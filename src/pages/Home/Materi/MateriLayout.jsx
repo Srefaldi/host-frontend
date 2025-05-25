@@ -18,7 +18,7 @@ const MateriLayout = () => {
   const { user, isError, isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const totalLessons = 59;
+  const totalLessons = 76;
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
