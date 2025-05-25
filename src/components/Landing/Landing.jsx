@@ -112,7 +112,7 @@ function Landing() {
         <div className="container flex flex-col flex-wrap items-center justify-between p-4 mx-auto md:flex-row">
           <Link
             to="/"
-            className="flex items-center font-medium text-gray-900 title-font md:mb-0 no-underline"
+            className="flex items-center font-medium text-gray-900 no-underline title-font md:mb-0"
           >
             <span className="ml-3 text-xl">
               <span className="font-bold" style={{ color: "#68217A" }}>
@@ -178,7 +178,7 @@ function Landing() {
               <br className="hidden lg:inline-block" />
               DASAR - DASAR C#
             </h1>
-           <p className="mb-6 text-base text-gray-600 leading-relaxed">
+            <p className="mb-6 text-base leading-relaxed text-gray-600">
               Bagian Latihan dan Kuis dirancang untuk membantu pengguna memahami
               materi pembelajaran melalui soal-soal. Latihan dapat dikerjakan
               berkali-kali sebagai sarana penguatan konsep, sedangkan kuis
@@ -200,7 +200,7 @@ function Landing() {
               </button>
               <Link
                 to="/login-guru"
-                className="inline-flex items-center justify-center font-bold text-gray-600 border border-gray-400 rounded no-underline focus:outline-none hover:bg-gray-100"
+                className="inline-flex items-center justify-center font-bold text-gray-600 no-underline border border-gray-400 rounded focus:outline-none hover:bg-gray-100"
                 style={{
                   backgroundColor: "#FFFFFF",
                   width: "180px",
