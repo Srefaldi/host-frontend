@@ -20,20 +20,20 @@ const HasilEvaluasiAkhir = () => {
     if (isPassing) {
       handleLessonComplete("/materi/evaluasi/evaluasi-akhir");
       handleLessonComplete("/materi/evaluasi/kesimpulan");
-      navigate("/materi/evaluasi/kesimpulan");
+      navigate("/dashboard");
     }
   };
 
   return (
-    <div className="mt-20 max-w-4xl p-4 mx-auto bg-white rounded-lg shadow-md sm:p-6 lg:p-8">
-      <h1 className="mb-4 text-xl sm:text-2xl font-bold text-center text-gray-800">
+    <div className="max-w-4xl p-4 mx-auto mt-20 bg-white rounded-lg shadow-md sm:p-6 lg:p-8">
+      <h1 className="mb-4 text-xl font-bold text-center text-gray-800 sm:text-2xl">
         Hasil Evaluasi Akhir
       </h1>
       <div className="p-4 text-center bg-gray-100 rounded-lg sm:p-6">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+        <h2 className="text-base font-semibold text-gray-800 sm:text-lg">
           Skor Anda: {score} / {totalQuestions * 5}
         </h2>
-        <p className="mt-2 text-gray-600 text-sm sm:text-base">
+        <p className="mt-2 text-sm text-gray-600 sm:text-base">
           Persentase: {percentage.toFixed(2)}%
         </p>
         <p
@@ -47,7 +47,7 @@ const HasilEvaluasiAkhir = () => {
       <div className="flex flex-col justify-center mt-6 space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
         <button
           onClick={handleRetry}
-          className="flex items-center justify-center gap-2 px-6 py-3 text-base text-white transition-all duration-200 rounded-lg shadow-sm hover:shadow-md sm:px-8 w-full sm:w-auto"
+          className="flex items-center justify-center w-full gap-2 px-6 py-3 text-base text-white transition-all duration-200 rounded-lg shadow-sm hover:shadow-md sm:px-8 sm:w-auto"
           style={{ backgroundColor: "#EF4444" }}
           onMouseEnter={(e) =>
             (e.currentTarget.style.backgroundColor = "#DC2626")
@@ -67,11 +67,11 @@ const HasilEvaluasiAkhir = () => {
           }`}
           disabled={!isPassing}
         >
-          <span>Selanjutnya</span>
+          <span>Kembali Ke Dashboard</span>
           <img
             src={isPassing ? nextIcon : lockIcon}
             alt={isPassing ? "Selanjutnya" : "Terkunci"}
-            className="w-4 sm:w-5 h-4 sm:h-5"
+            className="w-4 h-4 sm:w-5 sm:h-5"
           />
         </button>
       </div>
