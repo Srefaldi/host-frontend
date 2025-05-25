@@ -248,53 +248,112 @@ public static void Main()
         icon: "warning",
         confirmButtonText: "OK",
       });
-    } else {
-      Swal.fire({
-        title: "Konfirmasi Pengiriman",
-        text: "Apakah Anda yakin untuk mengirim jawaban Anda?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Ya",
-        cancelButtonText: "Tidak",
-        confirmButtonColor: "#6E2A7F",
-        cancelButtonColor: "#EF4444",
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            await axios.post(
-              `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-              {
-                user_id: user.uuid,
-                type: "latihan",
-                chapter: "6",
-                score: score,
-              },
-              { withCredentials: true }
-            );
-
-            if (score >= 75) {
-              handleLessonComplete("/materi/bab6/latihan-bab6");
-              handleLessonComplete("/materi/bab6/kuis-bab6");
-            }
-
-            navigate("/materi/bab6/hasil-latihan-bab6", {
-              state: { score, totalQuestions: questions.length },
-            });
-          } catch (error) {
-            console.error("Error saving score:", error);
-            Swal.fire({
-              title: "Gagal!",
-              text: "Terjadi kesalahan saat menyimpan skor.",
-              icon: "error",
-              confirmButtonText: "OK",
-            });
-          }
-        }
-      });
+      return;
     }
+
+    Swal.fire({
+      title: "Konfirmasi Pengiriman",
+      text: "Apakah Anda yakin untuk mengirim jawaban Anda?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya",
+      cancelButtonText: "Tidak",
+      confirmButtonColor: "#6E2A7F",
+      cancelButtonColor: "#EF4444",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const scorePercentage = Number((score / (questions.length * 20)) * 100);
+        console.log(
+          "Score:",
+          score,
+          "Questions Length:",
+          questions.length,
+          "Score Percentage:",
+          scorePercentage
+        );
+
+        if (
+          isNaN(scorePercentage) ||
+          scorePercentage < 0 ||
+          scorePercentage > 100
+        ) {
+          Swal.fire({
+            title: "Error!",
+            text: "Skor tidak valid. Silakan coba lagi.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+          return;
+        }
+
+        const payload = {
+          user_id: user?.uuid,
+          type: "latihan",
+          chapter: 6, // Integer, bukan string
+          score: scorePercentage,
+        };
+        console.log("Sending score to backend:", payload);
+
+        try {
+          const response = await axios.post(
+            `${import.meta.env.VITE_API_ENDPOINT}/scores`,
+            payload,
+            { withCredentials: true }
+          );
+          console.log("Score save response:", response.status, response.data);
+
+          if (scorePercentage >= 75) {
+            handleLessonComplete("/materi/bab6/latihan-bab6");
+            handleLessonComplete("/materi/bab6/kuis-bab6");
+          }
+
+          navigate("/materi/bab6/hasil-latihan-bab6", {
+            state: { score: scorePercentage, totalQuestions: questions.length },
+          });
+        } catch (error) {
+          const errorMsg = error.response
+            ? `Error ${error.response.status}: ${
+                error.response.data.msg || error.response.data
+              }`
+            : error.message;
+          console.error("Error saving score:", errorMsg);
+          Swal.fire({
+            title: "Gagal!",
+            text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        }
+      }
+    });
   };
 
-  const handleTimeUp = () => {
+  const handleTimeUp = async () => {
+    const scorePercentage = Number((score / (questions.length * 20)) * 100);
+    console.log("Time up score percentage:", scorePercentage);
+
+    if (
+      isNaN(scorePercentage) ||
+      scorePercentage < 0 ||
+      scorePercentage > 100
+    ) {
+      Swal.fire({
+        title: "Error!",
+        text: "Skor tidak valid. Silakan coba lagi.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    const payload = {
+      user_id: user?.uuid,
+      type: "latihan",
+      chapter: 6, // Integer, bukan string
+      score: scorePercentage,
+    };
+    console.log("Sending score to backend (time up):", payload);
+
     Swal.fire({
       title: "Waktu Habis!",
       text: "Apakah Anda yakin untuk mengirim jawaban Anda?",
@@ -307,30 +366,31 @@ public static void Main()
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.post(
+          const response = await axios.post(
             `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-            {
-              user_id: user.uuid,
-              type: "latihan",
-              chapter: "6",
-              score: score,
-            },
+            payload,
             { withCredentials: true }
           );
+          console.log("Score save response:", response.status, response.data);
 
-          if (score >= 75) {
+          if (scorePercentage >= 75) {
             handleLessonComplete("/materi/bab6/latihan-bab6");
             handleLessonComplete("/materi/bab6/kuis-bab6");
           }
 
           navigate("/materi/bab6/hasil-latihan-bab6", {
-            state: { score, totalQuestions: questions.length },
+            state: { score: scorePercentage, totalQuestions: questions.length },
           });
         } catch (error) {
-          console.error("Error saving score:", error);
+          const errorMsg = error.response
+            ? `Error ${error.response.status}: ${
+                error.response.data.msg || error.response.data
+              }`
+            : error.message;
+          console.error("Error saving score:", errorMsg);
           Swal.fire({
             title: "Gagal!",
-            text: "Terjadi kesalahan saat menyimpan skor.",
+            text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
             icon: "error",
             confirmButtonText: "OK",
           });
@@ -341,31 +401,31 @@ public static void Main()
 
   // UI untuk halaman instruksi
   const renderInstruksi = () => (
-    <div className="mx-auto max-w-4xl p-2 sm:p-4 lg:p-6 bg-white rounded-lg shadow-md">
-      <h1 className="mb-4 text-xl sm:text-2xl font-bold text-center">
+    <div className="max-w-4xl p-2 mx-auto bg-white rounded-lg shadow-md sm:p-4 lg:p-6">
+      <h1 className="mb-4 text-xl font-bold text-center sm:text-2xl">
         BAB 6 - METHOD
       </h1>
       <section>
-        <h2 className="mb-3 font-semibold text-gray-800 text-base sm:text-lg">
+        <h2 className="mb-3 text-base font-semibold text-gray-800 sm:text-lg">
           Aturan
         </h2>
-        <p className="mb-3 leading-relaxed text-sm sm:text-base">
+        <p className="mb-3 text-sm leading-relaxed sm:text-base">
           Latihan ini bertujuan untuk menguji pengetahuan Anda tentang method,
           parameter, dan expression-bodied member dalam pemrograman C#.
         </p>
-        <p className="mb-3 leading-relaxed text-sm sm:text-base">
+        <p className="mb-3 text-sm leading-relaxed sm:text-base">
           Terdapat {questions.length} pertanyaan yang harus dikerjakan dalam
           latihan ini. Beberapa ketentuannya sebagai berikut:
         </p>
-        <ul className="mb-3 leading-relaxed list-disc list-inside text-sm sm:text-base">
+        <ul className="mb-3 text-sm leading-relaxed list-disc list-inside sm:text-base">
           <li>Syarat nilai kelulusan: 75%</li>
           <li>Durasi ujian: 10 menit</li>
         </ul>
-        <p className="mb-3 leading-relaxed text-sm sm:text-base">
+        <p className="mb-3 text-sm leading-relaxed sm:text-base">
           Apabila tidak memenuhi syarat kelulusan, maka Anda harus mengulang
           pengerjaan latihan kembali.
         </p>
-        <p className="mb-6 leading-relaxed text-sm sm:text-base">
+        <p className="mb-6 text-sm leading-relaxed sm:text-base">
           Selamat Mengerjakan!
         </p>
         <div className="flex justify-end">
@@ -384,29 +444,29 @@ public static void Main()
             <img
               src={nextIcon}
               alt="Selanjutnya"
-              className="w-4 sm:w-5 h-4 sm:h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
             />
           </button>
         </div>
       </section>
 
       <section className="mt-8 sm:mt-16">
-        <h3 className="pb-1 mb-3 font-semibold text-gray-800 border-b border-gray-300 text-base sm:text-lg">
+        <h3 className="pb-1 mb-3 text-base font-semibold text-gray-800 border-b border-gray-300 sm:text-lg">
           Riwayat
         </h3>
         {isLoading ? (
-          <p className="text-gray-600 text-sm sm:text-base">
+          <p className="text-sm text-gray-600 sm:text-base">
             Memuat riwayat...
           </p>
         ) : error ? (
-          <p className="text-red-600 text-sm sm:text-base">{error}</p>
+          <p className="text-sm text-red-600 sm:text-base">{error}</p>
         ) : riwayat.length === 0 ? (
-          <p className="text-gray-600 text-sm sm:text-base">
+          <p className="text-sm text-gray-600 sm:text-base">
             Belum ada riwayat
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-gray-600 text-sm sm:text-base">
+            <table className="w-full text-sm text-left text-gray-600 sm:text-base">
               <thead>
                 <tr>
                   <th className="pb-2 font-semibold">Tanggal</th>
@@ -442,17 +502,17 @@ public static void Main()
 
   // UI untuk halaman latihan
   const renderLatihan = () => (
-    <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-lg">
+    <div className="max-w-6xl p-4 mx-auto bg-white rounded-lg shadow-lg sm:p-6 lg:p-8">
       <h2 className="text-lg font-semibold text-center text-gray-800">
         LATIHAN BAB 6
       </h2>
 
       <div
-        className="relative p-4 sm:p-6 mt-4 border rounded-lg"
+        className="relative p-4 mt-4 border rounded-lg sm:p-6"
         style={{ backgroundColor: "rgba(128, 128, 128, 0.158)" }}
       >
         <h3
-          className="flex items-center p-2 text-lg font-semibold border rounded-lg w-full sm:w-80 md:w-96"
+          className="flex items-center w-full p-2 text-lg font-semibold border rounded-lg sm:w-80 md:w-96"
           style={{ outline: "2px solid #6E2A7F", outlineOffset: "2px" }}
         >
           <img src={IconPetunjuk} alt="Icon" className="w-6 h-6 mr-2" />
@@ -473,7 +533,7 @@ public static void Main()
                 padding: "0.5rem 1rem",
                 borderRadius: "0.5rem",
                 cursor: "not-allowed",
-                opacity: 0.6,
+                opacity: "6",
               }}
             >
               Kirim
@@ -546,7 +606,7 @@ public static void Main()
           </div>
         </div>
 
-        <div className="w-full p-4 lg:p-6 border rounded-lg">
+        <div className="w-full p-4 border rounded-lg lg:p-6">
           <h3 className="font-semibold">{`Soal ${questions[currentQuestionIndex].id}`}</h3>
           <p className="text-gray-600">
             {questions[currentQuestionIndex].prompt}
