@@ -7,8 +7,8 @@ import "../Bab-1/Style/HasilLatihanBab1.css";
 const HasilLatihanBab2 = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { score = 0, totalQuestions = 10 } = state || {};
-  const percentage = (score / (totalQuestions * 10)) * 100;
+  const { score = 0, totalQuestions = 5 } = state || {};
+  const percentage = Math.min((score / (totalQuestions * 20)) * 100, 100); // Cap at 100%
   const isPassing = percentage >= 75;
   const { handleLessonComplete } = useOutletContext();
 
@@ -25,13 +25,13 @@ const HasilLatihanBab2 = () => {
   };
 
   return (
-    <div className="mt-20 max-w-4xl p-4 mx-auto bg-white rounded-lg shadow-md sm:p-6 lg:p-8">
+    <div className="max-w-4xl p-4 mx-auto mt-20 bg-white rounded-lg shadow-md sm:p-6 lg:p-8">
       <h1 className="mb-4 text-2xl font-bold text-center text-gray-800">
         Hasil Latihan Bab 2
       </h1>
       <div className="p-4 text-center bg-gray-100 rounded-lg sm:p-6">
         <h2 className="text-lg font-semibold text-gray-800">
-          Skor Anda: {score} / {totalQuestions * 10}
+          Skor Anda: {score} / {totalQuestions * 20}
         </h2>
         <p className="mt-2 text-gray-600">
           Persentase: {percentage.toFixed(2)}%
