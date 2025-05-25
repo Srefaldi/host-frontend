@@ -22,16 +22,12 @@ const Userlist = () => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_ENDPOINT}/classes`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       setClasses(response.data);
+      console.log("Classes fetched:", response.data);
     } catch (error) {
-      console.error(
-        "Error fetching classes:",
-        error.response?.data || error.message
-      );
+      console.error("Error fetching classes:", error.response?.data || error.message);
     }
   };
 
@@ -40,16 +36,14 @@ const Userlist = () => {
       const response = await axios.get(
         `${import.meta.env.VITE_API_ENDPOINT}/users`,
         {
-          params: { class: selectedClass },
+          params: { class: selectedClass || undefined },
           withCredentials: true,
         }
       );
       setUsers(response.data);
+      console.log("Users fetched:", response.data);
     } catch (error) {
-      console.error(
-        "Error fetching users:",
-        error.response?.data || error.message
-      );
+      console.error("Error fetching users:", error.response?.data || error.message);
     }
   };
 
@@ -57,9 +51,7 @@ const Userlist = () => {
     try {
       await axios.delete(
         `${import.meta.env.VITE_API_ENDPOINT}/users/${userId}`,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       await Swal.fire({
         icon: "success",
@@ -70,16 +62,11 @@ const Userlist = () => {
       });
       getUsers();
     } catch (error) {
-      console.error(
-        "Error deleting user:",
-        error.response?.data || error.message
-      );
+      console.error("Error deleting user:", error.response?.data || error.message);
       Swal.fire({
         icon: "error",
         title: "Gagal!",
-        text:
-          error.response?.data?.msg ||
-          "Terjadi kesalahan saat menghapus siswa.",
+        text: error.response?.data?.msg || "Terjadi kesalahan saat menghapus siswa.",
       });
     }
   };
@@ -109,9 +96,7 @@ const Userlist = () => {
           name: editUser.name,
           class: editUser.class,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       await Swal.fire({
         icon: "success",
@@ -123,13 +108,8 @@ const Userlist = () => {
       closeModal();
       getUsers();
     } catch (error) {
-      console.error(
-        "Error updating user:",
-        error.response?.data || error.message
-      );
-      setMsg(
-        error.response?.data?.msg || "Terjadi kesalahan saat memperbarui siswa."
-      );
+      console.error("Error updating user:", error.response?.data || error.message);
+      setMsg(error.response?.data?.msg || "Terjadi kesalahan saat memperbarui siswa.");
     }
   };
 
@@ -137,9 +117,14 @@ const Userlist = () => {
     getUsers();
   }, [selectedClass]);
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter users based on search term for NIS, name, and class
+  const filteredUsers = users.filter((user) => {
+    const searchLower = searchTerm.toLowerCase();
+    const nisMatch = user.nis?.toString().toLowerCase().includes(searchLower);
+    const nameMatch = user.name?.toLowerCase().includes(searchLower);
+    const classMatch = user.class?.toLowerCase().includes(searchLower);
+    return nisMatch || nameMatch || classMatch;
+  });
 
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
 
@@ -164,7 +149,10 @@ const Userlist = () => {
               <span>Menampilkan</span>
               <select
                 value={itemsPerPage}
-                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                onChange={(e) => {
+                  setItemsPerPage(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
                 className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-600 sm:text-base sm:px-3 sm:py-2"
               >
                 <option value={5}>5</option>
@@ -177,7 +165,10 @@ const Userlist = () => {
             <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
               <select
                 value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
+                onChange={(e) => {
+                  setSelectedClass(e.target.value);
+                  setCurrentPage(1);
+                }}
                 className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-600 sm:text-base sm:px-3 sm:py-2 sm:w-40"
               >
                 <option value="">Semua Kelas</option>
@@ -190,8 +181,11 @@ const Userlist = () => {
               <input
                 type="search"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Cari nama..."
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Cari NIS, nama, atau kelas..."
                 className="w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-600 sm:text-base sm:px-3 sm:py-2 sm:w-64"
               />
             </div>
@@ -200,7 +194,7 @@ const Userlist = () => {
           <div className="overflow-x-auto">
             <table className="w-full mt-4 text-sm text-gray-700 border sm:mt-5 sm:text-base">
               <thead className="hidden sm:table-header-group">
-                <tr className=" border-b border-gray-200">
+                <tr className="border-b border-gray-200">
                   <th className="px-2 py-1 font-semibold text-center select-none sm:px-3 sm:py-2">
                     NIS
                   </th>
@@ -219,67 +213,77 @@ const Userlist = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.map((user) => (
-                  <tr
-                    key={user.uuid}
-                    className="flex flex-col border-b border-gray-200 sm:table-row sm:border-b"
-                  >
-                    <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
-                      <span className="w-20 font-semibold text-centerinline-block sm:hidden">
-                        NIS:
-                      </span>
-                      {user.nis}
-                    </td>
-                    <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
-                      <span className="inline-block w-20 font-semibold sm:hidden">
-                        Nama:
-                      </span>
-                      {user.name}
-                    </td>
-                    <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
-                      <span className="inline-block w-20 font-semibold sm:hidden">
-                        Kelas:
-                      </span>
-                      {user.class || "-"}
-                    </td>
-                    <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
-                      <span className="inline-block w-20 font-semibold sm:hidden">
-                        Status:
-                      </span>
-                      {user.status === "BELUM SELESAI" ? (
-                        <span className="px-2 py-1 text-xs text-white bg-red-500 rounded sm:text-sm">
-                          BELUM SELESAI
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs text-white bg-green-500 rounded sm:text-sm">
-                          SELESAI
-                        </span>
-                      )}
-                    </td>
-                    <td className="flex items-center justify-center px-2 py-1 space-x-2 sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
-                      <span className="inline-block w-20 font-semibold sm:hidden">
-                        Aksi:
-                      </span>
-                      <button
-                        onClick={() => openEditModal(user)}
-                        className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded hover:bg-green-600 sm:text-sm sm:px-3"
-                      >
-                        Perbarui
-                      </button>
-                      <button
-                        onClick={() => deleteUser(user.uuid)}
-                        className="px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded hover:bg-red-700 sm:text-sm sm:px-3"
-                      >
-                        Hapus
-                      </button>
+                {currentUsers.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="px-2 py-1 text-sm text-center text-gray-500 sm:px-3 sm:py-2 sm:text-base"
+                    >
+                      Tidak ada data
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  currentUsers.map((user) => (
+                    <tr
+                      key={user.uuid}
+                      className="flex flex-col border-b border-gray-200 sm:table-row sm:border-b"
+                    >
+                      <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
+                        <span className="inline-block w-20 font-semibold text-center sm:hidden">
+                          NIS:
+                        </span>
+                        {user.nis || "-"}
+                      </td>
+                      <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
+                        <span className="inline-block w-20 font-semibold sm:hidden">
+                          Nama:
+                        </span>
+                        {user.name || "-"}
+                      </td>
+                      <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
+                        <span className="inline-block w-20 font-semibold sm:hidden">
+                          Kelas:
+                        </span>
+                        {user.class || "-"}
+                      </td>
+                      <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
+                        <span className="inline-block w-20 font-semibold sm:hidden">
+                          Status:
+                        </span>
+                        {user.status === "BELUM SELESAI" ? (
+                          <span className="px-2 py-1 text-xs text-white bg-red-500 rounded sm:text-sm">
+                            BELUM SELESAI
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs text-white bg-green-500 rounded sm:text-sm">
+                            SELESAI
+                          </span>
+                        )}
+                      </td>
+                      <td className="flex items-center justify-center px-2 py-1 space-x-2 sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text">
+                        <span className="inline-block w-20 font-semibold sm:hidden">
+                          Aksi:
+                        </span>
+                        <button
+                          onClick={() => openEditModal(user)}
+                          className="px-2 py-1 text-xs font-semibold text-white bg-green-500 rounded hover:bg-green-600 sm:text-sm sm:px-3"
+                        >
+                          Perbarui
+                        </button>
+                        <button
+                          onClick={() => deleteUser(user.uuid)}
+                          className="px-2 py-1 text-xs font-semibold text-white bg-red-600 rounded hover:bg-red-700 sm:text-sm sm:px-3"
+                        >
+                          Hapus
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
 
-          {/* Modal for Editing User */}
           {isModalOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
               <div className="w-11/12 max-w-md p-4 bg-white rounded-lg shadow-lg sm:p-6 sm:w-full">
@@ -368,9 +372,7 @@ const Userlist = () => {
               </button>
             ))}
             <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               className="px-2 py-1 text-xs font-semibold text-white bg-gray-500 hover:bg-gray-600 sm:text-sm sm:px-3"
               disabled={currentPage === totalPages}
             >
