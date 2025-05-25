@@ -1,0 +1,122 @@
+[
+    {
+      "id": 1,
+      "question": "Pembuat dan pengembang pertama bahasa pemrograman C# adalah…",
+      "options": [
+        "A. Anders Hejlsberg",
+        "B. Bill Gates",
+        "C. Guido van Rossum",
+        "D. Linus Torvalds",
+        "E. James Gosling"
+      ],
+      "correctAnswer": "A. Anders Hejlsberg"
+    },
+    {
+      "id": 2,
+      "question": "Apa yang dimaksud dengan CIL dalam pemrograman C# …",
+      "options": [
+        "A. Common Intermediate Language",
+        "B. Common Integrated Language",
+        "C. Comprehensive Intermediate Language",
+        "D. Common Interactive Language",
+        "E. Comprehensive Integrated Language"
+      ],
+      "correctAnswer": "A. Common Intermediate Language"
+    },
+    {
+      "id": 3,
+      "question": "Metode apa yang digunakan sebagai titik awal eksekusi program C# …",
+      "options": [
+        "A. Start",
+        "B. Begin",
+        "C. Execute",
+        "D. Main",
+        "E. Init"
+      ],
+      "correctAnswer": "D. Main"
+    },
+    {
+      "id": 4,
+      "question": "Apa fungsi dari Console.WriteLine() dalam C#...",
+      "options": [
+        "A. Menampilkan output ke layar tanpa baris baru",
+        "B. Menampilkan output ke layar dengan baris baru",
+        "C. Membaca input dari pengguna",
+        "D. Menjalankan program",
+        "E. Menghentikan program"
+      ],
+      "correctAnswer": "B. Menampilkan output ke layar dengan baris baru"
+    },
+    {
+      "id": 5,
+      "question": "Apa yang dimaksud dengan public dalam deklarasi metode public static void Main(string[] args)…",
+      "options": [
+        "A. Metode dapat diakses dari luar kelas",
+        "B. Metode mengembalikan nilai",
+        "C. Metode hanya dapat diakses dari dalam kelas",
+        "D. Metode bersifat private",
+        "E. Metode bersifat protected"
+      ],
+      "correctAnswer": "A. Metode dapat diakses dari luar kelas"
+    },
+    {
+      "id": 6,
+      "question": "Tanda apa yang digunakan untuk membuat komentar satu baris dalam C#...",
+      "options": [
+        "A. /* ... */",
+        "B. <!-- ... -->",
+        "C. //",
+        "D. #",
+        "E. <>"
+      ],
+      "correctAnswer": "C. //"
+    },
+    {
+      "id": 7,
+      "question": "Tipe Error yang terdapat pada C# …",
+      "options": [
+        "A. Main Error",
+        "B. Syntax Error",
+        "C. Runtime Error",
+        "D. Void Error",
+        "E. Not Found"
+      ],
+      "correctAnswer": "B. Syntax Error"
+    },
+    {
+      "id": 8,
+      "question": "Berdasarkan struktur bahasa pemrograman C# dasar, pada bagian kode mana kita menaruh semua statement kode program bahasa C#?",
+      "options": [
+        "A. static void Main",
+        "B. using System",
+        "C. namespace",
+        "D. Start",
+        "E. Init"
+      ],
+      "correctAnswer": "A. static void Main"
+    },
+    {
+      "id": 9,
+      "question": "Penyebab dari syntax error adalah …",
+      "options": [
+        "A. Tidak memberikan spasi antara kode",
+        "B. Menulis kode yang menyimpang dari aturan tata bahasa C#",
+        "C. Pengguna memasukkan data yang salah",
+        "D. Penulisan Komentar",
+        "E. Semua Benar"
+      ],
+      "correctAnswer": "B. Menulis kode yang menyimpang dari aturan tata bahasa C#"
+    },
+    {
+      "id": 10,
+      "question": "Apa keuntungan utama dari bahasa pemrograman C#...",
+      "options": [
+        "A. Hanya dapat digunakan pada sistem operasi Windows",
+        "B. Tidak mendukung pemrograman berorientasi objek",
+        "C. Mendukung pengembangan aplikasi pada platform Microsoft dengan efisien",
+        "D. Mudah diinstall",
+        "E. Memiliki sintaks yang sama dengan Java"
+      ],
+      "correctAnswer": "C. Mendukung pengembangan aplikasi pada platform Microsoft dengan efisien"
+    }
+  ]

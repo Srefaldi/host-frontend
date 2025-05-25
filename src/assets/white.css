@@ -1,0 +1,38 @@
+/* Custom CSS untuk mengganti grey dengan white */
+body,
+button,
+input,
+textarea,
+select,
+.dropdown-menu,
+.navbar,
+.modal,
+.card {
+  background-color: white !important; /* Mengubah latar belakang menjadi putih */
+  color: black !important;  /* Mengubah teks menjadi hitam */
+}
+
+.has-background-grey,
+.has-text-grey,
+.is-grey {
+  background-color: white !important; /* Ubah elemen dengan background grey menjadi putih */
+  color: black !important;  /* Ubah teks yang berwarna grey menjadi hitam */
+}
+
+.button.is-grey,
+.button.is-light {
+  background-color: white !important; /* Ubah tombol yang menggunakan warna grey */
+  color: black !important;  /* Ubah teks tombol menjadi hitam */
+}
+
+.input,
+.textarea,
+.select {
+  background-color: white !important; /* Ubah elemen input, textarea, dan select */
+  border-color: black !important; /* Ubah warna border */
+}
+
+/* Atur modal jika modal menggunakan grey background */
+.modal-background {
+  background-color: rgba(255, 255, 255, 0.8) !important; /* Ganti background modal */
+}

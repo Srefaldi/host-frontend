@@ -1,0 +1,48 @@
+/* HasilLatihanBab1.css */
+.keyword {
+  color: #0000ff;
+}
+
+.string {
+  color: #a31515;
+}
+
+.comment {
+  color: #008000;
+}
+
+button:disabled {
+  opacity: 0.6;
+}
+
+@media (max-width: 640px) {
+  .max-w-4xl {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.125rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .sm\:flex-row {
+    flex-direction: column;
+  }
+
+  .sm\:space-x-4 {
+    space-x: 0;
+  }
+
+  .sm\:space-y-0 {
+    space-y: 1rem;
+  }
+}

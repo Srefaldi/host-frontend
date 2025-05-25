@@ -1,0 +1,26 @@
+/* MateriLayout.css */
+.fixed {
+  position: fixed;
+}
+
+.h-[calc(100vh-80px)] {
+  height: calc(100vh - 80px); /* Sesuaikan dengan tinggi navbar Anda */
+}
+
+.ml-64 {
+  margin-left: 16rem; /* Sesuaikan dengan lebar sidebar Anda */
+}
+
+/* CSS untuk menyembunyikan scrollbar tetapi tetap bisa scroll */
+.hide-scrollbar {
+  overflow-y: scroll; /* Memungkinkan scroll vertikal */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Untuk Chrome, Safari, dan Opera */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* Untuk Internet Explorer dan Edge */
+  scrollbar-width: none; /* Untuk Firefox */
+}

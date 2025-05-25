@@ -1,0 +1,20 @@
+/* Latihan.css */
+.code-block {
+    background-color: #1e1e1e; /* Warna latar belakang gelap */
+    color: #dcdcdc; /* Warna teks default */
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+  }
+  
+  .keyword {
+    color: #569cd6; /* Warna untuk kata kunci */
+  }
+  
+  .string {
+    color: #ce9178; /* Warna untuk string */
+  }
+  
+  .comment {
+    color: #6a9955; /* Warna untuk komentar */
+  }

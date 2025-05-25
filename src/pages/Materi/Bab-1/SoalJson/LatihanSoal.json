@@ -1,0 +1,32 @@
+[
+    {
+      "id": 1,
+      "prompt": "Lengkapi kode berikut untuk menampilkan output \"Mari Belajar C#\".",
+      "code": "class Latihan \n{ \n    public static void Main(string[] args) \n    { \n        Console.WriteLine(_____); \n    } \n}",
+      "correctAnswer": ["\"Mari Belajar C#\""]
+    },
+    {
+      "id": 2,
+      "prompt": "Lengkapi program C# berikut untuk mencetak angka 10 ke layar.",
+      "code": "class Latihan \n{ \n    public static void Main(string[] args) \n    { \n        Console.WriteLine(_____); \n    } \n}",
+      "correctAnswer": ["10"]
+    },
+    {
+      "id": 3,
+      "prompt": "Lengkapilah program C# berikut untuk membuat komentar.",
+      "code": "class Latihan \n{ \n    public static void Main(string[] args) \n    { \n        _____\n        buatlah komentar ini \n        lebih dari satu baris\n        _____\n    } \n}",
+      "correctAnswer": ["/*", "*/"]
+    },
+    {
+      "id": 4,
+      "prompt": "Tambahkan baris baru untuk mencetak \"Semangat Belajar C#\" setelah \"Ayo Belajar\".",
+      "code": "class Latihan \n{ \n    public static void Main(string[] args) \n    { \n        Console.WriteLine(\"Ayo Belajar\"); \n        _____ \n    } \n}",
+      "correctAnswer": ["Console.WriteLine(\"Semangat Belajar C#\");"]
+    },
+    {
+      "id": 5,
+      "prompt": "Lengkapilan kode program berikut agar mencetak output String “Hello” dan Integer Angka 10.",
+      "code": "class Latihan \n{ \n    public static void Main(string[] args) \n    { \n        Console.WriteLine(_____); \n    } \n}",
+      "correctAnswer": ["\"Hello \" + 10"]
+    }
+  ]
