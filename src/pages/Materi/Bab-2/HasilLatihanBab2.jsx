@@ -12,6 +12,8 @@ const HasilLatihanBab2 = () => {
   const isPassing = percentage >= 75;
   const { handleLessonComplete } = useOutletContext();
 
+  console.log("HasilLatihanBab2 state:", { score, totalQuestions, percentage });
+
   const handleRetry = () => {
     navigate("/materi/bab2/latihan-bab2");
   };
