@@ -178,14 +178,12 @@ function Landing() {
               <br className="hidden lg:inline-block" />
               DASAR - DASAR C#
             </h1>
-            <p className="mb-8 text-sm leading-relaxed text-justify sm:text-base">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam
-              atque, autem numquam cum, sint aliquid ea doloribus obcaecati,
-              sapiente voluptates debitis. Aspernatur, praesentium! Ullam
-              repellat excepturi distinctio iusto veniam aperiam eveniet
-              asperiores culpa voluptatem ipsa! Quia aperiam est commodi dolor,
-              deleniti a quibusdam doloremque laudantium nihil velit nostrum
-              suscipit iste.
+           <p className="mb-6 text-base text-gray-600 leading-relaxed">
+              Bagian Latihan dan Kuis dirancang untuk membantu pengguna memahami
+              materi pembelajaran melalui soal-soal. Latihan dapat dikerjakan
+              berkali-kali sebagai sarana penguatan konsep, sedangkan kuis
+              bertujuan untuk mengukur sejauh mana pemahaman pengguna terhadap
+              materi yang telah dipelajari.
             </p>
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <button
