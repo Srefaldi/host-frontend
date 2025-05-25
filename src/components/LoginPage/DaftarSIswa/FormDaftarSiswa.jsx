@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 import { RegisterSiswa, reset } from "../../../features/authSlice.js";
 import Navbar from "../../Landing/Navbar";
 import Footer from "../../Landing/Footer";
@@ -193,9 +195,12 @@ const RegisterSiswaa = () => {
             </form>
             <p className="mt-4 text-gray-600">
               Sudah punya akun?{" "}
-              <a href="/login" className="text-purple-500">
+              <Link
+                to="/login"
+                className="text-white no-underline hover:text-gray-200"
+              >
                 MASUK
-              </a>
+              </Link>
             </p>
           </div>
         </div>
