@@ -292,9 +292,31 @@ const LatihanBab1 = () => {
       cancelButtonColor: "#EF4444",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100; // Simpan skor sebagai persentase
+        const scorePercentage = Number((score / (questions.length * 20)) * 100);
+        console.log(
+          "Score:",
+          score,
+          "Questions Length:",
+          questions.length,
+          "Score Percentage:",
+          scorePercentage
+        );
+
+        if (
+          isNaN(scorePercentage) ||
+          scorePercentage < 0 ||
+          scorePercentage > 100
+        ) {
+          Swal.fire({
+            title: "Error!",
+            text: "Skor tidak valid. Silakan coba lagi.",
+            icon: "error",
+          });
+          return;
+        }
+
         const payload = {
-          user_id: user.uuid,
+          user_id: user?.uuid,
           type: "latihan",
           chapter: 1,
           score: scorePercentage,
@@ -335,12 +357,25 @@ const LatihanBab1 = () => {
     });
   };
 
-  // Fungsi ketika waktu habis
   const handleTimeUp = async () => {
-    const scorePercentage = (score / (questions.length * 20)) * 100;
+    const scorePercentage = Number((score / (questions.length * 20)) * 100);
     console.log("Time up score percentage:", scorePercentage);
+
+    if (
+      isNaN(scorePercentage) ||
+      scorePercentage < 0 ||
+      scorePercentage > 100
+    ) {
+      Swal.fire({
+        title: "Error!",
+        text: "Skor tidak valid. Silakan coba lagi.",
+        icon: "error",
+      });
+      return;
+    }
+
     const payload = {
-      user_id: user.uuid,
+      user_id: user?.uuid,
       type: "latihan",
       chapter: 1,
       score: scorePercentage,
@@ -388,6 +423,8 @@ const LatihanBab1 = () => {
       });
     }
   };
+
+  // Fungsi ketika waktu habis
 
   // Render halaman instruksi
   const renderInstruksi = () => (
