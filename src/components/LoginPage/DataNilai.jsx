@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
@@ -14,6 +15,8 @@ const ScoreList = () => {
   const [error, setError] = useState(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
 
+  const navigate = useNavigate(); // Initialize useNavigate
+
   useEffect(() => {
     getClasses();
     getUsers();
@@ -21,9 +24,9 @@ const ScoreList = () => {
 
   useEffect(() => {
     if (error === "Mohon login ke akun anda") {
-      window.location.href = "/login";
+      navigate("/login"); // Replace window.location.href with navigate
     }
-  }, [error]);
+  }, [error, navigate]);
 
   const getClasses = async () => {
     try {

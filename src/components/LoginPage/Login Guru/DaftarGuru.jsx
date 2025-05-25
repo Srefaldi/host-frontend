@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import { RegisterGuru, reset } from "../../../features/authSlice";
 import Navbar from "../../Landing/Navbar";
 import Footer from "../../Landing/Footer";
@@ -181,9 +181,9 @@ const RegisterGuruu = () => {
             </form>
             <p className="mt-4 text-gray-600">
               Sudah punya akun?{" "}
-              <a href="/login-guru" className="text-purple-500">
+              <Link to="/login-guru" className="text-purple-500">
                 MASUK
-              </a>
+              </Link>
             </p>
           </div>
         </div>

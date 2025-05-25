@@ -29,9 +29,9 @@ const AddQuestion = () => {
   // Redirect ke login jika sesi kadaluarsa
   useEffect(() => {
     if (isError && message === "Mohon login ke akun anda") {
-      window.location.href = "/login";
+      navigate("/login"); // Replace window.location.href with navigate
     }
-  }, [isError, message]);
+  }, [isError, message, navigate]);
 
   const handleChange = (e) => {
     setFormData({

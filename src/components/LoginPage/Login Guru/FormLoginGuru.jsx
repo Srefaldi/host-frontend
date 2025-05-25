@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import { LoginUser, reset, getMe } from "../../../features/authSlice";
 import Navbar from "../../Landing/Navbar";
 import Footer from "../../Landing/Footer";
@@ -130,9 +130,9 @@ const Login = () => {
             </form>
             <p className="mt-4 text-gray-600">
               Belum punya akun?{" "}
-              <a href="/daftar-guru" className="text-purple-500">
+              <Link to="/daftar-guru" className="text-purple-500">
                 DAFTAR
-              </a>
+              </Link>
             </p>
           </div>
         </div>

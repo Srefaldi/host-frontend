@@ -109,9 +109,9 @@ const EvaluationList = () => {
         timer: 1500,
         showConfirmButton: false,
       });
-      window.location.href = "/login";
+      navigate("/login"); // Replace window.location.href with navigate
     }
-  }, [isError, message, user]);
+  }, [isError, message, user, navigate]);
 
   // Log untuk debugging
   useEffect(() => {
@@ -357,14 +357,14 @@ const EvaluationList = () => {
             key={question.id}
             className="flex flex-col border-b border-gray-200 sm:table-row"
           >
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-7 text-sm sm:table-cell sm-justify-between sm:px-3 sm:font-mono sm:text-sm">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 No:
               </span>
               {(currentPage - 1) * itemsPerPage + index + 1}
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex mb-2 px-7 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Bab:
               </span>
               {evaluations.find(
@@ -377,52 +377,52 @@ const EvaluationList = () => {
                   }`
                 : "Evaluasi Akhir"}
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle truncate">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle truncate">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Soal:
               </span>
               <span title={question.question_text}>
                 {question.question_text}
               </span>
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle truncate">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle truncate">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Opsi A:
               </span>
               <span title={question.option_a}>{question.option_a}</span>
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle truncate">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle truncate">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Opsi B:
               </span>
               <span title={question.option_b}>{question.option_b}</span>
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle truncate">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle truncate">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Opsi C:
               </span>
               <span title={question.option_c}>{question.option_c}</span>
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle truncate">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle truncate">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Opsi D:
               </span>
               <span title={question.option_d}>{question.option_d}</span>
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle truncate">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle truncate">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Opsi E:
               </span>
               <span title={question.option_e}>{question.option_e}</span>
             </td>
-            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Jawaban:
               </span>
               {question.correct_answer}
             </td>
-            <td className="flex justify-center px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-base sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
+            <td className="flex justify-center px-2 py-2 text-sm sm:table-cell sm:px-3 sm:font-mono sm:text-sm sm:align-middle">
+              <span className="inline-block w-24 sm:text-sm text-center font-semibold sm:hidden">
                 Aksi:
               </span>
               <div className="flex justify-center space-x-2">

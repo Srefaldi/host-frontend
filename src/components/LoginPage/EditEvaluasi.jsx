@@ -80,9 +80,9 @@ const EditQuestion = () => {
         timer: 1500,
         showConfirmButton: false,
       });
-      window.location.href = "/login";
+      navigate("/login"); // Replace window.location.href with navigate
     }
-  }, [isError, message, user]);
+  }, [isError, message, user, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -164,7 +164,7 @@ const EditQuestion = () => {
                 name="evaluation_id"
                 value={formData.evaluation_id}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm font-medium border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Pilih Bab/Evaluasi</option>
@@ -186,8 +186,8 @@ const EditQuestion = () => {
                 name="question_text"
                 value={formData.question_text}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows="4"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                rows="8"
                 required
               />
             </div>
@@ -201,7 +201,7 @@ const EditQuestion = () => {
                 name="option_a"
                 value={formData.option_a}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               />
             </div>
@@ -215,7 +215,7 @@ const EditQuestion = () => {
                 name="option_b"
                 value={formData.option_b}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               />
             </div>
@@ -229,7 +229,7 @@ const EditQuestion = () => {
                 name="option_c"
                 value={formData.option_c}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               />
             </div>
@@ -243,7 +243,7 @@ const EditQuestion = () => {
                 name="option_d"
                 value={formData.option_d}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               />
             </div>
@@ -257,7 +257,7 @@ const EditQuestion = () => {
                 name="option_e"
                 value={formData.option_e}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               />
             </div>
@@ -270,7 +270,7 @@ const EditQuestion = () => {
                 name="correct_answer"
                 value={formData.correct_answer}
                 onChange={handleChange}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               >
                 <option value="">Pilih Jawaban</option>
