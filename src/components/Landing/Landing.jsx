@@ -178,12 +178,13 @@ function Landing() {
               <br className="hidden lg:inline-block" />
               DASAR - DASAR C#
             </h1>
-            <p className="mb-6 text-base leading-relaxed text-gray-600">
-              Bagian Latihan dan Kuis dirancang untuk membantu pengguna memahami
-              materi pembelajaran melalui soal-soal. Latihan dapat dikerjakan
-              berkali-kali sebagai sarana penguatan konsep, sedangkan kuis
-              bertujuan untuk mengukur sejauh mana pemahaman pengguna terhadap
-              materi yang telah dipelajari.
+            <p className="mb-8 text-sm leading-relaxed text-justify sm:text-base">
+              Media pembelajaran berbasis web yang dirancang untuk membantu
+              pemahaman konsep dasar-dasar pemrograman menggunakan bahasa C#. Di
+              sini, Anda akan belajar berbagai topik fundamental dalam
+              pemrograman, termasuk pendahuluan C#, variabel, tipe data,
+              operator, kontrol alur, hingga pembuatan metode atau fungsi
+              sederhana.
             </p>
             <div className="flex flex-col justify-center gap-4 sm:flex-row">
               <button
