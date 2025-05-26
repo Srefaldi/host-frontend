@@ -1,20 +1,21 @@
 /* Latihan.css */
 .code-block {
-    background-color: #1e1e1e; /* Warna latar belakang gelap */
-    color: #dcdcdc; /* Warna teks default */
-    padding: 10px;
-    border-radius: 5px;
-    overflow: auto;
-  }
-  
-  .keyword {
-    color: #569cd6; /* Warna untuk kata kunci */
-  }
-  
-  .string {
-    color: #ce9178; /* Warna untuk string */
-  }
-  
-  .comment {
-    color: #6a9955; /* Warna untuk komentar */
-  }
+  background-color: #ffffff; /* Warna latar belakang putih */
+  color: #333333; /* Warna teks default (gelap untuk kontras) */
+  padding: 10px;
+  border-radius: 5px;
+  overflow: auto;
+  border: 1px solid #e5e7eb; /* Border ringan untuk definisi */
+}
+
+.keyword {
+  color: #2b6cb0; /* Biru tua untuk kata kunci */
+}
+
+.string {
+  color: #9b2c2c; /* Merah tua untuk string */
+}
+
+.comment {
+  color: #2f855a; /* Hijau tua untuk komentar */
+}
