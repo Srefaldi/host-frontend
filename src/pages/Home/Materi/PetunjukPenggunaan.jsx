@@ -5,6 +5,16 @@ import Navbar from "../../../components/Landing/NavbarLogin/NavbarLogin";
 import Footer from "../../../components/Landing/Footer";
 import { getMe, reset } from "../../../features/authSlice";
 import backIcon from "../../../assets/img/kembali.png";
+import halamanAwalImg from "./img-petunjuk-penggunaan/Landing-1.png";
+import halamanAwalImg2 from "./img-petunjuk-penggunaan/Landing-2.png";
+import loginImg from "./img-petunjuk-penggunaan/Login-1.png";
+import buatAkunImg from "./img-petunjuk-penggunaan/Register-1.png";
+import homeImg from "./img-petunjuk-penggunaan/Dashboard-1.png";
+import materiImg from "./img-petunjuk-penggunaan/Materi-1.png";
+import materi1Img from "./img-petunjuk-penggunaan/Materi-2.png";
+import materi2Img from "./img-petunjuk-penggunaan/Materi-3.png";
+import latihanKuisImg from "./img-petunjuk-penggunaan/Latihan-1.jpeg";
+import latihanKuisImg2 from "./img-petunjuk-penggunaan/Kuis-1.png";
 
 const PetunjukPenggunaan = () => {
   const [isLoggedOut, setIsLoggedOut] = useState(false);
@@ -48,118 +58,483 @@ const PetunjukPenggunaan = () => {
       case "Petunjuk Halaman Awal":
         return (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
               Halaman Beranda
             </h2>
-            <p className="mb-6 text-base text-gray-600 leading-relaxed">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae
-              natus, accusantium libero distinctio numquam provident mollitia
-              explicabo ipsum velit praesentium fugit labore? Et nesciunt
-              suscipit aspernatur reiciendis excepturi a adipisci!
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Halaman Beranda adalah halaman awal yang muncul saat media
+              pembelajaran pertama kali dibuka. Pada halaman beranda terdapat
+              menu Daftar Materi, Halaman Guru, login, Daftar, dan Mulai
+              belajar.
             </p>
-            <p className="mb-6 italic text-sm text-gray-500">
+            <p className="mb-2 text-sm italic text-gray-500">
               Lihat gambar berikut!
             </p>
+            <img
+              src={halamanAwalImg}
+              alt="Petunjuk Halaman Awal"
+              style={{
+                width: "800px",
+                height: "400px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span>: adalah Tombol
+                  Daftar, ketika diklik mengarahkan pengguna ke halaman
+                  pendaftaran untuk membuat akun baru.
+                </li>
+                <li>
+                  <span className="font-medium">No 2</span>: adalah Tombol
+                  Masuk, ketika diklik membawa pengguna ke halaman login untuk
+                  mengakses akun mereka.
+                </li>
+                <li>
+                  <span className="font-medium">No 3</span>: adalah Daftar
+                  Materi, ketika diklik menggulir halaman secara otomatis ke
+                  bagian daftar materi pembelajaran yang tersedia.
+                </li>
+                <li>
+                  <span className="font-medium">No 4</span>: adalah Halaman
+                  Guru, ketika diklik mengarahkan ke halaman khusus untuk guru
+                  guna mengelola aplikasi.
+                </li>
+              </ol>
+            </div>
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+            <img
+              src={halamanAwalImg2}
+              alt="Petunjuk Halaman Awal - Gambar Kedua"
+              style={{
+                width: "800px",
+                height: "600px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span>: Tombol Mulai
+                  Belajar, mengarahkan pengguna ke login untuk memasukan akun
+                  belajar, dan memulai pembelajaran.
+                </li>
+              </ol>
+            </div>
             <div className="bg-gradient-to-r from-[#b7c8ff] to-[#d9e2ff] rounded-lg p-4 flex items-center justify-between max-w-full mb-12 shadow-sm">
-              <div className="flex items-center gap-3">
-                <img
-                  alt="NumLess logo icon with letter N in blue and purple"
-                  className="w-8 h-8 rounded-full"
-                  height="32"
-                  src="https://storage.googleapis.com/a1aa/image/4efecb72-3335-457d-bf91-012d552b6eb7.jpg"
-                  width="32"
-                />
-                <span className="font-bold text-sm text-[#6E2A7F] select-none">
-                  NumLess
-                </span>
-              </div>
-              <div className="flex gap-2 text-sm font-medium text-[#1a2ea0]">
-                {["Beranda", "Fitur", "Login", "Halaman Dosen"].map(
-                  (item, index) => (
-                    <div
-                      key={item}
-                      className="border-2 border-[#6E2A7F] rounded-lg px-3 py-1 flex flex-col items-center relative transition-all duration-200 hover:bg-[#6E2A7F]/10"
-                    >
-                      <span className="absolute -top-3 -left-3 bg-[#6E2A7F] text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold select-none">
-                        {index + 1}
-                      </span>
-                      {item}
-                      {index === 0 && (
-                        <span className="text-[#6E2A7F] text-[10px]">•</span>
-                      )}
-                    </div>
-                  )
-                )}
-              </div>
+              <div className="flex items-center gap-3"></div>
             </div>
           </>
         );
       case "Petunjuk Login":
         return (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
               Petunjuk Login
             </h2>
-            <p className="mb-6 text-base text-gray-600 leading-relaxed">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae
-              natus, accusantium libero distinctio numquam provident mollitia
-              explicabo ipsum velit praesentium fugit labore? Et nesciunt
-              suscipit aspernatur reiciendis excepturi a adipisci!
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Halaman Login adalah halaman sebagai prasyarat agar pengguna dapat
+              masuk ke dalam aplikasi. Pada halaman login ada beberapa hal yang
+              harus diisi yakni.
             </p>
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+            <img
+              src={loginImg}
+              alt="Petunjuk Login"
+              style={{
+                width: "900px",
+                height: "500px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span> adalah Kolom isian
+                  untuk pengguna memasukkan <strong>NIS</strong> (Nomor Induk
+                  Siswa).
+                </li>
+                <li>
+                  <span className="font-medium">No 2</span> adalah Kolom isian
+                  untuk pengguna memasukkan <strong>kata sandi</strong> atau
+                  password yang sesuai.
+                </li>
+                <li>
+                  <span className="font-medium">No 3</span> adalah Tombol{" "}
+                  <strong>Masuk</strong> yang dapat diklik setelah NIS dan kata
+                  sandi diisi dengan benar.
+                </li>
+              </ol>
+            </div>
           </>
         );
       case "Petunjuk Buat Akun":
         return (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
               Petunjuk Buat Akun
             </h2>
-            <p className="mb-6 text-base text-gray-600 leading-relaxed">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae
-              natus, accusantium libero distinctio numquam provident mollitia
-              explicabo ipsum velit praesentium fugit labore? Et nesciunt
-              suscipit aspernatur reiciendis excepturi a adipisci!
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Halaman Buat Akun adalah halaman untuk membuat akun untuk pengguna
+              media pembelajaran. Disini pengguna diminta menginputkan data
+              pribadi sebagai data dari pengguna yang akan disimpan oleh guru.
             </p>
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+            <img
+              src={buatAkunImg}
+              alt="Petunjuk Buat Akun"
+              style={{
+                width: "500px",
+                height: "300px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span>: Merupakan tombol
+                  Daftar yang digunakan setelah pengguna mengisi seluruh kolom
+                  isian dengan benar, termasuk nama lengkap, NIS, kata sandi,
+                  kelas, dan token yang diberikan oleh guru.
+                </li>
+              </ol>
+            </div>
           </>
         );
       case "Petunjuk Home":
         return (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Petunjuk Home
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
+              Petunjuk Dashboard
             </h2>
-            <p className="mb-6 text-base text-gray-600 leading-relaxed">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae
-              natus, accusantium libero distinctio numquam provident mollitia
-              explicabo ipsum velit praesentium fugit labore? Et nesciunt
-              suscipit aspernatur reiciendis excepturi a adipisci!
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Halaman Home pada aplikasi ini menyediakan tiga menu utama yang
+              dapat diakses oleh pengguna, yaitu menu Petunjuk Penggunaan,
+              Materi, dan Aplikasi.
             </p>
-          </>
-        );
-      case "Petunjuk Informasi":
-        return (
-          <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Petunjuk Informasi
-            </h2>
-            <p className="mb-6 text-base text-gray-600 leading-relaxed">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae
-              natus, accusantium libero distinctio numquam provident mollitia
-              explicabo ipsum velit praesentium fugit labore? Et nesciunt
-              suscipit aspernaturasi!
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
             </p>
+            <img
+              src={homeImg}
+              alt="Petunjuk Dashboard"
+              style={{
+                width: "800px",
+                height: "500px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span>: Menu pada bagian
+                  navbar yang berisi dua pilihan, yaitu{" "}
+                  <strong>Dashboard</strong> untuk kembali ke halaman utama, dan{" "}
+                  <strong>Logout</strong> untuk keluar dari aplikasi.
+                </li>
+                <li>
+                  <span className="font-medium">No 2</span>: Tombol{" "}
+                  <strong>Petunjuk Penggunaan</strong> yang menampilkan halaman
+                  berisi penjelasan singkat mengenai cara menggunakan media
+                  pembelajaran ini.
+                </li>
+                <li>
+                  <span className="font-medium">No 3</span>: Tombol{" "}
+                  <strong>Mulai Belajar</strong> yang akan membawa pengguna ke
+                  halaman materi yang memuat seluruh konten pembelajaran.
+                </li>
+                <li>
+                  <span className="font-medium">No 4</span>: Tombol{" "}
+                  <strong>Informasi</strong> yang mengarahkan ke halaman berisi
+                  informasi pengembangan media serta daftar pustaka yang
+                  digunakan.
+                </li>
+              </ol>
+            </div>
           </>
         );
       case "Petunjuk Halaman Materi":
         return (
           <>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
               Halaman Materi
             </h2>
-            <p className="mb-6 text-base text-gray-600 leading-relaxed">
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quae
-              natus, accusantium libero distinctio numquam!
+
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Halaman ini berisi materi pembelajaran{" "}
+              <strong>Dasar-Dasar Pemrograman C#</strong>, yang disajikan dalam
+              bentuk teks dan latihan interaktif untuk memperkuat pemahaman
+              pengguna.
             </p>
+
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+
+            <img
+              src={materiImg}
+              alt="Petunjuk Halaman Materi"
+              style={{
+                width: "900px",
+                height: "500px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span>: Merupakan{" "}
+                  <strong>sidebar menu</strong> pada halaman materi. Sidebar ini
+                  menampilkan daftar lengkap materi dari awal hingga akhir,
+                  termasuk indikator progres belajar pengguna. Di dalamnya juga
+                  terlihat materi yang masih terkunci dan materi yang sudah
+                  berhasil diselesaikan.
+                </li>
+              </ol>
+            </div>
+
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Setiap halaman materi dilengkapi dengan{" "}
+              <strong>uji pengetahuan</strong>, yang dapat berupa latihan
+              melengkapi kode atau soal pilihan ganda. Berikut adalah salah satu
+              contoh tampilannya.
+            </p>
+
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+
+            <img
+              src={materi1Img}
+              alt="Tampilan Uji Pengetahuan"
+              style={{
+                width: "900px",
+                height: "500px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span>: Tombol{" "}
+                  <strong>Kirim Jawaban</strong> dan{" "}
+                  <strong>Hapus Jawaban</strong>. Tombol <em>Kirim Jawaban</em>{" "}
+                  digunakan untuk memeriksa apakah jawaban yang diberikan benar
+                  atau salah. Sementara <em>Hapus Jawaban</em> berfungsi untuk
+                  menghapus atau mereset jawaban yang telah diisi.
+                </li>
+                <li>
+                  <span className="font-medium">No 2</span>: Tombol{" "}
+                  <strong>Selanjutnya</strong>, yang berfungsi untuk melanjutkan
+                  ke materi berikutnya. Tombol ini hanya akan aktif jika
+                  pengguna telah menjawab uji pengetahuan dengan benar.
+                </li>
+              </ol>
+            </div>
+
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Setiap uji pengetahuan juga memberikan{" "}
+              <strong>umpan balik otomatis</strong>. Jika jawaban pengguna
+              benar, sistem akan menampilkan penjelasan atau respon yang sesuai.
+              Berikut contoh tampilannya:
+            </p>
+
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+
+            <img
+              src={materi2Img}
+              alt="Contoh Umpan Balik Jawaban"
+              style={{
+                width: "900px",
+                height: "500px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+          </>
+        );
+      case "Petunjuk Latihan dan Kuis":
+        return (
+          <>
+            <h2 className="mb-4 text-2xl font-bold text-gray-800">
+              Petunjuk Latihan dan Kuis
+            </h2>
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Bagian <strong>Latihan dan Kuis</strong> dirancang untuk membantu
+              pengguna memperdalam pemahaman terhadap materi melalui soal-soal
+              interaktif. Latihan dapat dikerjakan berkali-kali untuk memperkuat
+              konsep, sedangkan kuis bertujuan mengukur sejauh mana pemahaman
+              pengguna setelah mempelajari materi tertentu.
+            </p>
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+            <img
+              src={latihanKuisImg}
+              alt="Petunjuk Latihan dan Kuis"
+              style={{
+                width: "900px",
+                height: "600px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span> menunjukkan waktu
+                  pengerjaan soal latihan, yaitu <strong>10 menit</strong>. Jika
+                  waktu habis, seluruh jawaban akan otomatis dikirim.
+                </li>
+                <li>
+                  <span className="font-medium">No 2</span> menunjukkan jumlah
+                  soal latihan, yaitu
+                  <strong> 5 soal</strong>. Pengguna tidak dapat mengirim
+                  jawaban jika masih ada soal yang belum dijawab. Setelah
+                  jawaban dikirim, pengguna tidak bisa mengubahnya kembali.
+                </li>
+                <li>
+                  <span className="font-medium">No 3</span> merupakan kolom
+                  isian tempat pengguna menuliskan jawaban untuk setiap soal.
+                </li>
+                <li>
+                  <span className="font-medium">No 4</span> adalah kumpulan
+                  tombol di halaman latihan:
+                  <ul className="ml-6 list-disc list-inside">
+                    <li>
+                      <strong>Kirim</strong>: mengirim jawaban untuk soal yang
+                      sedang dikerjakan.
+                    </li>
+                    <li>
+                      <strong>Hapus Jawaban</strong>: menghapus jawaban yang
+                      telah diisi.
+                    </li>
+                    <li>
+                      <strong>Selesai</strong>: mengirim seluruh jawaban jika
+                      semua soal telah dijawab.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+            </div>
+
+            <p className="mb-2 text-base leading-relaxed text-gray-600">
+              Selain soal latihan yang berbentuk isian kode, terdapat juga kuis
+              pilihan ganda yang tersedia di akhir setiap bab. Contohnya dapat
+              dilihat pada gambar berikut.
+            </p>
+            <p className="mb-2 text-sm italic text-gray-500">
+              Lihat gambar berikut!
+            </p>
+            <img
+              src={latihanKuisImg2}
+              alt="Petunjuk Kuis Pilihan Ganda"
+              style={{
+                width: "900px",
+                height: "500px",
+                margin: "16px auto",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                display: "block",
+              }}
+            />
+            <div className="mb-6 text-justify">
+              <h3 className="mb-2 text-lg font-semibold text-gray-700">
+                Keterangan:
+              </h3>
+              <ol className="text-base leading-relaxed text-gray-600 list-decimal list-inside">
+                <li>
+                  <span className="font-medium">No 1</span> menunjukkan waktu
+                  pengerjaan kuis, yaitu <strong>20 menit</strong>. Setelah
+                  waktu habis, semua jawaban akan otomatis dikirim.
+                </li>
+                <li>
+                  <span className="font-medium">No 2</span> menunjukkan jumlah
+                  soal kuis, yaitu
+                  <strong> 10 soal</strong>. Semua soal harus dijawab sebelum
+                  pengguna bisa mengirim. Setelah jawaban dikirim, tidak dapat
+                  diubah kembali.
+                </li>
+                <li>
+                  <span className="font-medium">No 3</span> adalah kumpulan
+                  tombol yang digunakan di halaman kuis:
+                  <ul className="ml-6 list-disc list-inside">
+                    <li>
+                      <strong>Kirim</strong>: mengirim jawaban untuk soal yang
+                      sedang dijawab.
+                    </li>
+                    <li>
+                      <strong>Hapus Jawaban</strong>: menghapus jawaban yang
+                      telah diisi.
+                    </li>
+                    <li>
+                      <strong>Selesai</strong>: mengirim semua jawaban sekaligus
+                      setelah seluruh soal terisi.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+            </div>
           </>
         );
       default:
@@ -170,15 +545,15 @@ const PetunjukPenggunaan = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar setIsLoggedOut={setIsLoggedOut} />
-      <main className="flex flex-col md:flex-row p-4 md:p-6 gap-8 max-w-full mx-auto flex-grow mt-20">
+      <main className="flex flex-col flex-grow max-w-full gap-8 p-4 mx-auto mt-20 md:flex-row md:p-6">
         <nav className="flex flex-col gap-6 w-[256px] bg-white rounded-xl p-6 shadow-lg flex-shrink-0">
           {[
             "Petunjuk Halaman Awal",
             "Petunjuk Login",
             "Petunjuk Buat Akun",
             "Petunjuk Home",
-            "Petunjuk Informasi",
             "Petunjuk Halaman Materi",
+            "Petunjuk Latihan dan Kuis",
           ].map((section) => (
             <button
               key={section}
