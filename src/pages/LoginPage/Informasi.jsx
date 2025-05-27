@@ -103,6 +103,37 @@ const Informasi = () => {
           <h2 className="flex items-center mb-4 text-base font-bold text-gray-800 sm:text-lg">
             <i className="mr-2 fas fa-book"></i> DAFTAR PUSTAKA DAN ATRIBUSI
           </h2>
+          <h3 className="mb-2 text-sm font-semibold text-gray-800 sm:text-base">
+            Daftar Pustaka
+          </h3>
+          <ul className="mb-4 text-sm text-gray-700 list-disc list-inside sm:text-base">
+            <li>
+              Ali, R. (2014).{" "}
+              <i>
+                C# for Beginners Crash Course: Master C# Programming Fast and
+                Easy Today
+              </i>
+              .
+            </li>
+            <li>
+              C#, B., Kurniawan, A., Adnan, R., Aryaputra, P., Sasono, N.,
+              Ahmad, A., Fathur, H. M., I, R., Saryada, W., & Wirasta, A.
+              (2004). <i>Pengenalan Bahasa C# (CSH101)</i>.
+            </li>
+            <li>
+              Raharjo, B. (2022). <i>Pemrograman Bahasa C#</i>.
+            </li>
+          </ul>
+          <h3 className="mb-2 text-sm font-semibold text-gray-800 sm:text-base">
+            Atribusi
+          </h3>
+          <p className="text-sm text-gray-700 sm:text-base">
+            Ilustrasi pada media pembelajaran diadaptasi dari{" "}
+            <a href="https://storyset.com/work" className="text-purple-600">
+              storyset.com/work
+            </a>
+            .
+          </p>
         </section>
       </div>
       <Footer />
