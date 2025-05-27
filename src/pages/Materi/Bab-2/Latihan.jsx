@@ -24,7 +24,7 @@ const LatihanBab2 = () => {
   const [score, setScore] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(Array(5).fill(null));
   const [hasAnswered, setHasAnswered] = useState(Array(5).fill(false));
-  const [timeLeft, setTimeLeft] = useState(1 * 5); // 10 menit
+  const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 menit
 
   const questions = [
     {
@@ -169,7 +169,7 @@ const LatihanBab2 = () => {
   }, [user]);
 
   useEffect(() => {
-    if (showLatihan && timeLeft > 0) {
+    if (showLatihan) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -182,7 +182,7 @@ const LatihanBab2 = () => {
       }, 1000);
       return () => clearInterval(timer);
     }
-  }, [showLatihan, timeLeft]);
+  }, [showLatihan]);
 
   const normalizeAnswer = (answer) => {
     return answer.trim().replace(/\s+/g, " ").toLowerCase();
@@ -266,7 +266,7 @@ const LatihanBab2 = () => {
     if (hasIncompleteAnswers) {
       Swal.fire({
         title: "Masih Ada Soal Belum Dijawab!",
-        text: "Silakan periksa kembali jawaban anda.",
+        text: "Silakan periksa kembali jawaban Anda.",
         icon: "warning",
         confirmButtonText: "OK",
       });
@@ -319,7 +319,27 @@ const LatihanBab2 = () => {
   };
 
   const handleTimeUp = async () => {
-    const scorePercentage = (score / (questions.length * 20)) * 100;
+    // Evaluate all answers, including unsubmitted ones
+    let finalScore = score;
+    for (let i = 0; i < questions.length; i++) {
+      if (!hasAnswered[i]) {
+        const userAnswers = answers[i];
+        const normalizedUserAnswers = userAnswers.map((answer) =>
+          normalizeAnswer(answer)
+        );
+        const normalizedCorrectAnswers = questions[i].correctAnswer.map(
+          (answer) => normalizeAnswer(answer)
+        );
+        const isCorrect = normalizedUserAnswers.every(
+          (answer, idx) => answer === normalizedCorrectAnswers[idx]
+        );
+        if (isCorrect) {
+          finalScore += 20;
+        }
+      }
+    }
+
+    const scorePercentage = (finalScore / (questions.length * 20)) * 100;
     try {
       await axios.post(
         `${import.meta.env.VITE_API_ENDPOINT}/scores`,
@@ -344,7 +364,7 @@ const LatihanBab2 = () => {
           handleLessonComplete("/materi/bab2/kuis-bab2");
         }
         navigate("/materi/bab2/hasil-latihan-bab2", {
-          state: { score, totalQuestions: questions.length },
+          state: { score: finalScore, totalQuestions: questions.length },
         });
       });
     } catch (error) {
