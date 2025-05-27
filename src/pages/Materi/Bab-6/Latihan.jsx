@@ -28,63 +28,63 @@ const LatihanBab6 = () => {
     {
       id: 1,
       prompt:
-        "Lengkapi method berikut agar memanggil method TampilkanPesan untuk mencetak pesan ke konsol ...",
+        "Lengkapi method berikut agar memanggil method TampilkanPesan untuk mencetak pesan ke konsol",
       code: `public static void TampilkanPesan() 
     {
-    Console.WriteLine("Selamat belajar C#!"); 
+        Console.WriteLine("Selamat belajar C#!"); 
     } 
 
     public static void Main() 
     { 
-        ______(); 
+        ___; 
     }`,
-      correctAnswer: ["TampilkanPesan"],
+      correctAnswer: ["TampilkanPesan()"],
     },
     {
       id: 2,
       prompt:
-        "Lengkapi deklarasi method HitungLuas agar mengembalikan luas persegi Panjang ...",
-      code: `public static int HitungLuas(   ______   , ______  ) 
-  { 
-    return panjang * lebar; 
-  }`,
+        "Lengkapi deklarasi method HitungLuas agar mengembalikan luas persegi panjang",
+      code: `public static int HitungLuas(___, ___) 
+    { 
+        return panjang * lebar; 
+    }`,
       correctAnswer: ["int panjang", "int lebar"],
     },
     {
       id: 3,
       prompt:
-        "Lengkapi pemanggilan method berikut agar mencetak hasil penjumlahan 3 ...",
+        "Lengkapi pemanggilan method berikut agar mencetak hasil penjumlahan 3",
       code: `public static int Tambah(int a, int b) 
     { 
-      return a + b; 
+        return a + b; 
     } 
 
     public static void Main() 
     { 
-      Console.WriteLine(Tambah( ______  ,  ______  )); 
+        Console.WriteLine(Tambah(___, ___)); 
     }`,
       correctAnswer: ["1", "2"],
     },
     {
       id: 4,
       prompt:
-        "Lengkapi method dengan parameter berikut agar mencetak nama yang dimasukkan ....",
-      code: `public static void Sapa(______ nama) 
-  { 
-      Console.WriteLine("Halo, " + nama + "!"); 
-  } 
-
-public static void Main() 
+        "Lengkapi method dengan parameter berikut agar mencetak nama yang dimasukkan",
+      code: `public static void Sapa(___ nama) 
     { 
-      Sapa("Rudi"); 
+        Console.WriteLine("Halo, " + nama + "!"); 
+    } 
+
+    public static void Main() 
+    { 
+        Sapa("Rudi"); 
     }`,
       correctAnswer: ["string"],
     },
     {
       id: 5,
       prompt:
-        "Lengkapi definisi method berikut agar menggunakan expression-embodied member ...",
-      code: `public static int HitungPerkalian(int x, int y) => ______ ; `,
+        "Lengkapi definisi method berikut agar menggunakan expression-bodied member",
+      code: `public static int HitungPerkalian(int x, int y) => ___;`,
       correctAnswer: ["x * y"],
     },
   ];
@@ -581,9 +581,8 @@ public static void Main()
                         return <span key={`word-${wordIndex}`}>{word} </span>;
                       })}
                       {index <
-                        questions[currentQuestionIndex].code.split("___")
-                          .length -
-                          1 && (
+                        questions[currentQuestionIndex].correctAnswer
+                          .length && (
                         <span>
                           <input
                             type="text"
