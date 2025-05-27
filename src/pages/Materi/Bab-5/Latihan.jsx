@@ -24,7 +24,7 @@ const LatihanBab5 = () => {
   const [score, setScore] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(Array(5).fill(null));
   const [hasAnswered, setHasAnswered] = useState(Array(5).fill(false));
-  const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 menit
+  const [timeLeft, setTimeLeft] = useState(1 * 5); // 10 menit
 
   // Soal hard-coded
   const questions = [
@@ -295,7 +295,7 @@ const LatihanBab5 = () => {
       cancelButtonColor: "#EF4444",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100; // Simpan skor sebagai persentase
+        const scorePercentage = (score / (questions.length * 20)) * 100;
         try {
           await axios.post(
             `${import.meta.env.VITE_API_ENDPOINT}/scores`,
@@ -329,79 +329,74 @@ const LatihanBab5 = () => {
     });
   };
 
-  const handleTimeUp = () => {
-    Swal.fire({
-      title: "Waktu Habis!",
-      text: "Apakah Anda yakin untuk mengirim jawaban Anda?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya",
-      cancelButtonText: "Tidak",
-      confirmButtonColor: "#6E2A7F",
-      cancelButtonColor: "#EF4444",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100; // Simpan skor sebagai persentase
-        try {
-          await axios.post(
-            `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-            {
-              user_id: user.uuid,
-              type: "latihan",
-              chapter: 5,
-              score: scorePercentage,
-            },
-            { withCredentials: true }
-          );
+  const handleTimeUp = async () => {
+    const scorePercentage = (score / (questions.length * 20)) * 100;
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_ENDPOINT}/scores`,
+        {
+          user_id: user.uuid,
+          type: "latihan",
+          chapter: 5,
+          score: scorePercentage,
+        },
+        { withCredentials: true }
+      );
 
-          if (scorePercentage >= 75) {
-            handleLessonComplete("/materi/bab5/latihan-bab5");
-            handleLessonComplete("/materi/bab5/kuis-bab5");
-          }
-
-          navigate("/materi/bab5/hasil-latihan-bab5", {
-            state: { score, totalQuestions: questions.length },
-          });
-        } catch (error) {
-          console.error("Error saving score:", error);
-          Swal.fire({
-            title: "Gagal!",
-            text: "Terjadi kesalahan saat menyimpan skor.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
+      Swal.fire({
+        title: "Waktu Habis!",
+        text: "Jawaban Anda akan dikirim.",
+        icon: "warning",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#6E2A7F",
+      }).then(() => {
+        if (scorePercentage >= 75) {
+          handleLessonComplete("/materi/bab5/latihan-bab5");
+          handleLessonComplete("/materi/bab5/kuis-bab5");
         }
-      }
-    });
+        navigate("/materi/bab5/hasil-latihan-bab5", {
+          state: { score, totalQuestions: questions.length },
+        });
+      });
+    } catch (error) {
+      const errorMsg = error.response?.data?.msg || `Error: ${error.message}`;
+      console.error("Error saving score:", errorMsg);
+      Swal.fire({
+        title: "Gagal!",
+        text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   // UI untuk halaman instruksi
   const renderInstruksi = () => (
-    <div className="mx-auto max-w-4xl p-2 sm:p-4 lg:p-6 bg-white rounded-lg shadow-md">
-      <h1 className="mb-4 text-xl sm:text-2xl font-bold text-center">
+    <div className="max-w-4xl p-2 mx-auto bg-white rounded-lg shadow-md sm:p-4 lg:p-6">
+      <h1 className="mb-4 text-xl font-bold text-center sm:text-2xl">
         BAB 5 - KONTROL ALUR
       </h1>
       <section>
-        <h2 className="mb-3 font-semibold text-gray-800 text-base sm:text-lg">
+        <h2 className="mb-3 text-base font-semibold text-gray-800 sm:text-lg">
           Aturan
         </h2>
-        <p className="mb-3 leading-relaxed text-sm sm:text-base">
+        <p className="mb-3 text-sm leading-relaxed sm:text-base">
           Latihan ini bertujuan untuk menguji pengetahuan Anda tentang control
           flow (if, for, switch, break, continue) dalam pemrograman C#.
         </p>
-        <p className="mb-3 leading-relaxed text-sm sm:text-base">
+        <p className="mb-3 text-sm leading-relaxed sm:text-base">
           Terdapat {questions.length} pertanyaan yang harus dikerjakan dalam
           latihan ini. Beberapa ketentuannya sebagai berikut:
         </p>
-        <ul className="mb-3 leading-relaxed list-disc list-inside text-sm sm:text-base">
+        <ul className="mb-3 text-sm leading-relaxed list-disc list-inside sm:text-base">
           <li>Syarat nilai kelulusan: 75%</li>
           <li>Durasi ujian: 10 menit</li>
         </ul>
-        <p className="mb-3 leading-relaxed text-sm sm:text-base">
+        <p className="mb-3 text-sm leading-relaxed sm:text-base">
           Apabila tidak memenuhi syarat kelulusan, maka Anda harus mengulang
           pengerjaan latihan kembali.
         </p>
-        <p className="mb-6 leading-relaxed text-sm sm:text-base">
+        <p className="mb-6 text-sm leading-relaxed sm:text-base">
           Selamat Mengerjakan!
         </p>
         <div className="flex justify-end">
@@ -420,29 +415,29 @@ const LatihanBab5 = () => {
             <img
               src={nextIcon}
               alt="Selanjutnya"
-              className="w-4 sm:w-5 h-4 sm:h-5"
+              className="w-4 h-4 sm:w-5 sm:h-5"
             />
           </button>
         </div>
       </section>
 
       <section className="mt-8 sm:mt-16">
-        <h3 className="pb-1 mb-3 font-semibold text-gray-800 border-b border-gray-300 text-base sm:text-lg">
+        <h3 className="pb-1 mb-3 text-base font-semibold text-gray-800 border-b border-gray-300 sm:text-lg">
           Riwayat
         </h3>
         {isLoading ? (
-          <p className="text-gray-600 text-sm sm:text-base">
+          <p className="text-sm text-gray-600 sm:text-base">
             Memuat riwayat...
           </p>
         ) : error ? (
-          <p className="text-red-600 text-sm sm:text-base">{error}</p>
+          <p className="text-sm text-red-600 sm:text-base">{error}</p>
         ) : riwayat.length === 0 ? (
-          <p className="text-gray-600 text-sm sm:text-base">
+          <p className="text-sm text-gray-600 sm:text-base">
             Belum ada riwayat
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-gray-600 text-sm sm:text-base">
+            <table className="w-full text-sm text-left text-gray-600 sm:text-base">
               <thead>
                 <tr>
                   <th className="pb-2 font-semibold">Tanggal</th>
@@ -478,17 +473,17 @@ const LatihanBab5 = () => {
 
   // UI untuk halaman latihan
   const renderLatihan = () => (
-    <div className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8 bg-white rounded-lg shadow-lg">
+    <div className="max-w-6xl p-4 mx-auto bg-white rounded-lg shadow-lg sm:p-6 lg:p-8">
       <h2 className="text-lg font-semibold text-center text-gray-800">
         LATIHAN BAB 5
       </h2>
 
       <div
-        className="relative p-4 sm:p-6 mt-4 border rounded-lg"
+        className="relative p-4 mt-4 border rounded-lg sm:p-6"
         style={{ backgroundColor: "rgba(128, 128, 128, 0.158)" }}
       >
         <h3
-          className="flex items-center p-2 text-lg font-semibold border rounded-lg w-full sm:w-80 md:w-96"
+          className="flex items-center w-full p-2 text-lg font-semibold border rounded-lg sm:w-80 md:w-96"
           style={{ outline: "2px solid #6E2A7F", outlineOffset: "2px" }}
         >
           <img src={IconPetunjuk} alt="Icon" className="w-6 h-6 mr-2" />
@@ -582,7 +577,7 @@ const LatihanBab5 = () => {
           </div>
         </div>
 
-        <div className="w-full p-4 lg:p-6 border rounded-lg">
+        <div className="w-full p-4 border rounded-lg lg:p-6">
           <h3 className="font-semibold">{`Soal ${questions[currentQuestionIndex].id}`}</h3>
           <p className="text-gray-600">
             {questions[currentQuestionIndex].prompt}
@@ -604,13 +599,12 @@ const LatihanBab5 = () => {
                           word.includes("bool") ||
                           word.includes("int") ||
                           word.includes("string") ||
-                          word.includes("for") ||
                           word.includes("if") ||
+                          word.includes("for") ||
                           word.includes("switch") ||
                           word.includes("case") ||
                           word.includes("break") ||
-                          word.includes("continue") ||
-                          word.includes("default")
+                          word.includes("continue")
                         ) {
                           return (
                             <span key={`word-${wordIndex}`} className="keyword">
@@ -620,12 +614,6 @@ const LatihanBab5 = () => {
                         } else if (word.includes('"') || word.includes("'")) {
                           return (
                             <span key={`word-${wordIndex}`} className="string">
-                              {word}{" "}
-                            </span>
-                          );
-                        } else if (word.includes("//")) {
-                          return (
-                            <span key={`word-${wordIndex}`} className="comment">
                               {word}{" "}
                             </span>
                           );

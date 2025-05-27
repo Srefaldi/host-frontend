@@ -13,86 +13,84 @@ const LatihanBab6 = () => {
   const { user } = useSelector((state) => state.auth);
   const [showLatihan, setShowLatihan] = useState(false);
 
-  // State untuk instruksi
   const [riwayat, setRiwayat] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // State untuk latihan
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState(Array(5).fill([""]));
   const [score, setScore] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(Array(5).fill(null));
   const [hasAnswered, setHasAnswered] = useState(Array(5).fill(false));
-  const [timeLeft, setTimeLeft] = useState(10 * 60);
+  const [timeLeft, setTimeLeft] = useState(1 * 5);
 
-  // Soal hard-coded (hanya 1-5)
   const questions = [
     {
       id: 1,
       prompt:
-        "Lengkapi method berikut agar memanggil method TampilkanPesan untuk mencetak pesan ke konsol ...",
-      code: `public static void TampilkanPesan() 
-    {
-    Console.WriteLine("Selamat belajar C#!"); 
-    } 
-
-    public static void Main() 
-    { 
-        ______(); 
-    }`,
-      correctAnswer: ["TampilkanPesan"],
+        "Lengkapilah kode berikut untuk mendeklarasikan array integer dengan 5 elemen ...",
+      code: `public class Latihan {
+    public static void Main(string[] args) {
+        ___ numbers = new int[5];
+        Console.WriteLine(numbers.Length);
+    }
+}`,
+      correctAnswer: ["int[]"],
     },
     {
       id: 2,
       prompt:
-        "Lengkapi deklarasi method HitungLuas agar mengembalikan luas persegi Panjang ...",
-      code: `public static int HitungLuas(   ______   , ______  ) 
-  { 
-    return panjang * lebar; 
-  }`,
-      correctAnswer: ["int panjang", "int lebar"],
+        "Lengkapilah kode berikut untuk mengakses elemen kedua dari array ...",
+      code: `public class Latihan {
+    public static void Main(string[] args) {
+        int[] numbers = {10, 20, 30, 40, 50};
+        Console.WriteLine(numbers[___]);
+    }
+}`,
+      correctAnswer: ["1"],
     },
     {
       id: 3,
       prompt:
-        "Lengkapi pemanggilan method berikut agar mencetak hasil penjumlahan 3 ...",
-      code: `public static int Tambah(int a, int b) 
-    { 
-      return a + b; 
-    } 
-
-    public static void Main() 
-    { 
-      Console.WriteLine(Tambah( ______  ,  ______  )); 
-    }`,
-      correctAnswer: ["1", "2"],
+        "Lengkapilah kode berikut untuk mengubah nilai elemen ketiga menjadi 100 ...",
+      code: `public class Latihan {
+    public static void Main(string[] args) {
+        int[] numbers = {1, 2, 3, 4, 5};
+        numbers[___] = 100;
+        Console.WriteLine(numbers[2]);
+    }
+}`,
+      correctAnswer: ["2"],
     },
     {
       id: 4,
-      prompt:
-        "Lengkapi method dengan parameter berikut agar mencetak nama yang dimasukkan ....",
-      code: `public static void Sapa(______ nama) 
-  { 
-      Console.WriteLine("Halo, " + nama + "!"); 
-  } 
-
-public static void Main() 
-    { 
-      Sapa("Rudi"); 
-    }`,
-      correctAnswer: ["string"],
+      prompt: "Lengkapilah kode berikut untuk menambahkan elemen ke List ...",
+      code: `using System.Collections.Generic;
+public class Latihan {
+    public static void Main(string[] args) {
+        List<string> names = new List<string>();
+        names.___("Budi");
+        Console.WriteLine(names[0]);
+    }
+}`,
+      correctAnswer: ["Add"],
     },
     {
       id: 5,
       prompt:
-        "Lengkapi definisi method berikut agar menggunakan expression-embodied member ...",
-      code: `public static int HitungPerkalian(int x, int y) => ______ ; `,
-      correctAnswer: ["x * y"],
+        "Lengkapilah kode berikut untuk menghapus elemen pertama dari List ...",
+      code: `using System.Collections.Generic;
+public class Latihan {
+    public static void Main(string[] args) {
+        List<int> numbers = new List<int> {10, 20, 30};
+        numbers.___(0);
+        Console.WriteLine(numbers[0]);
+    }
+}`,
+      correctAnswer: ["RemoveAt"],
     },
   ];
 
-  // Fungsi untuk memformat tanggal
   const formatDate = (dateString) => {
     if (!dateString) {
       console.warn("Tanggal tidak tersedia:", dateString);
@@ -112,7 +110,6 @@ public static void Main()
     });
   };
 
-  // Ambil riwayat dari API
   useEffect(() => {
     const fetchRiwayat = async () => {
       if (!user?.uuid) {
@@ -124,7 +121,9 @@ public static void Main()
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-          { withCredentials: true }
+          {
+            withCredentials: true,
+          }
         );
         const filteredScores = response.data.scores.filter(
           (score) => score.type === "latihan" && score.chapter === 6
@@ -145,14 +144,11 @@ public static void Main()
       }
     };
 
-    if (user?.uuid) {
-      fetchRiwayat();
-    }
+    fetchRiwayat();
   }, [user]);
 
-  // Timer untuk latihan
   useEffect(() => {
-    if (showLatihan && timeLeft > 0) {
+    if (showLatihan) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -163,9 +159,14 @@ public static void Main()
           return prev - 1;
         });
       }, 1000);
+
       return () => clearInterval(timer);
     }
-  }, [showLatihan, timeLeft]);
+  }, [showLatihan]);
+
+  const normalizeAnswer = (answer) => {
+    return answer.trim().replace(/\s+/g, " ").toLowerCase();
+  };
 
   const handleAnswerChange = (value, inputIndex) => {
     const newAnswers = [...answers];
@@ -187,17 +188,19 @@ public static void Main()
       return;
     }
 
-    const normalizeAnswer = (answer) => {
-      return answer.replace(/\s+/g, "").toLowerCase();
-    };
+    const normalizedUserAnswers = userAnswers.map((answer) =>
+      normalizeAnswer(answer)
+    );
+    const normalizedCorrectAnswers = questions[
+      currentQuestionIndex
+    ].correctAnswer.map((answer) => normalizeAnswer(answer));
 
-    const isCorrect = questions[currentQuestionIndex].correctAnswer.every(
-      (correctAnswer, index) =>
-        normalizeAnswer(correctAnswer) === normalizeAnswer(userAnswers[index])
+    const isCorrect = normalizedUserAnswers.every(
+      (answer, idx) => answer === normalizedCorrectAnswers[idx]
     );
 
-    if (isCorrect && !hasAnswered[currentQuestionIndex]) {
-      setScore((prev) => prev + 20);
+    if (isCorrect) {
+      setScore((prevScore) => prevScore + 20);
     }
 
     const newAnswerStatus = [...answerStatus];
@@ -215,10 +218,9 @@ public static void Main()
       icon: "success",
       confirmButtonText: "OK",
     }).then(() => {
-      const nextQuestionIndex = currentQuestionIndex + 1;
-      if (nextQuestionIndex < questions.length) {
-        setCurrentQuestionIndex(nextQuestionIndex);
-      }
+      setCurrentQuestionIndex((prevIndex) =>
+        Math.min(prevIndex + 1, questions.length - 1)
+      );
     });
   };
 
@@ -229,15 +231,15 @@ public static void Main()
         title: "Sudah Menjawab",
         text: "Anda sudah menjawab soal ini.",
       });
-      return;
+    } else {
+      setCurrentQuestionIndex(index);
+      const newAnswers = [...answers];
+      newAnswers[index] = Array(questions[index].correctAnswer.length).fill("");
+      setAnswers(newAnswers);
     }
-    setCurrentQuestionIndex(index);
-    const newAnswers = [...answers];
-    newAnswers[index] = Array(questions[index].correctAnswer.length).fill("");
-    setAnswers(newAnswers);
   };
 
-  const handleFinish = async () => {
+  const handleFinish = () => {
     const hasIncompleteAnswers = answers.some((answer) =>
       answer.some((a) => a === "")
     );
@@ -262,45 +264,18 @@ public static void Main()
       cancelButtonColor: "#EF4444",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const scorePercentage = Number((score / (questions.length * 20)) * 100);
-        console.log(
-          "Score:",
-          score,
-          "Questions Length:",
-          questions.length,
-          "Score Percentage:",
-          scorePercentage
-        );
-
-        if (
-          isNaN(scorePercentage) ||
-          scorePercentage < 0 ||
-          scorePercentage > 100
-        ) {
-          Swal.fire({
-            title: "Error!",
-            text: "Skor tidak valid. Silakan coba lagi.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
-          return;
-        }
-
-        const payload = {
-          user_id: user?.uuid,
-          type: "latihan",
-          chapter: 6, // Integer, bukan string
-          score: scorePercentage,
-        };
-        console.log("Sending score to backend:", payload);
-
+        const scorePercentage = (score / (questions.length * 20)) * 100;
         try {
-          const response = await axios.post(
+          await axios.post(
             `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-            payload,
+            {
+              user_id: user.uuid,
+              type: "latihan",
+              chapter: 6,
+              score: scorePercentage,
+            },
             { withCredentials: true }
           );
-          console.log("Score save response:", response.status, response.data);
 
           if (scorePercentage >= 75) {
             handleLessonComplete("/materi/bab6/latihan-bab6");
@@ -308,18 +283,13 @@ public static void Main()
           }
 
           navigate("/materi/bab6/hasil-latihan-bab6", {
-            state: { score: scorePercentage, totalQuestions: questions.length },
+            state: { score, totalQuestions: questions.length },
           });
         } catch (error) {
-          const errorMsg = error.response
-            ? `Error ${error.response.status}: ${
-                error.response.data.msg || error.response.data
-              }`
-            : error.message;
-          console.error("Error saving score:", errorMsg);
+          console.error("Error saving score:", error);
           Swal.fire({
             title: "Gagal!",
-            text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
+            text: "Terjadi kesalahan saat menyimpan skor.",
             icon: "error",
             confirmButtonText: "OK",
           });
@@ -329,89 +299,58 @@ public static void Main()
   };
 
   const handleTimeUp = async () => {
-    const scorePercentage = Number((score / (questions.length * 20)) * 100);
-    console.log("Time up score percentage:", scorePercentage);
+    const scorePercentage = (score / (questions.length * 20)) * 100;
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_ENDPOINT}/scores`,
+        {
+          user_id: user.uuid,
+          type: "latihan",
+          chapter: 6,
+          score: scorePercentage,
+        },
+        { withCredentials: true }
+      );
 
-    if (
-      isNaN(scorePercentage) ||
-      scorePercentage < 0 ||
-      scorePercentage > 100
-    ) {
       Swal.fire({
-        title: "Error!",
-        text: "Skor tidak valid. Silakan coba lagi.",
+        title: "Waktu Habis!",
+        text: "Jawaban Anda akan dikirim.",
+        icon: "warning",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#6E2A7F",
+      }).then(() => {
+        if (scorePercentage >= 75) {
+          handleLessonComplete("/materi/bab6/latihan-bab6");
+          handleLessonComplete("/materi/bab6/kuis-bab6");
+        }
+        navigate("/materi/bab6/hasil-latihan-bab6", {
+          state: { score, totalQuestions: questions.length },
+        });
+      });
+    } catch (error) {
+      const errorMsg = error.response?.data?.msg || `Error: ${error.message}`;
+      console.error("Error saving score:", errorMsg);
+      Swal.fire({
+        title: "Gagal!",
+        text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
         icon: "error",
         confirmButtonText: "OK",
       });
-      return;
     }
-
-    const payload = {
-      user_id: user?.uuid,
-      type: "latihan",
-      chapter: 6, // Integer, bukan string
-      score: scorePercentage,
-    };
-    console.log("Sending score to backend (time up):", payload);
-
-    Swal.fire({
-      title: "Waktu Habis!",
-      text: "Apakah Anda yakin untuk mengirim jawaban Anda?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya",
-      cancelButtonText: "Tidak",
-      confirmButtonColor: "#6E2A7F",
-      cancelButtonColor: "#EF4444",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-            payload,
-            { withCredentials: true }
-          );
-          console.log("Score save response:", response.status, response.data);
-
-          if (scorePercentage >= 75) {
-            handleLessonComplete("/materi/bab6/latihan-bab6");
-            handleLessonComplete("/materi/bab6/kuis-bab6");
-          }
-
-          navigate("/materi/bab6/hasil-latihan-bab6", {
-            state: { score: scorePercentage, totalQuestions: questions.length },
-          });
-        } catch (error) {
-          const errorMsg = error.response
-            ? `Error ${error.response.status}: ${
-                error.response.data.msg || error.response.data
-              }`
-            : error.message;
-          console.error("Error saving score:", errorMsg);
-          Swal.fire({
-            title: "Gagal!",
-            text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
-            icon: "error",
-            confirmButtonText: "OK",
-          });
-        }
-      }
-    });
   };
 
-  // UI untuk halaman instruksi
   const renderInstruksi = () => (
     <div className="max-w-4xl p-2 mx-auto bg-white rounded-lg shadow-md sm:p-4 lg:p-6">
       <h1 className="mb-4 text-xl font-bold text-center sm:text-2xl">
-        BAB 6 - METHOD
+        BAB 6 - ARRAY DAN LIST
       </h1>
       <section>
         <h2 className="mb-3 text-base font-semibold text-gray-800 sm:text-lg">
           Aturan
         </h2>
         <p className="mb-3 text-sm leading-relaxed sm:text-base">
-          Latihan ini bertujuan untuk menguji pengetahuan Anda tentang method,
-          parameter, dan expression-bodied member dalam pemrograman C#.
+          Latihan ini bertujuan untuk menguji pengetahuan Anda tentang array dan
+          list dalam pemrograman C#.
         </p>
         <p className="mb-3 text-sm leading-relaxed sm:text-base">
           Terdapat {questions.length} pertanyaan yang harus dikerjakan dalam
@@ -500,7 +439,6 @@ public static void Main()
     </div>
   );
 
-  // UI untuk halaman latihan
   const renderLatihan = () => (
     <div className="max-w-6xl p-4 mx-auto bg-white rounded-lg shadow-lg sm:p-6 lg:p-8">
       <h2 className="text-lg font-semibold text-center text-gray-800">
@@ -533,7 +471,7 @@ public static void Main()
                 padding: "0.5rem 1rem",
                 borderRadius: "0.5rem",
                 cursor: "not-allowed",
-                opacity: "6",
+                opacity: 0.6,
               }}
             >
               Kirim
@@ -615,7 +553,7 @@ public static void Main()
             <pre className="code-block">
               <code>
                 {questions[currentQuestionIndex].code
-                  .split("______")
+                  .split("___")
                   .map((part, index) => (
                     <React.Fragment key={`part-${index}`}>
                       {part.split(" ").map((word, wordIndex) => {
@@ -627,7 +565,8 @@ public static void Main()
                           word.includes("Console") ||
                           word.includes("int") ||
                           word.includes("string") ||
-                          word.includes("return")
+                          word.includes("List") ||
+                          word.includes("new")
                         ) {
                           return (
                             <span key={`word-${wordIndex}`} className="keyword">
@@ -640,17 +579,11 @@ public static void Main()
                               {word}{" "}
                             </span>
                           );
-                        } else if (word.includes("//")) {
-                          return (
-                            <span key={`word-${wordIndex}`} className="comment">
-                              {word}{" "}
-                            </span>
-                          );
                         }
                         return <span key={`word-${wordIndex}`}>{word} </span>;
                       })}
                       {index <
-                        questions[currentQuestionIndex].code.split("______")
+                        questions[currentQuestionIndex].code.split("___")
                           .length -
                           1 && (
                         <span>

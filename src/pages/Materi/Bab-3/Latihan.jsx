@@ -22,7 +22,7 @@ const LatihanBab3 = () => {
   const [score, setScore] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(Array(5).fill(null));
   const [hasAnswered, setHasAnswered] = useState(Array(5).fill(false));
-  const [timeLeft, setTimeLeft] = useState(10 * 60);
+  const [timeLeft, setTimeLeft] = useState(1 * 5);
 
   const questions = [
     {
@@ -87,16 +87,16 @@ const LatihanBab3 = () => {
     {
       id: 5,
       prompt:
-        "Lengkapilah kode berikut untuk menggunakan operator increment (++) untuk menambah nilai variabel.",
+        "Lengkapilah kode berikut untuk menggabungkan dua string menggunakan string concatenation.",
       code: `public class Latihan {
     public static void Main(string[] args)
     {
-        int counter = 5;
-        counter_____;
-        Console.WriteLine("Counter: " + _____);
+        string nama = "Budi";
+        string pekerjaan = "Programmer";
+        Console.WriteLine("Nama: " + _____ + ", Pekerjaan: " + _____);
     }
 }`,
-      correctAnswer: ["++", "counter"],
+      correctAnswer: ["nama", "pekerjaan"],
     },
   ];
 
@@ -284,7 +284,7 @@ const LatihanBab3 = () => {
       cancelButtonColor: "#EF4444",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100; // Simpan skor sebagai persentase
+        const scorePercentage = (score / (questions.length * 20)) * 100;
         try {
           await axios.post(
             `${import.meta.env.VITE_API_ENDPOINT}/scores`,
@@ -318,50 +318,45 @@ const LatihanBab3 = () => {
     });
   };
 
-  const handleTimeUp = () => {
-    Swal.fire({
-      title: "Waktu Habis!",
-      text: "Apakah Anda yakin untuk mengirim jawaban Anda?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya",
-      cancelButtonText: "Tidak",
-      confirmButtonColor: "#6E2A7F",
-      cancelButtonColor: "#EF4444",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100; // Simpan skor sebagai persentase
-        try {
-          await axios.post(
-            `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-            {
-              user_id: user.uuid,
-              type: "latihan",
-              chapter: 3,
-              score: scorePercentage,
-            },
-            { withCredentials: true }
-          );
+  const handleTimeUp = async () => {
+    const scorePercentage = (score / (questions.length * 20)) * 100;
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_ENDPOINT}/scores`,
+        {
+          user_id: user.uuid,
+          type: "latihan",
+          chapter: 3,
+          score: scorePercentage,
+        },
+        { withCredentials: true }
+      );
 
-          if (scorePercentage >= 75) {
-            handleLessonComplete("/materi/bab3/latihan-bab3");
-            handleLessonComplete("/materi/bab3/kuis-bab3");
-          }
-
-          navigate("/materi/bab3/hasil-latihan-bab3", {
-            state: { score, totalQuestions: questions.length },
-          });
-        } catch (error) {
-          console.error("Error saving score:", error);
-          Swal.fire({
-            title: "Gagal!",
-            text: "Terjadi kesalahan saat menyimpan skor.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
+      Swal.fire({
+        title: "Waktu Habis!",
+        text: "Jawaban Anda akan dikirim.",
+        icon: "warning",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#6E2A7F",
+      }).then(() => {
+        if (scorePercentage >= 75) {
+          handleLessonComplete("/materi/bab3/latihan-bab3");
+          handleLessonComplete("/materi/bab3/kuis-bab3");
         }
-      }
-    });
+        navigate("/materi/bab3/hasil-latihan-bab3", {
+          state: { score, totalQuestions: questions.length },
+        });
+      });
+    } catch (error) {
+      const errorMsg = error.response?.data?.msg || `Error: ${error.message}`;
+      console.error("Error saving score:", errorMsg);
+      Swal.fire({
+        title: "Gagal!",
+        text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const renderInstruksi = () => (
@@ -589,7 +584,8 @@ const LatihanBab3 = () => {
                           word.includes("void") ||
                           word.includes("Console") ||
                           word.includes("bool") ||
-                          word.includes("int")
+                          word.includes("int") ||
+                          word.includes("string")
                         ) {
                           return (
                             <span key={`word-${wordIndex}`} className="keyword">

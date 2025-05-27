@@ -22,7 +22,7 @@ const LatihanBab4 = () => {
   const [score, setScore] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(Array(5).fill(null));
   const [hasAnswered, setHasAnswered] = useState(Array(5).fill(false));
-  const [timeLeft, setTimeLeft] = useState(10 * 60);
+  const [timeLeft, setTimeLeft] = useState(1 * 5);
 
   const questions = [
     {
@@ -246,7 +246,7 @@ const LatihanBab4 = () => {
       cancelButtonColor: "#EF4444",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100; // Simpan skor sebagai persentase
+        const scorePercentage = (score / (questions.length * 20)) * 100;
         try {
           await axios.post(
             `${import.meta.env.VITE_API_ENDPOINT}/scores`,
@@ -280,50 +280,45 @@ const LatihanBab4 = () => {
     });
   };
 
-  const handleTimeUp = () => {
-    Swal.fire({
-      title: "Waktu Habis!",
-      text: "Apakah Anda yakin untuk mengirim jawaban Anda?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Ya",
-      cancelButtonText: "Tidak",
-      confirmButtonColor: "#6E2A7F",
-      cancelButtonColor: "#EF4444",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100; // Simpan skor sebagai persentase
-        try {
-          await axios.post(
-            `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-            {
-              user_id: user.uuid,
-              type: "latihan",
-              chapter: 4,
-              score: scorePercentage,
-            },
-            { withCredentials: true }
-          );
+  const handleTimeUp = async () => {
+    const scorePercentage = (score / (questions.length * 20)) * 100;
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_ENDPOINT}/scores`,
+        {
+          user_id: user.uuid,
+          type: "latihan",
+          chapter: 4,
+          score: scorePercentage,
+        },
+        { withCredentials: true }
+      );
 
-          if (scorePercentage >= 75) {
-            handleLessonComplete("/materi/bab4/latihan-bab4");
-            handleLessonComplete("/materi/bab4/kuis-bab4");
-          }
-
-          navigate("/materi/bab4/hasil-latihan-bab4", {
-            state: { score, totalQuestions: questions.length },
-          });
-        } catch (error) {
-          console.error("Error saving score:", error);
-          Swal.fire({
-            title: "Gagal!",
-            text: "Terjadi kesalahan saat menyimpan skor.",
-            icon: "error",
-            confirmButtonText: "OK",
-          });
+      Swal.fire({
+        title: "Waktu Habis!",
+        text: "Jawaban Anda akan dikirim.",
+        icon: "warning",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#6E2A7F",
+      }).then(() => {
+        if (scorePercentage >= 75) {
+          handleLessonComplete("/materi/bab4/latihan-bab4");
+          handleLessonComplete("/materi/bab4/kuis-bab4");
         }
-      }
-    });
+        navigate("/materi/bab4/hasil-latihan-bab4", {
+          state: { score, totalQuestions: questions.length },
+        });
+      });
+    } catch (error) {
+      const errorMsg = error.response?.data?.msg || `Error: ${error.message}`;
+      console.error("Error saving score:", errorMsg);
+      Swal.fire({
+        title: "Gagal!",
+        text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const renderInstruksi = () => (
@@ -370,7 +365,7 @@ const LatihanBab4 = () => {
             <img
               src={nextIcon}
               alt="Selanjutnya"
-              className="w-4 h-4 sm:w-5 sm:h-5"
+              className="w-4 h-4 sm:h-auto"
             />
           </button>
         </div>
@@ -437,7 +432,7 @@ const LatihanBab4 = () => {
         style={{ backgroundColor: "rgba(128, 128, 128, 0.158)" }}
       >
         <h3
-          className="flex items-center w-full p-2 text-lg font-semibold border rounded-lg sm:w-80 md:w-96"
+          className="flex items-center w-full p-2 text-lg font-semibold border rounded-lg驻 sm:w-80 md:w-96"
           style={{ outline: "2px solid #6E2A7F", outlineOffset: "2px" }}
         >
           <img src={IconPetunjuk} alt="Icon" className="w-6 h-6 mr-2" />
@@ -536,7 +531,7 @@ const LatihanBab4 = () => {
           <p className="text-gray-600">
             {questions[currentQuestionIndex].prompt}
           </p>
-          <div className="p-4 mt-2 font-mono text-sm bg-gray-100 rounded-lg max-w-full overflow-x-auto">
+          <div className="max-w-full p-4 mt-2 overflow-x-auto font-mono text-sm bg-gray-100 rounded-lg">
             <pre className="code-block" style={{ whiteSpace: "pre-wrap" }}>
               <code>
                 {questions[currentQuestionIndex].code
@@ -562,12 +557,6 @@ const LatihanBab4 = () => {
                         } else if (word.includes('"') || word.includes("'")) {
                           return (
                             <span key={`word-${wordIndex}`} className="string">
-                              {word}{" "}
-                            </span>
-                          );
-                        } else if (word.includes("//")) {
-                          return (
-                            <span key={`word-${wordIndex}`} className="comment">
                               {word}{" "}
                             </span>
                           );
