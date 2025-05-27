@@ -7,88 +7,29 @@ import nextIcon from "../../../assets/img/selanjutnya.png";
 import IconPetunjuk from "../../../assets/img/informasi.png";
 import "../style/latihan.css";
 
-const LatihanBab6 = () => {
+const EvaluasiAkhir = () => {
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
   const { user } = useSelector((state) => state.auth);
-  const [showLatihan, setShowLatihan] = useState(false);
+  const [showEvaluasi, setShowEvaluasi] = useState(false);
 
+  // State untuk instruksi
   const [riwayat, setRiwayat] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [kkm, setKkm] = useState(75);
 
+  // State untuk evaluasi
+  const [questions, setQuestions] = useState([]);
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState(Array(5).fill([""]));
   const [score, setScore] = useState(0);
-  const [answerStatus, setAnswerStatus] = useState(Array(5).fill(null));
-  const [hasAnswered, setHasAnswered] = useState(Array(5).fill(false));
-  const [timeLeft, setTimeLeft] = useState(10 * 60);
+  const [answerStatus, setAnswerStatus] = useState([]);
+  const [hasAnswered, setHasAnswered] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(20 * 60);
+  const [evaluationId, setEvaluationId] = useState(null);
 
-  const questions = [
-    {
-      id: 1,
-      prompt:
-        "Lengkapi method berikut agar memanggil method TampilkanPesan untuk mencetak pesan ke konsol",
-      code: `public static void TampilkanPesan() 
-    {
-        Console.WriteLine("Selamat belajar C#!"); 
-    } 
-
-    public static void Main() 
-    { 
-        ___; 
-    }`,
-      correctAnswer: ["TampilkanPesan()"],
-    },
-    {
-      id: 2,
-      prompt:
-        "Lengkapi deklarasi method HitungLuas agar mengembalikan luas persegi panjang",
-      code: `public static int HitungLuas(___, ___) 
-    { 
-        return panjang * lebar; 
-    }`,
-      correctAnswer: ["int panjang", "int lebar"],
-    },
-    {
-      id: 3,
-      prompt:
-        "Lengkapi pemanggilan method berikut agar mencetak hasil penjumlahan 3",
-      code: `public static int Tambah(int a, int b) 
-    { 
-        return a + b; 
-    } 
-
-    public static void Main() 
-    { 
-        Console.WriteLine(Tambah(___, ___)); 
-    }`,
-      correctAnswer: ["1", "2"],
-    },
-    {
-      id: 4,
-      prompt:
-        "Lengkapi method dengan parameter berikut agar mencetak nama yang dimasukkan",
-      code: `public static void Sapa(___ nama) 
-    { 
-        Console.WriteLine("Halo, " + nama + "!"); 
-    } 
-
-    public static void Main() 
-    { 
-        Sapa("Rudi"); 
-    }`,
-      correctAnswer: ["string"],
-    },
-    {
-      id: 5,
-      prompt:
-        "Lengkapi definisi method berikut agar menggunakan expression-bodied member",
-      code: `public static int HitungPerkalian(int x, int y) => ___;`,
-      correctAnswer: ["x * y"],
-    },
-  ];
-
+  // Fungsi untuk memformat tanggal
   const formatDate = (dateString) => {
     if (!dateString) {
       console.warn("Tanggal tidak tersedia:", dateString);
@@ -108,45 +49,106 @@ const LatihanBab6 = () => {
     });
   };
 
+  // Ambil data evaluasi, KKM, soal, dan riwayat
   useEffect(() => {
-    const fetchRiwayat = async () => {
+    const fetchInitialData = async () => {
       if (!user?.uuid) {
-        setError("Mohon login ke akun Anda");
+        console.warn("User UUID tidak tersedia, menunggu autentikasi");
+        setError("Silakan login kembali.");
+        navigate("/login");
         return;
       }
 
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-          {
-            withCredentials: true,
-          }
+        // Ambil evaluasi untuk Evaluasi Akhir
+        const evalResponse = await axios.get(
+          `${import.meta.env.VITE_API_ENDPOINT}/evaluations`,
+          { withCredentials: true }
         );
-        const filteredScores = response.data.scores.filter(
-          (score) => score.type === "latihan" && score.chapter === 6
+        const evaluasiAkhir = evalResponse.data.find(
+          (evaluation) => evaluation.type === "evaluasi_akhir"
+        );
+        if (!evaluasiAkhir) {
+          setError("Evaluasi Akhir tidak ditemukan");
+          return;
+        }
+        setEvaluationId(evaluasiAkhir.id);
+
+        // Ambil KKM
+        const kkmResponse = await axios.get(
+          `${import.meta.env.VITE_API_ENDPOINT}/kkm`,
+          { withCredentials: true }
+        );
+        const evaluasiKkm = kkmResponse.data.find(
+          (k) => k.evaluation_id === evaluasiAkhir.id
+        );
+        if (evaluasiKkm) {
+          setKkm(evaluasiKkm.kkm);
+        }
+
+        // Ambil soal
+        const questionsResponse = await axios.get(
+          `${import.meta.env.VITE_API_ENDPOINT}/questions/evaluation/${
+            evaluasiAkhir.id
+          }`,
+          { withCredentials: true }
+        );
+        const fetchedQuestions = questionsResponse.data.questions.map(
+          (q, index) => ({
+            id: index + 1,
+            question: q.question_text || "Pertanyaan tidak tersedia",
+            options: [
+              q.option_a,
+              q.option_b,
+              q.option_c,
+              q.option_d,
+              q.option_e,
+            ].filter(Boolean),
+            correctAnswer:
+              q[`option_${q.correct_answer?.toLowerCase()}`] ||
+              q.option_a ||
+              "Jawaban tidak tersedia",
+          })
+        );
+        setQuestions(fetchedQuestions);
+        setSelectedAnswers(Array(fetchedQuestions.length).fill(""));
+        setAnswerStatus(Array(fetchedQuestions.length).fill(null));
+        setHasAnswered(Array(fetchedQuestions.length).fill(false));
+
+        // Ambil riwayat skor
+        const scoresResponse = await axios.get(
+          `${import.meta.env.VITE_API_ENDPOINT}/scores`,
+          { withCredentials: true }
+        );
+        const filteredScores = scoresResponse.data.scores.filter(
+          (score) => score.type === "evaluasi_akhir"
         );
         const formattedRiwayat = filteredScores.map((score) => ({
           tanggal: formatDate(score.created_at),
           persentase: `${score.score}%`,
-          status: score.score >= 75 ? "Lulus" : "Tidak Lulus",
+          status: score.score >= kkm ? "Lulus" : "Tidak Lulus",
         }));
         setRiwayat(formattedRiwayat);
       } catch (error) {
         const errorMsg =
-          error.response?.data?.msg || "Gagal mengambil data riwayat";
-        console.error("Error fetching scores:", errorMsg);
+          error.response?.data?.msg ||
+          "Gagal mengambil data. Silakan coba lagi.";
+        console.error("Error fetching data:", errorMsg, error);
         setError(errorMsg);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchRiwayat();
-  }, [user]);
+    if (user?.uuid) {
+      fetchInitialData();
+    }
+  }, [user, kkm, navigate]);
 
+  // Timer untuk evaluasi
   useEffect(() => {
-    if (showLatihan) {
+    if (showEvaluasi && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
@@ -157,48 +159,34 @@ const LatihanBab6 = () => {
           return prev - 1;
         });
       }, 1000);
-
       return () => clearInterval(timer);
     }
-  }, [showLatihan]);
+  }, [showEvaluasi, timeLeft]);
 
-  const normalizeAnswer = (answer) => {
-    return answer.trim().replace(/\s+/g, " ").toLowerCase();
-  };
-
-  const handleAnswerChange = (value, inputIndex) => {
-    const newAnswers = [...answers];
-    newAnswers[currentQuestionIndex] = [...newAnswers[currentQuestionIndex]];
-    newAnswers[currentQuestionIndex][inputIndex] = value;
-    setAnswers(newAnswers);
+  const handleAnswerChange = (answer) => {
+    const newAnswers = [...selectedAnswers];
+    newAnswers[currentQuestionIndex] = answer;
+    setSelectedAnswers(newAnswers);
   };
 
   const submitAnswer = () => {
-    const userAnswers = answers[currentQuestionIndex];
+    if (questions.length === 0 || !questions[currentQuestionIndex]) return;
 
-    if (userAnswers.some((answer) => answer === "")) {
+    const answer = selectedAnswers[currentQuestionIndex];
+
+    if (answer === "") {
       Swal.fire({
         title: "Soal Belum Dijawab!",
-        text: "Silakan isi jawaban sebelum mengirim.",
+        text: "Silakan pilih jawaban sebelum mengirim.",
         icon: "warning",
         confirmButtonText: "OK",
       });
       return;
     }
 
-    const normalizedUserAnswers = userAnswers.map((answer) =>
-      normalizeAnswer(answer)
-    );
-    const normalizedCorrectAnswers = questions[
-      currentQuestionIndex
-    ].correctAnswer.map((answer) => normalizeAnswer(answer));
-
-    const isCorrect = normalizedUserAnswers.every(
-      (answer, idx) => answer === normalizedCorrectAnswers[idx]
-    );
-
-    if (isCorrect) {
-      setScore((prevScore) => prevScore + 20);
+    const isCorrect = answer === questions[currentQuestionIndex].correctAnswer;
+    if (isCorrect && !hasAnswered[currentQuestionIndex]) {
+      setScore((prev) => prev + 5);
     }
 
     const newAnswerStatus = [...answerStatus];
@@ -216,13 +204,21 @@ const LatihanBab6 = () => {
       icon: "success",
       confirmButtonText: "OK",
     }).then(() => {
-      setCurrentQuestionIndex((prevIndex) =>
-        Math.min(prevIndex + 1, questions.length - 1)
-      );
+      const nextQuestionIndex = currentQuestionIndex + 1;
+      if (nextQuestionIndex < questions.length) {
+        setCurrentQuestionIndex(nextQuestionIndex);
+      }
     });
   };
 
+  const resetAnswerForCurrentQuestion = () => {
+    const newAnswers = [...selectedAnswers];
+    newAnswers[currentQuestionIndex] = "";
+    setSelectedAnswers(newAnswers);
+  };
+
   const handleQuestionSelect = (index) => {
+    if (index >= questions.length) return;
     if (hasAnswered[index]) {
       Swal.fire({
         icon: "info",
@@ -231,23 +227,30 @@ const LatihanBab6 = () => {
       });
     } else {
       setCurrentQuestionIndex(index);
-      const newAnswers = [...answers];
-      newAnswers[index] = Array(questions[index].correctAnswer.length).fill("");
-      setAnswers(newAnswers);
     }
   };
 
-  const handleFinish = () => {
-    const hasIncompleteAnswers = answers.some((answer) =>
-      answer.some((a) => a === "")
+  const handleFinish = async () => {
+    const hasIncompleteAnswers = selectedAnswers.some(
+      (answer) => answer === ""
     );
     if (hasIncompleteAnswers) {
       Swal.fire({
         title: "Masih Ada Soal Belum Dijawab!",
-        text: "Silakan periksa kembali jawaban anda.",
+        text: "Silakan periksa kembali jawaban Anda.",
         icon: "warning",
         confirmButtonText: "OK",
       });
+      return;
+    }
+
+    if (!user?.uuid) {
+      Swal.fire({
+        title: "Autentikasi Gagal",
+        text: "Silakan login kembali.",
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then(() => navigate("/login"));
       return;
     }
 
@@ -262,32 +265,43 @@ const LatihanBab6 = () => {
       cancelButtonColor: "#EF4444",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const scorePercentage = (score / (questions.length * 20)) * 100;
         try {
+          const scoreToSave = (score / (questions.length * 5)) * 100; // Convert to percentage
           await axios.post(
             `${import.meta.env.VITE_API_ENDPOINT}/scores`,
             {
               user_id: user.uuid,
-              type: "latihan",
-              chapter: 6,
-              score: scorePercentage,
+              type: "evaluasi_akhir",
+              score: scoreToSave,
             },
-            { withCredentials: true }
+            {
+              withCredentials: true,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
           );
 
-          if (scorePercentage >= 75) {
-            handleLessonComplete("/materi/bab6/latihan-bab6");
-            handleLessonComplete("/materi/bab6/kuis-bab6");
+          if (scoreToSave >= kkm) {
+            handleLessonComplete("/materi/evaluasi/evaluasi-akhir");
+            handleLessonComplete("/materi/evaluasi/kesimpulan");
           }
 
-          navigate("/materi/bab6/hasil-latihan-bab6", {
-            state: { score, totalQuestions: questions.length },
+          navigate("/materi/evaluasi/hasil-evaluasi-akhir", {
+            state: {
+              score: scoreToSave,
+              totalQuestions: questions.length,
+              kkm,
+            },
           });
         } catch (error) {
           console.error("Error saving score:", error);
+          const errorMsg =
+            error.response?.data?.msg ||
+            "Gagal menyimpan skor. Silakan coba lagi.";
           Swal.fire({
-            title: "Gagal!",
-            text: "Terjadi kesalahan saat menyimpan skor.",
+            title: "Gagal Menyimpan Skor",
+            text: errorMsg,
             icon: "error",
             confirmButtonText: "OK",
           });
@@ -297,18 +311,27 @@ const LatihanBab6 = () => {
   };
 
   const handleTimeUp = async () => {
-    const scorePercentage = (score / (questions.length * 20)) * 100;
     try {
+      const scoreToSave = (score / (questions.length * 5)) * 100; // Convert to percentage
       await axios.post(
         `${import.meta.env.VITE_API_ENDPOINT}/scores`,
         {
           user_id: user.uuid,
-          type: "latihan",
-          chapter: 6,
-          score: scorePercentage,
+          type: "evaluasi_akhir",
+          score: scoreToSave,
         },
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
+
+      if (scoreToSave >= kkm) {
+        handleLessonComplete("/materi/evaluasi/evaluasi-akhir");
+        handleLessonComplete("/materi/evaluasi/kesimpulan");
+      }
 
       Swal.fire({
         title: "Waktu Habis!",
@@ -317,353 +340,429 @@ const LatihanBab6 = () => {
         confirmButtonText: "OK",
         confirmButtonColor: "#6E2A7F",
       }).then(() => {
-        if (scorePercentage >= 75) {
-          handleLessonComplete("/materi/bab6/latihan-bab6");
-          handleLessonComplete("/materi/bab6/kuis-bab6");
-        }
-        navigate("/materi/bab6/hasil-latihan-bab6", {
-          state: { score, totalQuestions: questions.length },
+        navigate("/materi/evaluasi/hasil-evaluasi-akhir", {
+          state: { score: scoreToSave, totalQuestions: questions.length, kkm },
         });
       });
     } catch (error) {
-      const errorMsg = error.response?.data?.msg || `Error: ${error.message}`;
-      console.error("Error saving score:", errorMsg);
+      console.error("Error saving score:", error);
+      const errorMsg =
+        error.response?.data?.msg || "Gagal menyimpan skor. Silakan coba lagi.";
       Swal.fire({
-        title: "Gagal!",
-        text: `Terjadi kesalahan saat menyimpan skor: ${errorMsg}`,
+        title: "Gagal Menyimpan Skor",
+        text: errorMsg,
         icon: "error",
         confirmButtonText: "OK",
       });
     }
   };
 
+  // UI untuk halaman instruksi
   const renderInstruksi = () => (
-    <div className="max-w-4xl p-2 mx-auto bg-white rounded-lg shadow-md sm:p-4 lg:p-6">
-      <h1 className="mb-4 text-xl font-bold text-center sm:text-2xl">
-        BAB 6 - ARRAY DAN LIST
-      </h1>
-      <section>
-        <h2 className="mb-3 text-base font-semibold text-gray-800 sm:text-lg">
-          Aturan
-        </h2>
-        <p className="mb-3 text-sm leading-relaxed sm:text-base">
-          Latihan ini bertujuan untuk menguji pengetahuan Anda tentang array dan
-          list dalam pemrograman C#.
-        </p>
-        <p className="mb-3 text-sm leading-relaxed sm:text-base">
-          Terdapat {questions.length} pertanyaan yang harus dikerjakan dalam
-          latihan ini. Beberapa ketentuannya sebagai berikut:
-        </p>
-        <ul className="mb-3 text-sm leading-relaxed list-disc list-inside sm:text-base">
-          <li>Syarat nilai kelulusan: 75%</li>
-          <li>Durasi ujian: 10 menit</li>
-        </ul>
-        <p className="mb-3 text-sm leading-relaxed sm:text-base">
-          Apabila tidak memenuhi syarat kelulusan, maka Anda harus mengulang
-          pengerjaan latihan kembali.
-        </p>
-        <p className="mb-6 text-sm leading-relaxed sm:text-base">
-          Selamat Mengerjakan!
-        </p>
-        <div className="flex justify-end">
-          <button
-            onClick={() => setShowLatihan(true)}
-            className="flex items-center gap-2 px-6 py-3 text-base text-white transition-all duration-200 rounded-lg shadow-sm hover:shadow-md sm:px-8"
-            style={{ backgroundColor: "#6E2A7F" }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#5B1F6A")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#6E2A7F")
-            }
-          >
-            <span>MULAI</span>
-            <img
-              src={nextIcon}
-              alt="Selanjutnya"
-              className="w-4 h-4 sm:w-5 sm:h-5"
-            />
-          </button>
-        </div>
-      </section>
-
-      <section className="mt-8 sm:mt-16">
-        <h3 className="pb-1 mb-3 text-base font-semibold text-gray-800 border-b border-gray-300 sm:text-lg">
-          Riwayat
-        </h3>
-        {isLoading ? (
-          <p className="text-sm text-gray-600 sm:text-base">
-            Memuat riwayat...
+    <div className="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8">
+      <div className="p-4 bg-white rounded-lg shadow-md">
+        <h1 className="mb-4 text-2xl font-bold text-center">EVALUASI AKHIR</h1>
+        <section>
+          <h2 className="mb-3 text-lg font-semibold text-gray-800">Aturan</h2>
+          <p className="mb-3 text-base leading-relaxed">
+            Evaluasi ini bertujuan untuk menguji pengetahuan Anda tentang semua
+            materi dalam pemrograman C# (Bab 1-6), termasuk variabel, tipe data,
+            kontrol alur, dan method.
           </p>
-        ) : error ? (
-          <p className="text-sm text-red-600 sm:text-base">{error}</p>
-        ) : riwayat.length === 0 ? (
-          <p className="text-sm text-gray-600 sm:text-base">
-            Belum ada riwayat
+          <p className="mb-3 text-base leading-relaxed">
+            Terdapat {questions.length} pertanyaan pilihan ganda yang harus
+            dikerjakan dalam evaluasi ini. Beberapa ketentuannya sebagai
+            berikut:
           </p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left text-gray-600 sm:text-base">
-              <thead>
-                <tr>
-                  <th className="pb-2 font-semibold">Tanggal</th>
-                  <th className="pb-2 font-semibold">Persentase</th>
-                  <th className="pb-2 font-semibold">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {riwayat.map((item, index) => (
-                  <tr key={index}>
-                    <td className="pt-2 pb-3">{item.tanggal}</td>
-                    <td className="pt-2 pb-3">{item.persentase}</td>
-                    <td className="pt-2 pb-3">
-                      <span
-                        className={`text-[10px] sm:text-xs font-semibold px-2 py-[2px] rounded ${
-                          item.status === "Lulus"
-                            ? "text-green-600 bg-green-100"
-                            : "text-red-600 bg-red-100"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-    </div>
-  );
-
-  const renderLatihan = () => (
-    <div className="max-w-6xl p-4 mx-auto bg-white rounded-lg shadow-lg sm:p-6 lg:p-8">
-      <h2 className="text-lg font-semibold text-center text-gray-800">
-        LATIHAN BAB 6
-      </h2>
-
-      <div
-        className="relative p-4 mt-4 border rounded-lg sm:p-6"
-        style={{ backgroundColor: "rgba(128, 128, 128, 0.158)" }}
-      >
-        <h3
-          className="flex items-center w-full p-2 text-lg font-semibold border rounded-lg sm:w-80 md:w-96"
-          style={{ outline: "2px solid #6E2A7F", outlineOffset: "2px" }}
-        >
-          <img src={IconPetunjuk} alt="Icon" className="w-6 h-6 mr-2" />
-          PETUNJUK MENGERJAKAN
-        </h3>
-        <ol className="mt-2 text-justify text-gray-600 list-decimal list-inside">
-          <li>
-            Jawablah soal-soal di bawah ini dengan mengisikannya pada input yang
-            tersedia.
-          </li>
-          <li>
-            Tekan tombol{" "}
-            <button
-              disabled
-              style={{
-                backgroundColor: "#6E2A7F",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
-                cursor: "not-allowed",
-                opacity: 0.6,
-              }}
-            >
-              Kirim
-            </button>{" "}
-            untuk mengirim jawaban.
-          </li>
-          <li>
-            Apabila notifikasi berwarna Hijau, jawaban Anda telah terkirim.
-          </li>
-          <li>
-            Tekan tombol{" "}
-            <button
-              disabled
-              style={{
-                backgroundColor: "white",
-                color: "#6E2A7F",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
-                border: "2px solid #6E2A7F",
-                cursor: "not-allowed",
-                opacity: 0.6,
-              }}
-            >
-              Selesai
-            </button>{" "}
-            untuk mengirim semua jawaban.
-          </li>
-        </ol>
-      </div>
-
-      <div className="flex flex-col mt-6 lg:flex-row lg:items-start">
-        <div className="flex flex-col mr-3 lg:mr-6">
-          <div className="p-4 mt-5 text-center text-red-600 bg-gray-100 border rounded-lg sm:p-5">
-            <h3 className="font-semibold">
-              Waktu Tersisa: {Math.floor(timeLeft / 60)}:
-              {(timeLeft % 60).toString().padStart(2, "0")}
-            </h3>
-          </div>
-          <h3 className="mt-8 text-lg font-semibold text-center">SOAL</h3>
-          <div className="flex flex-row justify-center mb-2">
-            {questions.map((question, index) => (
-              <button
-                key={question.id}
-                onClick={() => handleQuestionSelect(index)}
-                style={{
-                  width: "2rem",
-                  height: "2rem",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  borderRadius: "0.5rem",
-                  margin: "0.125rem",
-                  backgroundColor:
-                    currentQuestionIndex === index
-                      ? "#6E2A7F"
-                      : answerStatus[index] === "submitted"
-                      ? "#10B981"
-                      : "#D1D5DB",
-                  color:
-                    currentQuestionIndex === index ||
-                    answerStatus[index] === "submitted"
-                      ? "white"
-                      : "black",
-                }}
-                className="sm:w-8 sm:h-8"
-              >
-                {question.id}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="w-full p-4 border rounded-lg lg:p-6">
-          <h3 className="font-semibold">{`Soal ${questions[currentQuestionIndex].id}`}</h3>
-          <p className="text-gray-600">
-            {questions[currentQuestionIndex].prompt}
+          <ul className="mb-3 text-base leading-relaxed list-disc list-inside">
+            <li>Syarat nilai kelulusan: {kkm}%</li>
+            <li>Durasi ujian: 20 menit</li>
+          </ul>
+          <p className="mb-3 text-base leading-relaxed">
+            Apabila tidak memenuhi syarat kelulusan, Anda harus mengulang
+            pengerjaan evaluasi kembali.
           </p>
-          <div className="p-4 mt-2 font-mono text-sm bg-gray-100 rounded-lg">
-            <pre className="code-block">
-              <code>
-                {questions[currentQuestionIndex].code
-                  .split("___")
-                  .map((part, index) => (
-                    <React.Fragment key={`part-${index}`}>
-                      {part.split(" ").map((word, wordIndex) => {
-                        if (
-                          word.includes("class") ||
-                          word.includes("public") ||
-                          word.includes("static") ||
-                          word.includes("void") ||
-                          word.includes("Console") ||
-                          word.includes("int") ||
-                          word.includes("string") ||
-                          word.includes("List") ||
-                          word.includes("new")
-                        ) {
-                          return (
-                            <span key={`word-${wordIndex}`} className="keyword">
-                              {word}{" "}
-                            </span>
-                          );
-                        } else if (word.includes('"') || word.includes("'")) {
-                          return (
-                            <span key={`word-${wordIndex}`} className="string">
-                              {word}{" "}
-                            </span>
-                          );
-                        }
-                        return <span key={`word-${wordIndex}`}>{word} </span>;
-                      })}
-                      {index <
-                        questions[currentQuestionIndex].correctAnswer
-                          .length && (
-                        <span>
-                          <input
-                            type="text"
-                            key={`input-${index}`}
-                            value={answers[currentQuestionIndex][index] || ""}
-                            onChange={(e) =>
-                              handleAnswerChange(e.target.value, index)
-                            }
-                            className="w-20 px-2 py-1 border border-gray-400 rounded-md focus:ring-2 focus:ring-blue-300 sm:w-24"
-                            placeholder="Jawaban..."
-                            autoFocus={index === 0}
-                          />
-                        </span>
-                      )}
-                    </React.Fragment>
-                  ))}
-              </code>
-            </pre>
-          </div>
-
-          <div className="flex flex-col mt-4 space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+          <p className="mb-6 text-base leading-relaxed">Selamat Mengerjakan!</p>
+          <div className="flex justify-end">
             <button
-              onClick={submitAnswer}
-              style={{
-                backgroundColor: "#6E2A7F",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
-                transition: "background-color 0.2s",
+              onClick={() => {
+                if (questions.length === 0) {
+                  Swal.fire({
+                    title: "Gagal Memuat Evaluasi",
+                    text:
+                      error ||
+                      "Soal tidak dapat dimuat. Silakan coba lagi nanti.",
+                    icon: "error",
+                    confirmButtonText: "OK",
+                  });
+                  return;
+                }
+                setShowEvaluasi(true);
               }}
+              className="flex items-center w-full gap-2 px-6 py-3 text-base text-white transition-all duration-200 rounded-lg shadow-sm hover:shadow-md sm:w-auto"
+              style={{ backgroundColor: "#6E2A7F" }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.backgroundColor = "#5B1F6A")
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.backgroundColor = "#6E2A7F")
               }
-              className="w-full sm:w-auto"
             >
-              Kirim
-            </button>
-            <button
-              onClick={() => {
-                const newAnswers = [...answers];
-                newAnswers[currentQuestionIndex] = Array(
-                  questions[currentQuestionIndex].correctAnswer.length
-                ).fill("");
-                setAnswers(newAnswers);
-              }}
-              className="w-full px-4 py-2 mt-2 text-white bg-red-500 rounded-lg hover:bg-red-600 sm:w-auto sm:mt-0"
-            >
-              Hapus Jawaban
-            </button>
-            <button
-              onClick={handleFinish}
-              style={{
-                backgroundColor: "white",
-                color: "#6E2A7F",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
-                transition: "background-color 0.2s, border-color 0.2s",
-                border: "2px solid #6E2A7F",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#e0e0e0";
-                e.currentTarget.style.borderColor = "#5B1F6A";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "white";
-                e.currentTarget.style.borderColor = "#6E2A7F";
-              }}
-              className="w-full sm:w-auto"
-            >
-              Selesai
+              <span>MULAI</span>
+              <img src={nextIcon} alt="Selanjutnya" className="w-5 h-5" />
             </button>
           </div>
-        </div>
+        </section>
+
+        <section className="mt-16">
+          <h3 className="pb-1 mb-3 text-lg font-semibold text-gray-800 border-b border-gray-300">
+            Riwayat
+          </h3>
+          {isLoading ? (
+            <p className="text-base text-gray-600">Memuat riwayat...</p>
+          ) : error ? (
+            <p className="text-base text-red-600">{error}</p>
+          ) : riwayat.length === 0 ? (
+            <p className="text-base text-gray-600">Belum ada riwayat</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-gray-600 text-base min-w-[300px]">
+                <thead>
+                  <tr>
+                    <th className="pb-2 font-semibold">Tanggal</th>
+                    <th className="pb-2 font-semibold">Persentase</th>
+                    <th className="pb-2 font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {riwayat.map((item, index) => (
+                    <tr key={index}>
+                      <td className="pt-2 pb-3">{item.tanggal}</td>
+                      <td className="pt-2 pb-3">{item.persentase}</td>
+                      <td className="pt-2 pb-3">
+                        <span
+                          className={`text-xs font-semibold px-2 py-[2px] rounded ${
+                            item.status === "Lulus"
+                              ? "text-green-600 bg-green-100"
+                              : "text-red-600 bg-red-100"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
 
-  return showLatihan ? renderLatihan() : renderInstruksi();
+  // UI untuk halaman evaluasi
+  const renderEvaluasi = () => {
+    if (questions.length === 0 || !questions[currentQuestionIndex]) {
+      return (
+        <div className="max-w-4xl p-4 mx-auto text-center bg-white rounded-lg shadow-md">
+          <h2 className="text-lg font-semibold text-gray-800">
+            EVALUASI AKHIR
+          </h2>
+          <p className="mt-4 text-base text-red-600">
+            {error || "Gagal memuat soal. Silakan coba lagi nanti."}
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
+        <div className="p-4 bg-white rounded-lg shadow-lg">
+          <h2 className="text-lg font-semibold text-center text-gray-800">
+            EVALUASI AKHIR
+          </h2>
+
+          <div
+            className="relative p-4 mt-4 border rounded-lg"
+            style={{ backgroundColor: "rgba(128, 128, 128, 0.158)" }}
+          >
+            <h3
+              className="flex items-center w-full p-2 text-lg font-semibold border rounded-lg"
+              style={{ outline: "2px solid #6E2A7F", outlineOffset: "2px" }}
+            >
+              <img src={IconPetunjuk} alt="Icon" className="w-6 h-6 mr-2" />
+              PETUNJUK MENGERJAKAN
+            </h3>
+            <ol className="mt-2 text-base text-justify text-gray-600 list-decimal list-inside">
+              <li>
+                Jawablah pertanyaan berikut dengan memilih salah satu jawaban
+                yang paling tepat.
+              </li>
+              <li>
+                Tekan tombol{" "}
+                <button
+                  disabled
+                  style={{
+                    backgroundColor: "#6E2A7F",
+                    color: "white",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "0.5rem",
+                    cursor: "not-allowed",
+                    opacity: 0.6,
+                  }}
+                >
+                  Kirim
+                </button>{" "}
+                untuk mengirim jawaban.
+              </li>
+              <li>
+                Apabila notifikasi berwarna Hijau, jawaban Anda telah terkirim.
+              </li>
+              <li>
+                Tekan tombol{" "}
+                <button
+                  disabled
+                  style={{
+                    backgroundColor: "white",
+                    color: "#6E2A7F",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "0.5rem",
+                    border: "2px solid #6E2A7F",
+                    cursor: "not-allowed",
+                    opacity: 0.6,
+                  }}
+                >
+                  Selesai
+                </button>{" "}
+                untuk mengirim semua jawaban.
+              </li>
+            </ol>
+          </div>
+
+          <div className="flex flex-col gap-4 mt-6 lg:flex-row lg:items-start">
+            <div className="flex flex-col w-full mr-0 lg:mr-6 lg:w-auto">
+              <div className="p-4 mt-5 text-center text-red-600 bg-gray-100 border rounded-lg">
+                <h3 className="text-base font-semibold">
+                  Waktu Tersisa: {Math.floor(timeLeft / 60)}:
+                  {(timeLeft % 60).toString().padStart(2, "0")}
+                </h3>
+              </div>
+              <h3 className="mt-8 text-lg font-semibold text-center">SOAL</h3>
+              <div className="flex flex-row justify-center gap-1">
+                {questions.slice(0, 5).map((question, index) => (
+                  <button
+                    key={question.id}
+                    onClick={() => handleQuestionSelect(index)}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "0.5rem",
+                      margin: "0.125rem",
+                      backgroundColor:
+                        currentQuestionIndex === index
+                          ? "#6E2A7F"
+                          : answerStatus[index] === "submitted"
+                          ? "#10B981"
+                          : "#D1D5DB",
+                      color:
+                        currentQuestionIndex === index ||
+                        answerStatus[index] === "submitted"
+                          ? "white"
+                          : "black",
+                    }}
+                    className="w-8 h-8 sm:w-8 sm:h-8"
+                  >
+                    {question.id}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-row justify-center gap-1 mt-2">
+                {questions.slice(5, 10).map((question, index) => (
+                  <button
+                    key={question.id}
+                    onClick={() => handleQuestionSelect(index + 5)}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "0.5rem",
+                      margin: "0.125rem",
+                      backgroundColor:
+                        currentQuestionIndex === index + 5
+                          ? "#6E2A7F"
+                          : answerStatus[index + 5] === "submitted"
+                          ? "#10B981"
+                          : "#D1D5DB",
+                      color:
+                        currentQuestionIndex === index + 5 ||
+                        answerStatus[index + 5] === "submitted"
+                          ? "white"
+                          : "black",
+                    }}
+                    className="w-8 h-8 sm:w-8 sm:h-8"
+                  >
+                    {question.id}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-row justify-center gap-1 mt-2">
+                {questions.slice(10, 15).map((question, index) => (
+                  <button
+                    key={question.id}
+                    onClick={() => handleQuestionSelect(index + 10)}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "0.5rem",
+                      margin: "0.125rem",
+                      backgroundColor:
+                        currentQuestionIndex === index + 10
+                          ? "#6E2A7F"
+                          : answerStatus[index + 10] === "submitted"
+                          ? "#10B981"
+                          : "#D1D5DB",
+                      color:
+                        currentQuestionIndex === index + 10 ||
+                        answerStatus[index + 10] === "submitted"
+                          ? "white"
+                          : "black",
+                    }}
+                    className="w-8 h-8 sm:w-8 sm:h-8"
+                  >
+                    {question.id}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-row justify-center gap-1 mt-2">
+                {questions.slice(15, 20).map((question, index) => (
+                  <button
+                    key={question.id}
+                    onClick={() => handleQuestionSelect(index + 15)}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "0.5rem",
+                      margin: "0.125rem",
+                      backgroundColor:
+                        currentQuestionIndex === index + 15
+                          ? "#6E2A7F"
+                          : answerStatus[index + 15] === "submitted"
+                          ? "#10B981"
+                          : "#D1D5DB",
+                      color:
+                        currentQuestionIndex === index + 15 ||
+                        answerStatus[index + 15] === "submitted"
+                          ? "white"
+                          : "black",
+                    }}
+                    className="w-8 h-8 sm:w-8 sm:h-8"
+                  >
+                    {question.id}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full p-4 border rounded-lg">
+              <h3 className="text-base font-semibold">
+                {questions[currentQuestionIndex]?.id &&
+                questions[currentQuestionIndex]?.question
+                  ? `${questions[currentQuestionIndex].id}. ${questions[currentQuestionIndex].question}`
+                  : "Memuat soal..."}
+              </h3>
+              <div className="mt-2 mb-4">
+                {questions[currentQuestionIndex]?.options?.map((option) => (
+                  <div key={option} className="mb-2">
+                    <label
+                      className={`flex items-center cursor-pointer p-3 rounded-lg border-2 transition duration-200 text-base w-full ${
+                        selectedAnswers[currentQuestionIndex] === option
+                          ? "bg-[#6E2A7F] text-white border-[#6E2A7F]"
+                          : "bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        value={option}
+                        checked={
+                          selectedAnswers[currentQuestionIndex] === option
+                        }
+                        onChange={() => handleAnswerChange(option)}
+                        className="hidden"
+                      />
+                      {option}
+                    </label>
+                  </div>
+                )) || <p className="text-base">Memuat opsi...</p>}
+                <div className="flex flex-col justify-start mt-4 space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+                  <button
+                    onClick={submitAnswer}
+                    style={{
+                      backgroundColor: "#6E2A7F",
+                      color: "white",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "0.5rem",
+                      transition: "background-color 0.2s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#5B1F6A")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor = "#6E2A7F")
+                    }
+                    className="w-full px-4 py-2 text-base sm:w-auto"
+                  >
+                    Kirim
+                  </button>
+                  <button
+                    onClick={resetAnswerForCurrentQuestion}
+                    className="w-full px-4 py-2 text-base text-white bg-red-500 rounded-lg hover:bg-red-600 sm:w-auto"
+                  >
+                    Hapus Jawaban
+                  </button>
+                  <button
+                    onClick={handleFinish}
+                    style={{
+                      backgroundColor: "white",
+                      color: "#6E2A7F",
+                      padding: "0.5rem 1rem",
+                      borderRadius: "0.5rem",
+                      transition: "background-color 0.2s, border-color 0.2s",
+                      border: "2px solid #6E2A7F",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#e0e0e0";
+                      e.currentTarget.style.borderColor = "#5B1F6A";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "white";
+                      e.currentTarget.style.borderColor = "#6E2A7F";
+                    }}
+                    className="w-full px-4 py-2 text-base sm:w-auto"
+                  >
+                    Selesai
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return showEvaluasi ? renderEvaluasi() : renderInstruksi();
 };
 
-export default LatihanBab6;
+export default EvaluasiAkhir;
