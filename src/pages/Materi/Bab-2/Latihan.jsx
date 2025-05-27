@@ -24,7 +24,7 @@ const LatihanBab2 = () => {
   const [score, setScore] = useState(0);
   const [answerStatus, setAnswerStatus] = useState(Array(5).fill(null));
   const [hasAnswered, setHasAnswered] = useState(Array(5).fill(false));
-  const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 menit
+  const [timeLeft, setTimeLeft] = useState(1 * 5); // 10 menit
 
   const questions = [
     {
