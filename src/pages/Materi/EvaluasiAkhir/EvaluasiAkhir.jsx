@@ -359,30 +359,30 @@ const EvaluasiAkhir = () => {
 
   // UI untuk halaman instruksi
   const renderInstruksi = () => (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div className="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8">
       <div className="p-4 bg-white rounded-lg shadow-md">
         <h1 className="mb-4 text-2xl font-bold text-center">EVALUASI AKHIR</h1>
         <section>
-          <h2 className="mb-3 font-semibold text-gray-800 text-lg">Aturan</h2>
-          <p className="mb-3 leading-relaxed text-base">
+          <h2 className="mb-3 text-lg font-semibold text-gray-800">Aturan</h2>
+          <p className="mb-3 text-base leading-relaxed">
             Evaluasi ini bertujuan untuk menguji pengetahuan Anda tentang semua
             materi dalam pemrograman C# (Bab 1-6), termasuk variabel, tipe data,
             kontrol alur, dan method.
           </p>
-          <p className="mb-3 leading-relaxed text-base">
+          <p className="mb-3 text-base leading-relaxed">
             Terdapat {questions.length} pertanyaan pilihan ganda yang harus
             dikerjakan dalam evaluasi ini. Beberapa ketentuannya sebagai
             berikut:
           </p>
-          <ul className="mb-3 leading-relaxed list-disc list-inside text-base">
+          <ul className="mb-3 text-base leading-relaxed list-disc list-inside">
             <li>Syarat nilai kelulusan: {kkm}%</li>
             <li>Durasi ujian: 20 menit</li>
           </ul>
-          <p className="mb-3 leading-relaxed text-base">
+          <p className="mb-3 text-base leading-relaxed">
             Apabila tidak memenuhi syarat kelulusan, Anda harus mengulang
             pengerjaan evaluasi kembali.
           </p>
-          <p className="mb-6 leading-relaxed text-base">Selamat Mengerjakan!</p>
+          <p className="mb-6 text-base leading-relaxed">Selamat Mengerjakan!</p>
           <div className="flex justify-end">
             <button
               onClick={() => {
@@ -399,7 +399,7 @@ const EvaluasiAkhir = () => {
                 }
                 setShowEvaluasi(true);
               }}
-              className="flex items-center gap-2 px-6 py-3 text-base text-white transition-all duration-200 rounded-lg shadow-sm hover:shadow-md w-full sm:w-auto"
+              className="flex items-center w-full gap-2 px-6 py-3 text-base text-white transition-all duration-200 rounded-lg shadow-sm hover:shadow-md sm:w-auto"
               style={{ backgroundColor: "#6E2A7F" }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.backgroundColor = "#5B1F6A")
@@ -415,15 +415,15 @@ const EvaluasiAkhir = () => {
         </section>
 
         <section className="mt-16">
-          <h3 className="pb-1 mb-3 font-semibold text-gray-800 border-b border-gray-300 text-lg">
+          <h3 className="pb-1 mb-3 text-lg font-semibold text-gray-800 border-b border-gray-300">
             Riwayat
           </h3>
           {isLoading ? (
-            <p className="text-gray-600 text-base">Memuat riwayat...</p>
+            <p className="text-base text-gray-600">Memuat riwayat...</p>
           ) : error ? (
-            <p className="text-red-600 text-base">{error}</p>
+            <p className="text-base text-red-600">{error}</p>
           ) : riwayat.length === 0 ? (
-            <p className="text-gray-600 text-base">Belum ada riwayat</p>
+            <p className="text-base text-gray-600">Belum ada riwayat</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left text-gray-600 text-base min-w-[300px]">
@@ -465,11 +465,11 @@ const EvaluasiAkhir = () => {
   const renderEvaluasi = () => {
     if (questions.length === 0 || !questions[currentQuestionIndex]) {
       return (
-        <div className="mx-auto max-w-4xl p-4 text-center bg-white rounded-lg shadow-md">
+        <div className="max-w-4xl p-4 mx-auto text-center bg-white rounded-lg shadow-md">
           <h2 className="text-lg font-semibold text-gray-800">
             EVALUASI AKHIR
           </h2>
-          <p className="mt-4 text-red-600 text-base">
+          <p className="mt-4 text-base text-red-600">
             {error || "Gagal memuat soal. Silakan coba lagi nanti."}
           </p>
         </div>
@@ -477,7 +477,7 @@ const EvaluasiAkhir = () => {
     }
 
     return (
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl px-4 mx-auto sm:px-6 lg:px-8">
         <div className="p-4 bg-white rounded-lg shadow-lg">
           <h2 className="text-lg font-semibold text-center text-gray-800">
             EVALUASI AKHIR
@@ -488,13 +488,13 @@ const EvaluasiAkhir = () => {
             style={{ backgroundColor: "rgba(128, 128, 128, 0.158)" }}
           >
             <h3
-              className="flex items-center p-2 text-lg font-semibold border rounded-lg w-full"
+              className="flex items-center w-full p-2 text-lg font-semibold border rounded-lg"
               style={{ outline: "2px solid #6E2A7F", outlineOffset: "2px" }}
             >
               <img src={IconPetunjuk} alt="Icon" className="w-6 h-6 mr-2" />
               PETUNJUK MENGERJAKAN
             </h3>
-            <ol className="mt-2 text-justify text-gray-600 list-decimal list-inside text-base">
+            <ol className="mt-2 text-base text-justify text-gray-600 list-decimal list-inside">
               <li>
                 Jawablah pertanyaan berikut dengan memilih salah satu jawaban
                 yang paling tepat.
@@ -540,16 +540,16 @@ const EvaluasiAkhir = () => {
             </ol>
           </div>
 
-          <div className="flex flex-col lg:flex-row mt-6 gap-4 lg:items-start">
-            <div className="flex flex-col mr-0 lg:mr-6 w-full lg:w-auto">
+          <div className="flex flex-col gap-4 mt-6 lg:flex-row lg:items-start">
+            <div className="flex flex-col w-full mr-0 lg:mr-6 lg:w-auto">
               <div className="p-4 mt-5 text-center text-red-600 bg-gray-100 border rounded-lg">
-                <h3 className="font-semibold text-base">
+                <h3 className="text-base font-semibold">
                   Waktu Tersisa: {Math.floor(timeLeft / 60)}:
                   {(timeLeft % 60).toString().padStart(2, "0")}
                 </h3>
               </div>
               <h3 className="mt-8 text-lg font-semibold text-center">SOAL</h3>
-              <div className="flex flex-row gap-1 justify-center">
+              <div className="flex flex-row justify-center gap-1">
                 {questions.slice(0, 5).map((question, index) => (
                   <button
                     key={question.id}
@@ -580,7 +580,7 @@ const EvaluasiAkhir = () => {
                   </button>
                 ))}
               </div>
-              <div className="flex flex-row gap-1 justify-center mt-2">
+              <div className="flex flex-row justify-center gap-1 mt-2">
                 {questions.slice(5, 10).map((question, index) => (
                   <button
                     key={question.id}
@@ -611,10 +611,72 @@ const EvaluasiAkhir = () => {
                   </button>
                 ))}
               </div>
+              <div className="flex flex-row justify-center gap-1 mt-2">
+                {questions.slice(10, 15).map((question, index) => (
+                  <button
+                    key={question.id}
+                    onClick={() => handleQuestionSelect(index + 10)}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "0.5rem",
+                      margin: "0.125rem",
+                      backgroundColor:
+                        currentQuestionIndex === index + 10
+                          ? "#6E2A7F"
+                          : answerStatus[index + 10] === "submitted"
+                          ? "#10B981"
+                          : "#D1D5DB",
+                      color:
+                        currentQuestionIndex === index + 10 ||
+                        answerStatus[index + 10] === "submitted"
+                          ? "white"
+                          : "black",
+                    }}
+                    className="w-8 h-8 sm:w-8 sm:h-8"
+                  >
+                    {question.id}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-row justify-center gap-1 mt-2">
+                {questions.slice(15, 20).map((question, index) => (
+                  <button
+                    key={question.id}
+                    onClick={() => handleQuestionSelect(index + 15)}
+                    style={{
+                      width: "2rem",
+                      height: "2rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "0.5rem",
+                      margin: "0.125rem",
+                      backgroundColor:
+                        currentQuestionIndex === index + 15
+                          ? "#6E2A7F"
+                          : answerStatus[index + 15] === "submitted"
+                          ? "#10B981"
+                          : "#D1D5DB",
+                      color:
+                        currentQuestionIndex === index + 15 ||
+                        answerStatus[index + 15] === "submitted"
+                          ? "white"
+                          : "black",
+                    }}
+                    className="w-8 h-8 sm:w-8 sm:h-8"
+                  >
+                    {question.id}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="w-full p-4 border rounded-lg">
-              <h3 className="font-semibold text-base">
+              <h3 className="text-base font-semibold">
                 {questions[currentQuestionIndex]?.id &&
                 questions[currentQuestionIndex]?.question
                   ? `${questions[currentQuestionIndex].id}. ${questions[currentQuestionIndex].question}`
@@ -643,7 +705,7 @@ const EvaluasiAkhir = () => {
                     </label>
                   </div>
                 )) || <p className="text-base">Memuat opsi...</p>}
-                <div className="flex flex-col mt-4 space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2 justify-start">
+                <div className="flex flex-col justify-start mt-4 space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
                   <button
                     onClick={submitAnswer}
                     style={{
@@ -659,13 +721,13 @@ const EvaluasiAkhir = () => {
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.backgroundColor = "#6E2A7F")
                     }
-                    className="px-4 py-2 text-base w-full sm:w-auto"
+                    className="w-full px-4 py-2 text-base sm:w-auto"
                   >
                     Kirim
                   </button>
                   <button
                     onClick={resetAnswerForCurrentQuestion}
-                    className="px-4 py-2 text-base text-white bg-red-500 rounded-lg hover:bg-red-600 w-full sm:w-auto"
+                    className="w-full px-4 py-2 text-base text-white bg-red-500 rounded-lg hover:bg-red-600 sm:w-auto"
                   >
                     Hapus Jawaban
                   </button>
@@ -687,7 +749,7 @@ const EvaluasiAkhir = () => {
                       e.currentTarget.style.backgroundColor = "white";
                       e.currentTarget.style.borderColor = "#6E2A7F";
                     }}
-                    className="px-4 py-2 text-base w-full sm:w-auto"
+                    className="w-full px-4 py-2 text-base sm:w-auto"
                   >
                     Selesai
                   </button>
