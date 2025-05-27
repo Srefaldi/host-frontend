@@ -319,27 +319,7 @@ const LatihanBab2 = () => {
   };
 
   const handleTimeUp = async () => {
-    // Evaluate all answers, including unsubmitted ones
-    let finalScore = score;
-    for (let i = 0; i < questions.length; i++) {
-      if (!hasAnswered[i]) {
-        const userAnswers = answers[i];
-        const normalizedUserAnswers = userAnswers.map((answer) =>
-          normalizeAnswer(answer)
-        );
-        const normalizedCorrectAnswers = questions[i].correctAnswer.map(
-          (answer) => normalizeAnswer(answer)
-        );
-        const isCorrect = normalizedUserAnswers.every(
-          (answer, idx) => answer === normalizedCorrectAnswers[idx]
-        );
-        if (isCorrect) {
-          finalScore += 20;
-        }
-      }
-    }
-
-    const scorePercentage = (finalScore / (questions.length * 20)) * 100;
+    const scorePercentage = (score / (questions.length * 20)) * 100;
     try {
       await axios.post(
         `${import.meta.env.VITE_API_ENDPOINT}/scores`,
@@ -364,7 +344,7 @@ const LatihanBab2 = () => {
           handleLessonComplete("/materi/bab2/kuis-bab2");
         }
         navigate("/materi/bab2/hasil-latihan-bab2", {
-          state: { score: finalScore, totalQuestions: questions.length },
+          state: { score, totalQuestions: questions.length },
         });
       });
     } catch (error) {
