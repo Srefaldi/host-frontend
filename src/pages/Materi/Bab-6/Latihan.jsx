@@ -28,66 +28,64 @@ const LatihanBab6 = () => {
     {
       id: 1,
       prompt:
-        "Lengkapilah kode berikut untuk mendeklarasikan array integer dengan 5 elemen ...",
-      code: `public class Latihan {
-    public static void Main(string[] args) {
-        ___ numbers = new int[5];
-        Console.WriteLine(numbers.Length);
-    }
-}`,
-      correctAnswer: ["int[]"],
+        "Lengkapi method berikut agar memanggil method TampilkanPesan untuk mencetak pesan ke konsol ...",
+      code: `public static void TampilkanPesan() 
+    {
+    Console.WriteLine("Selamat belajar C#!"); 
+    } 
+
+    public static void Main() 
+    { 
+        ______(); 
+    }`,
+      correctAnswer: ["TampilkanPesan"],
     },
     {
       id: 2,
       prompt:
-        "Lengkapilah kode berikut untuk mengakses elemen kedua dari array ...",
-      code: `public class Latihan {
-    public static void Main(string[] args) {
-        int[] numbers = {10, 20, 30, 40, 50};
-        Console.WriteLine(numbers[___]);
-    }
-}`,
-      correctAnswer: ["1"],
+        "Lengkapi deklarasi method HitungLuas agar mengembalikan luas persegi Panjang ...",
+      code: `public static int HitungLuas(   ______   , ______  ) 
+  { 
+    return panjang * lebar; 
+  }`,
+      correctAnswer: ["int panjang", "int lebar"],
     },
     {
       id: 3,
       prompt:
-        "Lengkapilah kode berikut untuk mengubah nilai elemen ketiga menjadi 100 ...",
-      code: `public class Latihan {
-    public static void Main(string[] args) {
-        int[] numbers = {1, 2, 3, 4, 5};
-        numbers[___] = 100;
-        Console.WriteLine(numbers[2]);
-    }
-}`,
-      correctAnswer: ["2"],
+        "Lengkapi pemanggilan method berikut agar mencetak hasil penjumlahan 3 ...",
+      code: `public static int Tambah(int a, int b) 
+    { 
+      return a + b; 
+    } 
+
+    public static void Main() 
+    { 
+      Console.WriteLine(Tambah( ______  ,  ______  )); 
+    }`,
+      correctAnswer: ["1", "2"],
     },
     {
       id: 4,
-      prompt: "Lengkapilah kode berikut untuk menambahkan elemen ke List ...",
-      code: `using System.Collections.Generic;
-public class Latihan {
-    public static void Main(string[] args) {
-        List<string> names = new List<string>();
-        names.___("Budi");
-        Console.WriteLine(names[0]);
-    }
-}`,
-      correctAnswer: ["Add"],
+      prompt:
+        "Lengkapi method dengan parameter berikut agar mencetak nama yang dimasukkan ....",
+      code: `public static void Sapa(______ nama) 
+  { 
+      Console.WriteLine("Halo, " + nama + "!"); 
+  } 
+
+public static void Main() 
+    { 
+      Sapa("Rudi"); 
+    }`,
+      correctAnswer: ["string"],
     },
     {
       id: 5,
       prompt:
-        "Lengkapilah kode berikut untuk menghapus elemen pertama dari List ...",
-      code: `using System.Collections.Generic;
-public class Latihan {
-    public static void Main(string[] args) {
-        List<int> numbers = new List<int> {10, 20, 30};
-        numbers.___(0);
-        Console.WriteLine(numbers[0]);
-    }
-}`,
-      correctAnswer: ["RemoveAt"],
+        "Lengkapi definisi method berikut agar menggunakan expression-embodied member ...",
+      code: `public static int HitungPerkalian(int x, int y) => ______ ; `,
+      correctAnswer: ["x * y"],
     },
   ];
 
