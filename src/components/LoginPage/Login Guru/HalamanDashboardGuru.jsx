@@ -16,7 +16,7 @@ import {
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
-  const [token] = useState("123"); // Static token
+  const [token] = useState("HAYQK"); // Static token
   const [studentCount, setStudentCount] = useState(0);
   const [completedStudents, setCompletedStudents] = useState(0);
   const [averageScores, setAverageScores] = useState({});
@@ -285,10 +285,7 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-            <div
-              className="p-4 text-white transition-shadow duration-200 rounded-lg shadow-lg bg-gradient-to-r from-blue-500 to-blue-7
-00 hover:shadow-xl sm:p-6"
-            >
+            <div className="p-4 text-white transition-shadow duration-200 rounded-lg shadow-lg bg-gradient-to-r from-blue-500 to-blue-7 00 hover:shadow-xl sm:p-6">
               <div className="flex items-center">
                 <IoStatsChart className="mr-2 text-xl sm:mr-3 sm:text-2xl" />
                 <div className="text-lg font-bold sm:text-xl">
