@@ -31,7 +31,7 @@ const UserDashboard = () => {
   useEffect(() => {
     if (isError && message === "Mohon login ke akun anda" && !isLoggedOut) {
       dispatch(reset());
-      // navigate("/");p
+      navigate("/");
     }
   }, [isError, message, dispatch, navigate, isLoggedOut]);
 
