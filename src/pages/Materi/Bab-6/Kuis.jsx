@@ -13,13 +13,11 @@ const KuisBab6 = () => {
   const { user } = useSelector((state) => state.auth);
   const [showKuis, setShowKuis] = useState(false);
 
-  // State untuk instruksi
   const [riwayat, setRiwayat] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [kkm, setKkm] = useState(75);
 
-  // State untuk kuis
   const [questions, setQuestions] = useState([]);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -29,7 +27,6 @@ const KuisBab6 = () => {
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [evaluationId, setEvaluationId] = useState(null);
 
-  // Fungsi untuk memformat tanggal
   const formatDate = (dateString) => {
     if (!dateString) {
       console.warn("Tanggal tidak tersedia:", dateString);
@@ -49,7 +46,6 @@ const KuisBab6 = () => {
     });
   };
 
-  // Ambil data evaluasi, KKM, soal, dan riwayat
   useEffect(() => {
     const fetchInitialData = async () => {
       if (!user?.uuid) {
@@ -59,7 +55,6 @@ const KuisBab6 = () => {
 
       setIsLoading(true);
       try {
-        // Ambil evaluasi untuk Bab 6
         const evalResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/evaluations`,
           { withCredentials: true }
@@ -73,7 +68,6 @@ const KuisBab6 = () => {
         }
         setEvaluationId(bab6Evaluation.id);
 
-        // Ambil KKM
         const kkmResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/kkm`,
           { withCredentials: true }
@@ -85,7 +79,6 @@ const KuisBab6 = () => {
           setKkm(bab6Kkm.kkm);
         }
 
-        // Ambil soal
         const questionsResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/questions/evaluation/${
             bab6Evaluation.id
@@ -111,7 +104,6 @@ const KuisBab6 = () => {
         setAnswerStatus(Array(fetchedQuestions.length).fill(null));
         setHasAnswered(Array(fetchedQuestions.length).fill(false));
 
-        // Ambil riwayat skor
         const scoresResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/scores`,
           { withCredentials: true }
@@ -141,7 +133,6 @@ const KuisBab6 = () => {
     }
   }, [user, kkm]);
 
-  // Timer untuk kuis
   useEffect(() => {
     if (showKuis && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -191,17 +182,20 @@ const KuisBab6 = () => {
       return newHasAnswered;
     });
 
-    Swal.fire({
-      title: "Jawaban Terkirim!",
-      text: "Silakan lanjut ke soal berikutnya.",
-      icon: "success",
-      confirmButtonText: "OK",
-    }).then(() => {
-      const nextQuestionIndex = currentQuestionIndex + 1;
-      if (nextQuestionIndex < questions.length) {
-        setCurrentQuestionIndex(nextQuestionIndex);
-      }
-    });
+    const nextQuestionIndex = currentQuestionIndex + 1;
+    if (nextQuestionIndex < questions.length) {
+      setCurrentQuestionIndex(nextQuestionIndex);
+    }
+
+    // Check if all questions are answered (all buttons are green)
+    if (newAnswerStatus.every((status) => status === "submitted")) {
+      Swal.fire({
+        title: "Semua Soal Telah Terjawab!",
+        text: "Silahkan selesaikan kuis.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const resetAnswerForCurrentQuestion = () => {
@@ -280,43 +274,42 @@ const KuisBab6 = () => {
     });
   };
 
-  const handleTimeUp = async () => {
-    try {
-      const scoreToSave = (score / (questions.length * 10)) * 100;
-      await axios.post(
-        `${import.meta.env.VITE_API_ENDPOINT}/scores`,
-        {
-          user_id: user.uuid,
-          type: "evaluasi",
-          chapter: 6,
-          score: scoreToSave,
-        },
-        { withCredentials: true }
-      );
+  const handleTimeUp = () => {
+    Swal.fire({
+      title: "Waktu Habis!",
+      text: "Jawaban Anda akan dikirim.",
+      icon: "warning",
+      confirmButtonText: "OK",
+      confirmButtonColor: "#6E2A7F",
+    }).then(async () => {
+      try {
+        const scoreToSave = (score / (questions.length * 10)) * 100;
+        await axios.post(
+          `${import.meta.env.VITE_API_ENDPOINT}/scores`,
+          {
+            user_id: user.uuid,
+            type: "evaluasi",
+            chapter: 6,
+            score: scoreToSave,
+          },
+          { withCredentials: true }
+        );
 
-      Swal.fire({
-        title: "Waktu Habis!",
-        text: "Jawaban Anda akan dikirim.",
-        icon: "warning",
-        confirmButtonText: "OK",
-        confirmButtonColor: "#6E2A7F",
-      }).then(() => {
         navigate("/materi/bab6/hasil-kuis-bab6", {
           state: { score: scoreToSave, totalQuestions: questions.length, kkm },
         });
-      });
-    } catch (error) {
-      console.error("Error saving score:", error);
-      Swal.fire({
-        title: "Gagal!",
-        text: "Terjadi kesalahan saat menyimpan skor.",
-        icon: "error",
-        confirmButtonText: "OK",
-      });
-    }
+      } catch (error) {
+        console.error("Error saving score:", error);
+        Swal.fire({
+          title: "Gagal!",
+          text: "Terjadi kesalahan saat menyimpan skor.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    });
   };
 
-  // UI untuk halaman instruksi
   const renderInstruksi = () => (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
       <div className="p-2 sm:p-4 bg-white rounded-lg shadow-md">
@@ -432,7 +425,6 @@ const KuisBab6 = () => {
     </div>
   );
 
-  // UI untuk halaman kuis
   const renderKuis = () => {
     if (questions.length === 0 || !questions[currentQuestionIndex]) {
       return (
@@ -599,7 +591,7 @@ const KuisBab6 = () => {
                       className={`flex items-center cursor-pointer p-2 sm:p-3 rounded-lg border-2 transition duration-200 text-sm sm:text-base ${
                         selectedAnswers[currentQuestionIndex] === option
                           ? "bg-[#6E2A7F] text-white border-[#6E2A7F]"
-                          : "bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200"
+                          : "bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200"
                       }`}
                     >
                       <input

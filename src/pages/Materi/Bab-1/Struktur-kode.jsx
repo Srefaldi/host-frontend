@@ -87,10 +87,12 @@ const StrukturKode = () => {
       <Quiz onComplete={handleQuizComplete} />
 
       {/* Tombol Navigasi */}
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between mt-6 gap-4">
+        {" "}
+        {/* Added gap-4 for spacing */}
         <button
-          onClick={handleBack}
-          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          onClick={() => navigate("/dashboard")}
+          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali

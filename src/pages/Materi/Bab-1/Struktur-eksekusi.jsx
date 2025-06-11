@@ -4,28 +4,31 @@ import gambar118 from "./img-bab1/Gambar-118.png";
 import Quiz from "./Quiz-bab1/Quiz4";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
-import lockIcon from "../../../assets/img/lock.png"; // Replace with actual lock icon path
+import lockIcon from "../../../assets/img/lock.png";
 
+// Material page for "Struktur Eksekusi"
 const StrukturEksekusi = () => {
   const navigate = useNavigate();
   const [quizCompleted, setQuizCompleted] = useState(false);
   const { handleLessonComplete } = useOutletContext();
 
+  // Navigate to previous lesson
   const handleBack = () => {
     window.scrollTo(0, 0);
     navigate("/materi/bab1/struktur-kode");
   };
 
+  // Navigate to next lesson
   const handleNext = () => {
     handleLessonComplete("/materi/bab1/struktur-eksekusi");
     window.scrollTo(0, 0);
     navigate("/materi/bab1/sintaks-print");
   };
 
+  // Handle quiz completion
   const handleQuizComplete = () => {
     handleLessonComplete("/materi/bab1/sintaks-print");
     setQuizCompleted(true);
-    // Scroll to the bottom of the page
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
@@ -80,29 +83,28 @@ const StrukturEksekusi = () => {
         <p className="mt-4">
           Di dalam struktur eksekusi kode terdapat control structures yang
           berguna untuk mengatur proses eksekusi sebuah kode program. Terdapat 3
-          tipe control structures dalam bahasa pemrograman:
+          ada 3 ttipe control structures dalam bahasa pemrograman:
+          <ul className="mt-4 pl-6 list-disc">
+            <li>
+              <strong>Sequence</strong> - struktur dimana perintah dieksekusi
+              secara berurutan.
+            </li>
+            <li>
+              <strong>Selection</strong> - seleksi dimana salah satu dari
+              beberapa instruksi dipilih dan dieksekusi.
+            </li>
+            <li>
+              <strong>Iteration</strong> - struktur dimana perintah yang sama
+              dieksekusi berulang kali.
+            </li>
+          </ul>
         </p>
 
-        <ul className="mt-4 pl-6 list-disc">
-          <li>
-            <strong>Sequence</strong> - struktur dimana perintah dieksekusi
-            secara berurutan.
-          </li>
-          <li>
-            <strong>Selection</strong> - struktur dimana salah satu dari
-            beberapa instruksi dipilih dan dieksekusi.
-          </li>
-          <li>
-            <strong>Iteration</strong> - struktur dimana perintah yang sama
-            dieksekusi berulang kali.
-          </li>
-        </ul>
-
-        {/* Tipe Control Structures Image and Caption */}
-        <figure className="p-0 md:p-4 my-3 md:my-0 text-center w-full mt-4">
+        {/* <!-- Tipe Control Structures Image and Caption --> */}
+        <figure className="p-0 md:p-4 my-3 sm:my-8 text-center w-full mt-4">
           <img
             src={gambar118}
-            alt="Gambar 1.18 Tipe control structures"
+            alt="Gambar 1.3 Tipe control structures"
             className="w-full max-w-3xl mx-auto rounded-lg"
           />
           <div className="mt-3">
@@ -113,16 +115,16 @@ const StrukturEksekusi = () => {
         </figure>
       </div>
 
-      {/* Quiz - Now outside white container */}
+      {/* <!-- Quiz - Outside white container -->  */}
       <div className="mb-6">
         <Quiz onComplete={handleQuizComplete} />
       </div>
 
-      {/* Navigation Buttons - Now outside white container */}
-      <div className="flex justify-between">
+      {/* <!-- Navigation Buttons - Outside white container -->  */}
+      <div className="flex justify-between mt-6 gap-4">
         <button
           onClick={handleBack}
-          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
@@ -130,11 +132,10 @@ const StrukturEksekusi = () => {
         <button
           onClick={quizCompleted ? handleNext : null}
           disabled={!quizCompleted}
-          className="flex items-center justify-between"
+          className="flex items-center justify-between px-4 py-2 text-base font-semibold"
           style={{
             backgroundColor: quizCompleted ? "#6E2A7F" : "#B0B0B0",
             color: "white",
-            padding: "0.5rem 1rem",
             borderRadius: "0.5rem",
             transition: "background-color 0.2s",
             cursor: quizCompleted ? "pointer" : "not-allowed",

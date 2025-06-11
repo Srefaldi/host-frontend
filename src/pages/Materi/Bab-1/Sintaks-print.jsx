@@ -5,54 +5,46 @@ import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
 import lockIcon from "../../../assets/img/lock.png";
 
+// Material page for "Sintaks Print"
 const SintaksPrint = () => {
   const navigate = useNavigate();
-
-  // State untuk bagian utama
   const [mainCode, setMainCode] = useState(
     `Console.WriteLine("Hello World!");`
   );
   const [mainOutput, setMainOutput] = useState("");
-
-  // State untuk bagian nilai numerik
   const [numericCode, setNumericCode] = useState(
     `Console.WriteLine(1);\nConsole.WriteLine(7.5);`
   );
   const [numericOutput, setNumericOutput] = useState("");
-
-  // State untuk bagian menggabungkan string
   const [stringConcatCode, setStringConcatCode] = useState(
     `Console.WriteLine("Hello " + "Hello");`
   );
   const [stringConcatOutput, setStringConcatOutput] = useState("");
-
-  // State untuk bagian string dan angka
   const [stringAndNumberCode, setStringAndNumberCode] = useState(
     `Console.WriteLine("Hello " + 10);`
   );
   const [stringAndNumberOutput, setStringAndNumberOutput] = useState("");
-
-  // State untuk bagian angka dan angka
   const [numberAndNumberCode, setNumberAndNumberCode] = useState(
     `Console.WriteLine(10 + 10);`
   );
   const [numberAndNumberOutput, setNumberAndNumberOutput] = useState("");
-
-  // State untuk kuis
   const [quizCompleted, setQuizCompleted] = useState(false);
   const { handleLessonComplete } = useOutletContext();
 
+  // Navigate to previous lesson
   const handleBack = () => {
     window.scrollTo(0, 0);
     navigate("/materi/bab1/struktur-eksekusi");
   };
 
+  // Navigate to next lesson
   const handleNext = () => {
     handleLessonComplete("/materi/bab1/sintaks-print");
     window.scrollTo(0, 0);
     navigate("/materi/bab1/sintaks-komentar");
   };
 
+  // Run main code
   const handleRunMain = () => {
     const trimmedCode = mainCode.trim();
     if (
@@ -71,6 +63,7 @@ const SintaksPrint = () => {
     }
   };
 
+  // Run numeric code
   const handleRunNumeric = () => {
     const trimmedCode = numericCode.trim();
     const lines = trimmedCode.split("\n");
@@ -84,6 +77,7 @@ const SintaksPrint = () => {
     setNumericOutput(outputLines.join("\n"));
   };
 
+  // Run string concatenation code
   const handleRunStringConcat = () => {
     const trimmedCode = stringConcatCode.trim();
     if (
@@ -94,7 +88,7 @@ const SintaksPrint = () => {
         trimmedCode.indexOf('"') + 1,
         trimmedCode.lastIndexOf('"')
       );
-      setStringConcatOutput(outputText.replace(/" \+ "/g, " "));
+      setStringConcatOutput(outputText.replace(/" \+ "/g, ""));
     } else {
       setStringConcatOutput(
         "Format kode tidak valid. Pastikan menggunakan Console.WriteLine()."
@@ -102,6 +96,7 @@ const SintaksPrint = () => {
     }
   };
 
+  // Run string and number code
   const handleRunStringAndNumber = () => {
     const trimmedCode = stringAndNumberCode.trim();
     if (
@@ -113,7 +108,9 @@ const SintaksPrint = () => {
         trimmedCode.lastIndexOf('"')
       );
       const number = trimmedCode.match(/\d+/);
-      setStringAndNumberOutput(`${outputText} ${number}`);
+      setStringAndNumberOutput(
+        number ? `${outputText}${number[0]}` : "Format kode tidak valid."
+      );
     } else {
       setStringAndNumberOutput(
         "Format kode tidak valid. Pastikan menggunakan Console.WriteLine()."
@@ -121,6 +118,7 @@ const SintaksPrint = () => {
     }
   };
 
+  // Run number and number code (safer parsing instead of eval)
   const handleRunNumberAndNumber = () => {
     const trimmedCode = numberAndNumberCode.trim();
     if (
@@ -131,8 +129,15 @@ const SintaksPrint = () => {
         trimmedCode.indexOf("(") + 1,
         trimmedCode.lastIndexOf(")")
       );
-      const result = eval(expression);
-      setNumberAndNumberOutput(result);
+      const match = expression.match(/(\d+)\s*\+\s*(\d+)/);
+      if (match) {
+        const result = parseInt(match[1]) + parseInt(match[2]);
+        setNumberAndNumberOutput(result.toString());
+      } else {
+        setNumberAndNumberOutput(
+          "Format kode tidak valid. Hanya operasi + didukung."
+        );
+      }
     } else {
       setNumberAndNumberOutput(
         "Format kode tidak valid. Pastikan menggunakan Console.WriteLine()."
@@ -140,6 +145,7 @@ const SintaksPrint = () => {
     }
   };
 
+  // Handle quiz completion
   const handleQuizCompletion = () => {
     handleLessonComplete("/materi/bab1/sintaks-komentar");
     setQuizCompleted(true);
@@ -155,6 +161,7 @@ const SintaksPrint = () => {
         BAB 1 - PENDAHULUAN
       </h1>
 
+      {/* White Container - Content Only */}
       <div className="p-4 mb-6 text-justify text-gray-700 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold">1.4 Sintaks Print</h2>
 
@@ -174,7 +181,7 @@ const SintaksPrint = () => {
 
         <p className="mt-4">Cobalah kode program pada compiler:</p>
 
-        <div className="mt-4 flex space-x-4">
+        <div className="mt-4 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="w-full max-w-md p-4 rounded-lg shadow-md">
             <h2 className="mb-2 text-xl font-semibold">Compiler</h2>
             <textarea
@@ -184,11 +191,9 @@ const SintaksPrint = () => {
             />
             <button
               onClick={handleRunMain}
+              className="mt-2 w-full px-4 py-2 text-white rounded-md text-base font-semibold transition-colors duration-200"
               style={{
                 backgroundColor: "#6E2A7F",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
                 transition: "background-color 0.2s",
               }}
               onMouseEnter={(e) =>
@@ -217,7 +222,7 @@ const SintaksPrint = () => {
           Untuk mencetak nilai numerik, masukkan angka tanpa tanda kutip.
         </p>
 
-        <div className="mt-4 flex space-x-4">
+        <div className="mt-4 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="w-full max-w-md p-4 rounded-lg shadow-md">
             <h2 className="mb-2 text-xl font-semibold">Compiler</h2>
             <textarea
@@ -227,11 +232,9 @@ const SintaksPrint = () => {
             />
             <button
               onClick={handleRunNumeric}
+              className="mt-2 w-full px-4 py-2 text-white rounded-md text-base font-semibold transition-colors duration-200"
               style={{
                 backgroundColor: "#6E2A7F",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
                 transition: "background-color 0.2s",
               }}
               onMouseEnter={(e) =>
@@ -260,7 +263,7 @@ const SintaksPrint = () => {
           Anda dapat menggabungkan string dan string lainnya.
         </p>
 
-        <div className="mt-4 flex space-x-4">
+        <div className="mt-4 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="w-full max-w-md p-4 rounded-lg shadow-md">
             <h2 className="mb-2 text-xl font-semibold">Compiler</h2>
             <textarea
@@ -270,11 +273,9 @@ const SintaksPrint = () => {
             />
             <button
               onClick={handleRunStringConcat}
+              className="mt-2 w-full px-4 py-2 text-white rounded-md text-base font-semibold transition-colors duration-200"
               style={{
                 backgroundColor: "#6E2A7F",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
                 transition: "background-color 0.2s",
               }}
               onMouseEnter={(e) =>
@@ -299,7 +300,7 @@ const SintaksPrint = () => {
 
         <p className="mt-4">Anda juga dapat menggabungkan string dan angka.</p>
 
-        <div className="mt-4 flex space-x-4">
+        <div className="mt-4 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="w-full max-w-md p-4 rounded-lg shadow-md">
             <h2 className="mb-2 text-xl font-semibold">Compiler</h2>
             <textarea
@@ -309,11 +310,9 @@ const SintaksPrint = () => {
             />
             <button
               onClick={handleRunStringAndNumber}
+              className="mt-2 w-full px-4 py-2 text-white rounded-md text-base font-semibold transition-colors duration-200"
               style={{
                 backgroundColor: "#6E2A7F",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
                 transition: "background-color 0.2s",
               }}
               onMouseEnter={(e) =>
@@ -340,7 +339,7 @@ const SintaksPrint = () => {
           Anda juga dapat menggabungkan angka dan angka lainnya.
         </p>
 
-        <div className="mt-4 flex space-x-4">
+        <div className="mt-4 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <div className="w-full max-w-md p-4 rounded-lg shadow-md">
             <h2 className="mb-2 text-xl font-semibold">Compiler</h2>
             <textarea
@@ -350,11 +349,9 @@ const SintaksPrint = () => {
             />
             <button
               onClick={handleRunNumberAndNumber}
+              className="mt-2 w-full px-4 py-2 text-white rounded-md text-base font-semibold transition-colors duration-200"
               style={{
                 backgroundColor: "#6E2A7F",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.5rem",
                 transition: "background-color 0.2s",
               }}
               onMouseEnter={(e) =>
@@ -376,14 +373,14 @@ const SintaksPrint = () => {
         </div>
       </div>
 
-      {/* Quiz component moved outside the white container */}
+      {/* Quiz component */}
       <Quiz onComplete={handleQuizCompletion} />
 
-      {/* Navigation buttons moved outside the white container */}
-      <div className="flex justify-between mt-6">
+      {/* Navigation buttons */}
+      <div className="flex justify-between mt-6 gap-4">
         <button
           onClick={handleBack}
-          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
@@ -391,24 +388,21 @@ const SintaksPrint = () => {
         <button
           onClick={quizCompleted ? handleNext : null}
           disabled={!quizCompleted}
-          className="flex items-center justify-between"
+          className="flex items-center justify-between px-4 py-2 text-base font-semibold"
           style={{
             backgroundColor: quizCompleted ? "#6E2A7F" : "#B0B0B0",
             color: "white",
-            padding: "0.5rem 1rem",
             borderRadius: "0.5rem",
             transition: "background-color 0.2s",
             cursor: quizCompleted ? "pointer" : "not-allowed",
           }}
           onMouseEnter={(e) => {
-            if (quizCompleted) {
+            if (quizCompleted)
               e.currentTarget.style.backgroundColor = "#5B1F6A";
-            }
           }}
           onMouseLeave={(e) => {
-            if (quizCompleted) {
+            if (quizCompleted)
               e.currentTarget.style.backgroundColor = "#6E2A7F";
-            }
           }}
         >
           <span>Selanjutnya</span>

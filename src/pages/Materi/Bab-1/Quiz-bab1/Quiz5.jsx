@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 
+// Quiz component for multiple-choice questions
 const Quiz = ({ onComplete }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
+  const [showCompiler, setShowCompiler] = useState(false);
 
+  // Handle radio option change
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!selectedOption) {
       Swal.fire({
         title: "Pilih Jawaban!",
@@ -21,7 +24,6 @@ const Quiz = ({ onComplete }) => {
       });
       return;
     }
-
     if (selectedOption === "B") {
       setShowExplanation(true);
       Swal.fire({
@@ -46,9 +48,16 @@ const Quiz = ({ onComplete }) => {
     }
   };
 
+  // Reset quiz state
   const handleReset = () => {
     setSelectedOption("");
     setShowExplanation(false);
+    setShowCompiler(false);
+  };
+
+  // Toggle compiler visibility
+  const handleTryCode = () => {
+    setShowCompiler((prev) => !prev);
   };
 
   return (
@@ -59,8 +68,10 @@ const Quiz = ({ onComplete }) => {
       >
         UJI PENGETAHUAN
       </h2>
-      <p className="mb-4">Console.WriteLine() merupakan function untuk ...</p>
       <form onSubmit={handleSubmit}>
+        <p className="mb-4 text-gray-700">
+          Console.WriteLine() merupakan function untuk ...
+        </p>
         <div className="mb-4">
           {["A", "B", "C", "D", "E"].map((option) => (
             <div key={option} className="mb-2">
@@ -83,14 +94,15 @@ const Quiz = ({ onComplete }) => {
             </div>
           ))}
         </div>
-        <div className="flex space-x-2">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row mt-4 gap-2">
           <button
             type="submit"
             style={{
               backgroundColor: "#6E2A7F",
               color: "white",
               padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
+              borderRadius: "0.375rem",
               transition: "background-color 0.2s",
             }}
             onMouseEnter={(e) =>
@@ -102,7 +114,6 @@ const Quiz = ({ onComplete }) => {
           >
             Kirim
           </button>
-
           <button
             type="button"
             onClick={handleReset}
@@ -110,9 +121,8 @@ const Quiz = ({ onComplete }) => {
               backgroundColor: "red",
               color: "white",
               padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
+              borderRadius: "0.375rem",
               transition: "background-color 0.2s",
-              marginLeft: "1rem",
             }}
             onMouseEnter={(e) =>
               (e.currentTarget.style.backgroundColor = "#c0392b")
@@ -123,7 +133,39 @@ const Quiz = ({ onComplete }) => {
           >
             Hapus Jawaban
           </button>
+          <button
+            type="button"
+            onClick={handleTryCode}
+            style={{
+              backgroundColor: "white",
+              color: "#6E2A7F",
+              border: "2px solid #6E2A7F",
+              padding: "0.5rem 1rem",
+              borderRadius: "0.375rem",
+              transition: "background-color 0.2s, border-color 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#e0e0e0";
+              e.currentTarget.style.borderColor = "#5B1F6A";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "white";
+              e.currentTarget.style.borderColor = "#6E2A7F";
+            }}
+          >
+            {showCompiler ? "Sembunyikan Compiler" : "Coba di Compiler"}
+          </button>
         </div>
+        {showCompiler && (
+          <div className="mt-6">
+            <iframe
+              width="100%"
+              height="475"
+              src="https://dotnetfiddle.net/Widget/z3Z1xG"
+              frameBorder="0"
+            ></iframe>
+          </div>
+        )}
       </form>
 
       {/* Explanation Section */}
@@ -159,6 +201,7 @@ const Quiz = ({ onComplete }) => {
   );
 };
 
+// Helper function for option text
 const getOptionText = (option) => {
   switch (option) {
     case "A":

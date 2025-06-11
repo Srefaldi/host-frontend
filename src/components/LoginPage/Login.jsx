@@ -1,7 +1,8 @@
+// src/pages/LoginSiswa.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom"; // Added Link import
-import { LoginUser, reset } from "../../features/authSlice";
+import { useNavigate, Link } from "react-router-dom";
+import { LoginUser, reset, getMe } from "../../features/authSlice";
 import Navbar from "../Landing/Navbar";
 import Footer from "../Landing/Footer";
 import loginImage from "../../assets/img/hero-login.png";
@@ -11,11 +12,10 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 const Login = () => {
   const [nis, setNis] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
-
-  const { user, isError, isSuccess, isLoading, message } = useSelector(
+  const { user, isError, isLoading, message } = useSelector(
     (state) => state.auth
   );
 
@@ -23,9 +23,29 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
+  const Auth = async (e) => {
+    e.preventDefault();
+    try {
+      await dispatch(LoginUser({ nis, password })).unwrap();
+      const result = await dispatch(getMe()).unwrap();
+      if (result?.role === "user") {
+        navigate("/dashboard");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Akses Ditolak",
+          text: "Halaman ini hanya untuk siswa.",
+          showConfirmButton: true,
+        });
+      }
+      dispatch(reset());
+    } catch (error) {
+      dispatch(reset());
+    }
+  };
+
   useEffect(() => {
-    // Tampilkan alert saat login berhasil
-    if (isSuccess) {
+    if (user && user.role === "user") {
       Swal.fire({
         icon: "success",
         title: "Login Berhasil!",
@@ -35,9 +55,17 @@ const Login = () => {
       }).then(() => {
         navigate("/dashboard");
       });
+    } else if (user && user.role !== "user") {
+      Swal.fire({
+        icon: "error",
+        title: "Akses Ditolak",
+        text: "Halaman ini hanya untuk siswa.",
+        showConfirmButton: true,
+      }).then(() => {
+        navigate("/");
+      });
     }
 
-    // Tampilkan alert saat login gagal
     if (isError) {
       Swal.fire({
         icon: "error",
@@ -47,14 +75,8 @@ const Login = () => {
       });
     }
 
-    // Reset state setelah login
     dispatch(reset());
-  }, [isSuccess, isError, message, dispatch, navigate, user]);
-
-  const Auth = (e) => {
-    e.preventDefault();
-    dispatch(LoginUser({ nis, password }));
-  };
+  }, [user, isError, message, dispatch, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen">

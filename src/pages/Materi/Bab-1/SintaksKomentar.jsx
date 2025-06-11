@@ -5,26 +5,29 @@ import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
 import lockIcon from "../../../assets/img/lock.png";
 
+// Material page for "Sintaks Komentar"
 const SintaksKomentar = () => {
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
   const [quizCompleted, setQuizCompleted] = useState(false);
 
+  // Navigate to next lesson
   const handleNext = () => {
     handleLessonComplete("/materi/bab1/sintaks-komentar");
     window.scrollTo(0, 0);
     navigate("/materi/bab1/error-csharp");
   };
 
+  // Navigate to previous lesson
   const handleBack = () => {
     window.scrollTo(0, 0);
     navigate("/materi/bab1/sintaks-print");
   };
 
+  // Handle quiz completion
   const handleQuizCompletion = () => {
     handleLessonComplete("/materi/bab1/error-csharp");
     setQuizCompleted(true);
-    // Scroll ke bagian paling bawah halaman
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
@@ -72,16 +75,16 @@ const SintaksKomentar = () => {
         </pre>
       </div>
 
-      {/* Quiz Component - Now always visible and outside white container */}
+      {/* Quiz */}
       <div className="mb-6">
         <Quiz onComplete={handleQuizCompletion} />
       </div>
 
-      {/* Navigation Buttons - Now outside white container */}
-      <div className="flex justify-between">
+      {/* Navigation Buttons */}
+      <div className="flex justify-between mt-6 gap-4">
         <button
           onClick={handleBack}
-          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
@@ -99,14 +102,12 @@ const SintaksKomentar = () => {
             cursor: quizCompleted ? "pointer" : "not-allowed",
           }}
           onMouseEnter={(e) => {
-            if (quizCompleted) {
+            if (quizCompleted)
               e.currentTarget.style.backgroundColor = "#5B1F6A";
-            }
           }}
           onMouseLeave={(e) => {
-            if (quizCompleted) {
+            if (quizCompleted)
               e.currentTarget.style.backgroundColor = "#6E2A7F";
-            }
           }}
         >
           <span>Selanjutnya</span>

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 
+// Quiz component for multiple-choice questions
 const Quiz = ({ onComplete }) => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [showCompiler, setShowCompiler] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -46,6 +48,7 @@ const Quiz = ({ onComplete }) => {
     }
   };
 
+  // Reset quiz state
   const handleReset = () => {
     setSelectedAnswer("");
     setQuizCompleted(false);
@@ -53,32 +56,32 @@ const Quiz = ({ onComplete }) => {
     setShowCompiler(false);
   };
 
+  // Toggle compiler visibility
   const toggleCompiler = () => {
     setShowCompiler((prev) => !prev);
   };
 
   return (
-    <div className="max-w-full p-6 mx-auto rounded-lg shadow-lg">
+    <div className="max-w-full p-6 mx-auto bg-white rounded-lg shadow-lg">
       <h2
         className="text-lg font-semibold text-center"
         style={{ color: "#6E2A7F" }}
       >
         UJI PENGETAHUAN
       </h2>
-      <form onSubmit={handleSubmit} className="p-4 rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="p-4 rounded-lg">
         <p className="mb-4 text-gray-700">
           Dari sampel kode di bawah ini, yang mana yang merupakan hasil output
           dengan urutan struktur eksekusi kode yang benar?
         </p>
-        <pre className="p-2 mb-4 bg-gray-100 rounded-md">
+        <pre className="p-2 mb-4 bg-gray-100 rounded-md text-sm">
           {`public class Transportasi {
     static void Main(string[] args) {
         Console.WriteLine("Mobil");
         Console.WriteLine("Motor");
         Console.WriteLine("Sepeda");
-        }
     }
-`}
+}`}
         </pre>
         <div className="mb-4">
           {["A", "B", "C", "D", "E"].map((option) => (
@@ -102,14 +105,15 @@ const Quiz = ({ onComplete }) => {
             </div>
           ))}
         </div>
-        <div className="flex space-x-2">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row mt-4 gap-2">
           <button
-            type="submit"
+            onClick={handleSubmit}
             style={{
               backgroundColor: "#6E2A7F",
               color: "white",
               padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
+              borderRadius: "0.375rem", // Equivalent to rounded-md
               transition: "background-color 0.2s",
             }}
             onMouseEnter={(e) =>
@@ -119,16 +123,17 @@ const Quiz = ({ onComplete }) => {
               (e.currentTarget.style.backgroundColor = "#6E2A7F")
             }
           >
-            Kirim
+            Cek Jawaban
           </button>
+
+          {/* Tombol Reset (Hapus Jawaban) */}
           <button
-            type="button"
             onClick={handleReset}
             style={{
               backgroundColor: "red",
               color: "white",
               padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
+              borderRadius: "0.375rem", // Equivalent to rounded-md
               transition: "background-color 0.2s",
             }}
             onMouseEnter={(e) =>
@@ -146,17 +151,19 @@ const Quiz = ({ onComplete }) => {
             style={{
               backgroundColor: "white",
               color: "#6E2A7F",
-              padding: "0.5rem 1rem",
-              borderRadius: "0.5rem",
-              transition: "background-color 0.2s, border-color 0.2s",
               border: "2px solid #6E2A7F",
+              padding: "0.5rem 1rem",
+              borderRadius: "0.375rem", // Equivalent to rounded-md
+              transition: "background-color 0.2s, border-color 0.2s",
             }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#aab7b8")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "white")
-            }
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#e0e0e0";
+              e.currentTarget.style.borderColor = "#5B1F6A";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "white";
+              e.currentTarget.style.borderColor = "#6E2A7F";
+            }}
           >
             {showCompiler ? "Sembunyikan Compiler" : "Coba di Compiler"}
           </button>
@@ -206,10 +213,11 @@ const Quiz = ({ onComplete }) => {
   );
 };
 
+// Helper function for option text
 const getOptionText = (option) => {
   switch (option) {
     case "A":
-      return "Mobil \nSepeda\nMotor";
+      return "Mobil\nSepeda\nMotor";
     case "B":
       return "Sepeda\nMobil\nMotor";
     case "C":

@@ -26,7 +26,6 @@ const Quiz = ({ onComplete }) => {
     const normalizedMethod = normalizeAnswer(methodName);
 
     if (normalizedFunction === "main" && normalizedMethod === "console") {
-      // Auto-correct the case before proceeding
       setFunctionName("Main");
       setMethodName("Console");
       setShowExplanation(true);
@@ -103,67 +102,69 @@ const Quiz = ({ onComplete }) => {
         </div>
 
         {/* Tombol Submit */}
-        <button
-          onClick={handleSubmit}
-          style={{
-            backgroundColor: "#6E2A7F",
-            color: "white",
-            padding: "0.5rem 1rem",
-            borderRadius: "0.5rem",
-            transition: "background-color 0.2s",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "#5B1F6A")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "#6E2A7F")
-          }
-        >
-          Cek Jawaban
-        </button>
+        <div className="flex flex-col sm:flex-row mt-4 gap-2">
+          <button
+            onClick={handleSubmit}
+            style={{
+              backgroundColor: "#6E2A7F",
+              color: "white",
+              padding: "0.5rem 1rem",
+              borderRadius: "0.375rem", // Equivalent to rounded-md
+              transition: "background-color 0.2s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#5B1F6A")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#6E2A7F")
+            }
+          >
+            Cek Jawaban
+          </button>
 
-        {/* Tombol Reset (Hapus Jawaban) */}
-        <button
-          onClick={handleReset}
-          style={{
-            backgroundColor: "red",
-            color: "white",
-            padding: "0.5rem 1rem",
-            borderRadius: "0.5rem",
-            transition: "background-color 0.2s",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "#c0392b")
-          }
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "red")}
-          className="ml-2"
-        >
-          Hapus Jawaban
-        </button>
+          {/* Tombol Reset (Hapus Jawaban) */}
+          <button
+            onClick={handleReset}
+            style={{
+              backgroundColor: "red",
+              color: "white",
+              padding: "0.5rem 1rem",
+              borderRadius: "0.375rem", // Equivalent to rounded-md
+              transition: "background-color 0.2s",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#c0392b")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "red")
+            }
+          >
+            Hapus Jawaban
+          </button>
 
-        {/* Tombol Coba Kode di Compiler */}
-        <button
-          onClick={handleTryCode}
-          style={{
-            backgroundColor: "white",
-            color: "#6E2A7F",
-            padding: "0.5rem 1rem",
-            borderRadius: "0.5rem",
-            transition: "background-color 0.2s, border-color 0.2s",
-            border: "2px solid #6E2A7F",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "#e0e0e0";
-            e.currentTarget.style.borderColor = "#5B1F6A";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "white";
-            e.currentTarget.style.borderColor = "#6E2A7F";
-          }}
-          className="ml-2"
-        >
-          Coba Kode di Compiler
-        </button>
+          {/* Tombol Coba Kode di Compiler */}
+          <button
+            onClick={handleTryCode}
+            style={{
+              backgroundColor: "white",
+              color: "#6E2A7F",
+              border: "2px solid #6E2A7F",
+              padding: "0.5rem 1rem",
+              borderRadius: "0.375rem", // Equivalent to rounded-md
+              transition: "background-color 0.2s, border-color 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#e0e0e0";
+              e.currentTarget.style.borderColor = "#5B1F6A";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "white";
+              e.currentTarget.style.borderColor = "#6E2A7F";
+            }}
+          >
+            Coba Kode di Compiler
+          </button>
+        </div>
       </div>
 
       {/* Explanation Section */}

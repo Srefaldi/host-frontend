@@ -1,6 +1,7 @@
+// src/pages/LoginGuru.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom"; // Import Link
+import { useNavigate, Link } from "react-router-dom";
 import { LoginUser, reset, getMe } from "../../../features/authSlice";
 import Navbar from "../../Landing/Navbar";
 import Footer from "../../Landing/Footer";
@@ -26,24 +27,25 @@ const Login = () => {
     e.preventDefault();
     try {
       await dispatch(LoginUser({ nis, password })).unwrap();
-      // Ambil data pengguna untuk memeriksa role
       const result = await dispatch(getMe()).unwrap();
-      // Periksa role pengguna
       if (result?.role === "admin") {
         navigate("/dashboard-guru");
       } else {
-        navigate("/dashboard");
+        Swal.fire({
+          icon: "error",
+          title: "Akses Ditolak",
+          text: "Halaman ini hanya untuk guru (role admin).",
+          showConfirmButton: true,
+        });
       }
       dispatch(reset());
     } catch (error) {
-      // Error akan ditangani oleh isError dan message dari state
       dispatch(reset());
     }
   };
 
   useEffect(() => {
-    // Tampilkan alert saat login berhasil
-    if (user || (isError === false && message)) {
+    if (user && user.role === "admin") {
       Swal.fire({
         icon: "success",
         title: "Login Berhasil!",
@@ -51,11 +53,19 @@ const Login = () => {
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
-        // Navigasi sudah dilakukan di Auth, jadi tidak perlu ulang di sini
+        navigate("/dashboard-guru");
+      });
+    } else if (user && user.role !== "admin") {
+      Swal.fire({
+        icon: "error",
+        title: "Akses Ditolak",
+        text: "Halaman ini hanya untuk guru (role admin).",
+        showConfirmButton: true,
+      }).then(() => {
+        navigate("/");
       });
     }
 
-    // Tampilkan alert saat login gagal
     if (isError) {
       Swal.fire({
         icon: "error",
@@ -65,9 +75,8 @@ const Login = () => {
       });
     }
 
-    // Reset state setelah login
     dispatch(reset());
-  }, [user, isError, message, dispatch]);
+  }, [user, isError, message, dispatch, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen">

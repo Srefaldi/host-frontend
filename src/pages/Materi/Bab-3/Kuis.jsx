@@ -198,17 +198,20 @@ const KuisBab3 = () => {
       return newHasAnswered;
     });
 
-    Swal.fire({
-      title: "Jawaban Terkirim!",
-      text: "Silakan lanjut ke soal berikutnya.",
-      icon: "success",
-      confirmButtonText: "OK",
-    }).then(() => {
-      const nextQuestionIndex = currentQuestionIndex + 1;
-      if (nextQuestionIndex < questions.length) {
-        setCurrentQuestionIndex(nextQuestionIndex);
-      }
-    });
+    const nextQuestionIndex = currentQuestionIndex + 1;
+    if (nextQuestionIndex < questions.length) {
+      setCurrentQuestionIndex(nextQuestionIndex);
+    }
+
+    // Check if all questions are answered (all buttons are green)
+    if (newAnswerStatus.every((status) => status === "submitted")) {
+      Swal.fire({
+        title: "Semua Soal Telah Terjawab!",
+        text: "Silahkan selesaikan kuis.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const resetAnswerForCurrentQuestion = () => {

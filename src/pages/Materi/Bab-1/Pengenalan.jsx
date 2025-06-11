@@ -5,7 +5,7 @@ import logoc from "./img-bab1/logo.png";
 import Quiz from "./Quiz-bab1/Quiz1";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
-import lockIcon from "../../../assets/img/lock.png"; // Replace with actual lock icon path
+import lockIcon from "../../../assets/img/lock.png";
 import iconBook from "../../../assets/img/book.png";
 import iconTujuan from "../../../assets/img/tujuan.png";
 import iconKonten from "../../../assets/img/konten.png";
@@ -39,7 +39,7 @@ const PengenalanCSharp = () => {
   };
 
   return (
-    <div>
+    <div className="p-4 sm:p-6">
       <h1 className="mb-4 text-xl font-bold text-center sm:text-2xl">
         BAB 1 - PENDAHULUAN
       </h1>
@@ -207,16 +207,14 @@ const PengenalanCSharp = () => {
       <Quiz onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between mt-6 gap-4">
+        {" "}
+        {/* Added gap-4 for spacing */}
         <button
           onClick={() => navigate("/dashboard")}
-          className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-sm sm:text-base"
+          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"
         >
-          <img
-            src={backIcon}
-            alt="Kembali"
-            className="w-4 h-4 mr-2 sm:w-5 sm:h-5"
-          />
+          <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
         </button>
         <button

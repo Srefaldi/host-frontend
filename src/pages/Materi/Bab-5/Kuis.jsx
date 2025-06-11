@@ -182,17 +182,20 @@ const KuisBab5 = () => {
       return newHasAnswered;
     });
 
-    Swal.fire({
-      title: "Jawaban Terkirim!",
-      text: "Silakan lanjut ke soal berikutnya.",
-      icon: "success",
-      confirmButtonText: "OK",
-    }).then(() => {
-      const nextQuestionIndex = currentQuestionIndex + 1;
-      if (nextQuestionIndex < questions.length) {
-        setCurrentQuestionIndex(nextQuestionIndex);
-      }
-    });
+    const nextQuestionIndex = currentQuestionIndex + 1;
+    if (nextQuestionIndex < questions.length) {
+      setCurrentQuestionIndex(nextQuestionIndex);
+    }
+
+    // Check if all questions are answered (all buttons are green)
+    if (newAnswerStatus.every((status) => status === "submitted")) {
+      Swal.fire({
+        title: "Semua Soal Telah Terjawab!",
+        text: "Silahkan selesaikan kuis.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const resetAnswerForCurrentQuestion = () => {
@@ -588,7 +591,7 @@ const KuisBab5 = () => {
                       className={`flex items-center cursor-pointer p-2 sm:p-3 rounded-lg border-2 transition duration-200 text-sm sm:text-base ${
                         selectedAnswers[currentQuestionIndex] === option
                           ? "bg-[#6E2A7F] text-white border-[#6E2A7F]"
-                          : "bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200"
+                          : "bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200"
                       }`}
                     >
                       <input

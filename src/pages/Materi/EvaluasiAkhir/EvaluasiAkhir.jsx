@@ -13,13 +13,11 @@ const EvaluasiAkhir = () => {
   const { user } = useSelector((state) => state.auth);
   const [showEvaluasi, setShowEvaluasi] = useState(false);
 
-  // State untuk instruksi
   const [riwayat, setRiwayat] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [kkm, setKkm] = useState(75);
 
-  // State untuk evaluasi
   const [questions, setQuestions] = useState([]);
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -29,7 +27,6 @@ const EvaluasiAkhir = () => {
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [evaluationId, setEvaluationId] = useState(null);
 
-  // Fungsi untuk memformat tanggal
   const formatDate = (dateString) => {
     if (!dateString) {
       console.warn("Tanggal tidak tersedia:", dateString);
@@ -49,7 +46,6 @@ const EvaluasiAkhir = () => {
     });
   };
 
-  // Ambil data evaluasi, KKM, soal, dan riwayat
   useEffect(() => {
     const fetchInitialData = async () => {
       if (!user?.uuid) {
@@ -61,7 +57,6 @@ const EvaluasiAkhir = () => {
 
       setIsLoading(true);
       try {
-        // Ambil evaluasi untuk Evaluasi Akhir
         const evalResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/evaluations`,
           { withCredentials: true }
@@ -75,7 +70,6 @@ const EvaluasiAkhir = () => {
         }
         setEvaluationId(evaluasiAkhir.id);
 
-        // Ambil KKM
         const kkmResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/kkm`,
           { withCredentials: true }
@@ -87,7 +81,6 @@ const EvaluasiAkhir = () => {
           setKkm(evaluasiKkm.kkm);
         }
 
-        // Ambil soal
         const questionsResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/questions/evaluation/${
             evaluasiAkhir.id
@@ -116,7 +109,6 @@ const EvaluasiAkhir = () => {
         setAnswerStatus(Array(fetchedQuestions.length).fill(null));
         setHasAnswered(Array(fetchedQuestions.length).fill(false));
 
-        // Ambil riwayat skor
         const scoresResponse = await axios.get(
           `${import.meta.env.VITE_API_ENDPOINT}/scores`,
           { withCredentials: true }
@@ -146,7 +138,6 @@ const EvaluasiAkhir = () => {
     }
   }, [user, kkm, navigate]);
 
-  // Timer untuk evaluasi
   useEffect(() => {
     if (showEvaluasi && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -198,17 +189,20 @@ const EvaluasiAkhir = () => {
       return newHasAnswered;
     });
 
-    Swal.fire({
-      title: "Jawaban Terkirim!",
-      text: "Silakan lanjut ke soal berikutnya.",
-      icon: "success",
-      confirmButtonText: "OK",
-    }).then(() => {
-      const nextQuestionIndex = currentQuestionIndex + 1;
-      if (nextQuestionIndex < questions.length) {
-        setCurrentQuestionIndex(nextQuestionIndex);
-      }
-    });
+    const nextQuestionIndex = currentQuestionIndex + 1;
+    if (nextQuestionIndex < questions.length) {
+      setCurrentQuestionIndex(nextQuestionIndex);
+    }
+
+    // Check if all questions are answered (all buttons are green)
+    if (newAnswerStatus.every((status) => status === "submitted")) {
+      Swal.fire({
+        title: "Semua Soal Telah Terjawab!",
+        text: "Silahkan selesaikan evaluasi.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const resetAnswerForCurrentQuestion = () => {
@@ -266,7 +260,7 @@ const EvaluasiAkhir = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const scoreToSave = (score / (questions.length * 5)) * 100; // Convert to percentage
+          const scoreToSave = (score / (questions.length * 5)) * 100;
           await axios.post(
             `${import.meta.env.VITE_API_ENDPOINT}/scores`,
             {
@@ -312,7 +306,7 @@ const EvaluasiAkhir = () => {
 
   const handleTimeUp = async () => {
     try {
-      const scoreToSave = (score / (questions.length * 5)) * 100; // Convert to percentage
+      const scoreToSave = (score / (questions.length * 5)) * 100;
       await axios.post(
         `${import.meta.env.VITE_API_ENDPOINT}/scores`,
         {
@@ -357,7 +351,6 @@ const EvaluasiAkhir = () => {
     }
   };
 
-  // UI untuk halaman instruksi
   const renderInstruksi = () => (
     <div className="max-w-4xl px-4 mx-auto sm:px-6 lg:px-8">
       <div className="p-4 bg-white rounded-lg shadow-md">
@@ -461,7 +454,6 @@ const EvaluasiAkhir = () => {
     </div>
   );
 
-  // UI untuk halaman evaluasi
   const renderEvaluasi = () => {
     if (questions.length === 0 || !questions[currentQuestionIndex]) {
       return (
@@ -517,7 +509,7 @@ const EvaluasiAkhir = () => {
                 untuk mengirim jawaban.
               </li>
               <li>
-                Apabila notifikasi berwarna Hijau, jawaban Anda telah terkirim.
+                Apabila tombol soal berwarna Hijau, jawaban Anda telah terkirim.
               </li>
               <li>
                 Tekan tombol{" "}
@@ -525,7 +517,7 @@ const EvaluasiAkhir = () => {
                   disabled
                   style={{
                     backgroundColor: "white",
-                    color: "#6E2A7F",
+                    color: "6E2A7F",
                     padding: "0.5rem 1rem",
                     borderRadius: "0.5rem",
                     border: "2px solid #6E2A7F",
@@ -689,7 +681,7 @@ const EvaluasiAkhir = () => {
                       className={`flex items-center cursor-pointer p-3 rounded-lg border-2 transition duration-200 text-base w-full ${
                         selectedAnswers[currentQuestionIndex] === option
                           ? "bg-[#6E2A7F] text-white border-[#6E2A7F]"
-                          : "bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200"
+                          : "bg-gray-100 text-gray-600 border-gray-300 hover:bg-gray-200"
                       }`}
                     >
                       <input
