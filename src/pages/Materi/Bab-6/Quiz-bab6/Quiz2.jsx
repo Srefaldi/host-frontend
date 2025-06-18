@@ -7,6 +7,11 @@ const Quiz2 = ({ onComplete }) => {
   const [inputMethod, setInputMethod] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
+  // Function to normalize answers (remove spaces and make lowercase)
+  const normalizeAnswer = (answer) => {
+    return answer.replace(/\s+/g, "").toLowerCase();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -25,11 +30,6 @@ const Quiz2 = ({ onComplete }) => {
     const correctCall1 = "TampilkanPesan();";
     const correctCall2 = "TampilkanPesan();";
     const correctMethod = "TampilkanPesan()";
-
-    // Function to normalize answers (remove spaces and make lowercase)
-    const normalizeAnswer = (answer) => {
-      return answer.replace(/\s+/g, "").toLowerCase();
-    };
 
     // Check if answers match when normalized
     const isCorrect =
@@ -58,17 +58,19 @@ const Quiz2 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputCall1("");
-      setInputCall2("");
-      setInputMethod("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(inputCall1, inputCall2, inputMethod),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputCall1("");
+        setInputCall2("");
+        setInputMethod("");
+        setShowExplanation(false);
+        onComplete(false);
       });
     }
   };
@@ -80,8 +82,30 @@ const Quiz2 = ({ onComplete }) => {
     setShowExplanation(false);
   };
 
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (call1, call2, method) => {
+    let feedback = "Jawaban Anda belum tepat. Berikut adalah masalahnya:<ul>";
+
+    if (normalizeAnswer(call1) !== normalizeAnswer("TampilkanPesan();")) {
+      feedback += `<li><strong>Pemanggilan pertama (${call1})</strong> salah. Pemanggilan method harus menggunakan nama method yang benar diikuti tanda kurung dan titik koma. Pastikan sintaksis pemanggilan sesuai dengan nama method yang didefinisikan. Tinjau kembali materi tentang pemanggilan method di C#. </li>`;
+    }
+    if (normalizeAnswer(call2) !== normalizeAnswer("TampilkanPesan();")) {
+      feedback += `<li><strong>Pemanggilan kedua (${call2})</strong> salah. Pemanggilan method harus menggunakan nama method yang benar diikuti tanda kurung dan titik koma. Pastikan sintaksis pemanggilan sesuai dengan nama method yang didefinisikan. Tinjau kembali materi tentang pemanggilan method di C#. </li>`;
+    }
+    if (normalizeAnswer(method) !== normalizeAnswer("TampilkanPesan()")) {
+      if (method.trim().length === 0) {
+        feedback += `<li><strong>Nama method (kosong)</strong> salah. Nama method harus diisi dengan nama yang sesuai, diikuti tanda kurung, tanpa titik koma. Tinjau kembali materi tentang definisi method di C#. </li>`;
+      } else {
+        feedback += `<li><strong>Nama method (${method})</strong> salah. Nama method harus sesuai dengan yang dipanggil, diikuti tanda kurung, tanpa titik koma. Pastikan Anda tidak menambahkan kata kunci seperti <code>static</code> atau <code>void</code> di sini. Tinjau kembali materi tentang definisi method di C#. </li>`;
+      }
+    }
+
+    feedback += "</ul>Yuk, coba lagi!";
+    return feedback;
+  };
+
   return (
-    <div className="mt-4 max-w-full p-6 mx-auto rounded-lg">
+    <div className="max-w-full p-6 mx-auto mt-4 rounded-lg">
       <h2
         className="text-lg font-semibold text-center"
         style={{ color: "#6E2A7F" }}
@@ -96,7 +120,7 @@ const Quiz2 = ({ onComplete }) => {
           tidak mengembalikan nilai.
         </p>
 
-        <div className="p-4 mt-3 font-mono text-sm bg-gray-100 rounded-lg mb-4">
+        <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
               {`public class Program\n{\n    static void Main(string[] args)\n    {\n        `}
@@ -171,10 +195,10 @@ const Quiz2 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -191,23 +215,23 @@ const Quiz2 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Untuk pemanggilan pertama: <strong>TampilkanPesan();</strong>,
-          <br />
-          Untuk pemanggilan kedua: <strong>TampilkanPesan();</strong>,
-          <br />
-          Untuk nama method: <strong>TampilkanPesan()</strong>.
-          <br />
-          Dalam C#, method <code>TampilkanPesan()</code> harus dipanggil dengan
-          sintaks yang benar, yaitu nama method diikuti tanda kurung dan titik
-          koma untuk setiap pemanggilan. Dalam kode ini, method dipanggil tiga
-          kali (dua kali dengan <code>TampilkanPesan();</code> yang dimasukkan
-          pengguna dan sekali dalam kode yang sudah ada) untuk menampilkan pesan
-          "Selamat Belajar Method di C#!" sebanyak tiga kali. Method
-          didefinisikan dengan nama <code>TampilkanPesan()</code> tanpa
-          parameter dan bertipe <code>void</code> karena tidak mengembalikan
-          nilai.
+          Jawaban Anda benar. Method dalam kode ini dipanggil tiga kali untuk
+          menampilkan pesan "Selamat Belajar Method di C#!" sebanyak tiga kali:
+          <ul>
+            <li>
+              Pemanggilan pertama: <code>{inputCall1}</code>
+            </li>
+            <li>
+              Pemanggilan kedua: <code>{inputCall2}</code>
+            </li>
+            <li>
+              Nama method: <code>{inputMethod}</code>
+            </li>
+          </ul>
+          Dalam C#, pemanggilan method menggunakan nama method diikuti tanda
+          kurung dan titik koma (<code>MethodName();</code>). Definisi method
+          menggunakan nama method diikuti tanda kurung tanpa titik koma, dengan
+          tipe <code>void</code> jika tidak mengembalikan nilai.
         </div>
       )}
     </div>

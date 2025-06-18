@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -17,12 +18,22 @@ import image6 from "./img-bab2/sintaks-input6.png";
 
 const SintaksInput = () => {
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab2/sintaks-input";
 
-  const handleQuizComplete = (isPassed) => {
-    handleLessonComplete("/materi/bab2/latihan-bab2");
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuizPassed(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizCompleteLocal = (isPassed) => {
+    handleQuizComplete("/materi/bab2/sintaks-input");
     setQuizCompleted(true);
     setQuizPassed(isPassed);
   };
@@ -187,7 +198,7 @@ const SintaksInput = () => {
       </div>
 
       {/* Kuis Sintaks Input */}
-      <QuizSintaksInput onComplete={handleQuizComplete} />
+      <QuizSintaksInput onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

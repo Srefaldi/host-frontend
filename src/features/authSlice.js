@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Debugging: Log variabel lingkungan untuk memastikan VITE_API_ENDPOINT tersedia
 console.log("VITE_API_ENDPOINT:", import.meta.env.VITE_API_ENDPOINT);
 
 const initialState = {
@@ -13,6 +12,7 @@ const initialState = {
   evaluations: [],
   questions: [],
   kkm: [],
+  completedLessons: [],
 };
 
 export const LoginUser = createAsyncThunk(
@@ -101,6 +101,28 @@ export const getMe = createAsyncThunk("user/getMe", async (_, thunkAPI) => {
   }
 });
 
+export const validateLesson = createAsyncThunk(
+  "user/validateLesson",
+  async ({ lessonPath }, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+      const userId = state.auth.user?.uuid;
+      if (!userId) {
+        return thunkAPI.rejectWithValue("User tidak terautentikasi");
+      }
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_ENDPOINT}/users/${userId}/validate-lesson`,
+        { lessonPath },
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.msg || "Terjadi kesalahan";
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const LogOut = createAsyncThunk("user/LogOut", async (_, thunkAPI) => {
   try {
     const response = await axios.delete(
@@ -143,7 +165,7 @@ export const getEvaluations = createAsyncThunk(
           withCredentials: true,
         }
       );
-      console.log("getEvaluations response:", response.data); // Debugging
+      console.log("getEvaluations response:", response.data);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.msg || "Terjadi kesalahan";
@@ -162,10 +184,11 @@ export const getQuestionsByEvaluation = createAsyncThunk(
         }/questions/evaluation/${evaluation_id}`,
         { withCredentials: true }
       );
-      console.log("getQuestionsByEvaluation response:", response.data); // Debugging
+      console.log("getQuestionsByEvaluation response:", response.data);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.msg || "Terjadi kesalahan";
+      console.error("getQuestionsByEvaluation error:", error);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -180,7 +203,7 @@ export const createQuestion = createAsyncThunk(
         questionData,
         { withCredentials: true }
       );
-      console.log("createQuestion response:", response.data); // Debugging
+      console.log("createQuestion response:", response.data);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.msg || "Terjadi kesalahan";
@@ -194,16 +217,15 @@ export const updateQuestion = createAsyncThunk(
   async ({ id, questionData }, thunkAPI) => {
     try {
       const response = await axios.patch(
-        // Ubah dari put ke patch
         `${import.meta.env.VITE_API_ENDPOINT}/questions/${id}`,
         questionData,
         { withCredentials: true }
       );
-      console.log("updateQuestion response:", response.data); // Debugging
+      console.log("updateQuestion response:", response.data);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.msg || "Terjadi kesalahan";
-      console.error("updateQuestion error:", error.response?.data); // Debugging
+      console.error("updateQuestion error:", error.response?.data);
       return thunkAPI.rejectWithValue(message);
     }
   }
@@ -217,7 +239,7 @@ export const deleteQuestion = createAsyncThunk(
         `${import.meta.env.VITE_API_ENDPOINT}/questions/${questionId}`,
         { withCredentials: true }
       );
-      console.log("deleteQuestion response:", response.data); // Debugging
+      console.log("deleteQuestion response:", response.data);
       return { questionId, message: response.data.msg };
     } catch (error) {
       const message = error.response?.data?.msg || "Terjadi kesalahan";
@@ -234,7 +256,7 @@ export const getKkm = createAsyncThunk("kkm/getKkm", async (_, thunkAPI) => {
         withCredentials: true,
       }
     );
-    console.log("getKkm response:", response.data); // Debugging
+    console.log("getKkm response:", response.data);
     return response.data;
   } catch (error) {
     const message = error.response?.data?.msg || "Terjadi kesalahan";
@@ -253,7 +275,7 @@ export const setKkm = createAsyncThunk(
           withCredentials: true,
         }
       );
-      console.log("setKkm response:", response.data); // Debugging
+      console.log("setKkm response:", response.data);
       return response.data;
     } catch (error) {
       const message = error.response?.data?.msg || "Terjadi kesalahan";
@@ -278,6 +300,7 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.user = action.payload;
+      state.completedLessons = action.payload.completedLessons || [];
       state.isError = false;
       state.message = "";
     });
@@ -330,6 +353,7 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.user = action.payload;
+      state.completedLessons = action.payload.completedLessons || [];
       state.isError = false;
       state.message = "";
     });
@@ -338,6 +362,24 @@ export const authSlice = createSlice({
       state.isError = true;
       state.message = action.payload;
       state.user = null;
+      state.completedLessons = [];
+    });
+
+    builder.addCase(validateLesson.pending, (state) => {
+      state.isLoading = true;
+      state.isError = false;
+      state.message = "";
+    });
+    builder.addCase(validateLesson.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.isError = false;
+      state.message = "";
+    });
+    builder.addCase(validateLesson.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+      state.message = action.payload;
     });
 
     builder.addCase(LogOut.pending, (state) => {
@@ -349,6 +391,7 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.user = null;
+      state.completedLessons = [];
       state.isError = false;
       state.message = action.payload.message;
     });
@@ -402,7 +445,10 @@ export const authSlice = createSlice({
     builder.addCase(getQuestionsByEvaluation.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
-      state.questions = action.payload.questions || action.payload;
+      // Pastikan payload memiliki properti questions, jika tidak, gunakan array kosong
+      state.questions = Array.isArray(action.payload?.questions)
+        ? action.payload.questions
+        : [];
       state.isError = false;
       state.message = "";
     });
@@ -410,6 +456,7 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
       state.message = action.payload;
+      state.questions = []; // Reset questions jika gagal
     });
 
     builder.addCase(createQuestion.pending, (state) => {
@@ -421,7 +468,10 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.message = action.payload.msg;
-      state.questions.push(action.payload.question || action.payload);
+      // Pastikan menambahkan question ke array questions
+      if (action.payload.question) {
+        state.questions.push(action.payload.question);
+      }
       state.isError = false;
     });
     builder.addCase(createQuestion.rejected, (state, action) => {
@@ -439,11 +489,14 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.message = action.payload.msg;
-      state.questions = state.questions.map((question) =>
-        question.id === action.payload.question?.id
-          ? action.payload.question
-          : question
-      );
+      // Pastikan hanya memperbarui jika question ada
+      if (action.payload.question) {
+        state.questions = state.questions.map((question) =>
+          question.id === action.payload.question?.id
+            ? action.payload.question
+            : question
+        );
+      }
       state.isError = false;
     });
     builder.addCase(updateQuestion.rejected, (state, action) => {

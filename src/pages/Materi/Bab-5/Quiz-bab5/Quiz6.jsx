@@ -6,11 +6,17 @@ const Quiz6 = ({ onComplete }) => {
   const [inputIteration, setInputIteration] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
+  const normalizeAnswer = (answer) => {
+    return answer
+      .replace(/[;,\s]+/g, "") // Hapus spasi, koma, dan titik koma
+      .toLowerCase();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Check for empty inputs
-    if (!inputCondition || !inputIteration) {
+    // Periksa input kosong atau hanya berisi spasi
+    if (!inputCondition.trim() || !inputIteration.trim()) {
       window.scrollTo(0, 0);
       Swal.fire({
         title: "Isi Semua Kolom!",
@@ -22,16 +28,11 @@ const Quiz6 = ({ onComplete }) => {
       return;
     }
 
-    // Fungsi untuk normalisasi jawaban
-    const normalizeAnswer = (answer) => {
-      return answer.replace(/\s+/g, "").toLowerCase();
-    };
-
-    // Normalisasi jawaban pengguna dan jawaban yang benar
+    // Normalisasi jawaban
     const normalizedInputCondition = normalizeAnswer(inputCondition);
     const normalizedInputIteration = normalizeAnswer(inputIteration);
-    const correctCondition = "i > 0"; // Jawaban yang benar untuk kondisi
-    const correctIteration = "i--"; // Jawaban yang benar untuk iterasi
+    const correctCondition = "i > 0";
+    const correctIteration = "i--";
     const normalizedCorrectCondition = normalizeAnswer(correctCondition);
     const normalizedCorrectIteration = normalizeAnswer(correctIteration);
 
@@ -55,16 +56,18 @@ const Quiz6 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputCondition("");
-      setInputIteration("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(inputCondition, inputIteration),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputCondition("");
+        setInputIteration("");
+        setShowExplanation(false);
+        onComplete(false); // Tambahkan penanganan untuk jawaban salah
       });
     }
   };
@@ -73,6 +76,46 @@ const Quiz6 = ({ onComplete }) => {
     setInputCondition("");
     setInputIteration("");
     setShowExplanation(false);
+    // Atur fokus ke input pertama
+    document.querySelector('input[placeholder="Jawaban..."]').focus();
+  };
+
+  const getIncorrectFeedback = (condition, iteration) => {
+    const normalizedCondition = normalizeAnswer(condition);
+    const normalizedIteration = normalizeAnswer(iteration);
+    const normalizedCorrectCondition = normalizeAnswer("i > 0");
+    const normalizedCorrectIteration = normalizeAnswer("i--");
+
+    let feedback = "Jawaban Anda belum tepat. Berikut adalah masalahnya:<ul>";
+
+    if (normalizedCondition !== normalizedCorrectCondition) {
+      if (normalizedCondition.includes("i>=1")) {
+        feedback += `<li><strong>Kondisi (${condition})</strong> hampir benar, tetapi gunakan <code>i > 0</code> untuk menyamakan dengan jawaban yang diharapkan.</li>`;
+      } else if (
+        !normalizedCondition.includes(">0") &&
+        !normalizedCondition.includes(">=1")
+      ) {
+        feedback += `<li><strong>Kondisi (${condition})</strong> salah. Kondisi harus memastikan perulangan berjalan selama <code>i</code> lebih besar dari 0, misalnya <code>i > 0</code>.</li>`;
+      } else {
+        feedback += `<li><strong>Kondisi (${condition})</strong> salah. Periksa sintaksis, pastikan formatnya seperti <code>i > 0</code>.</li>`;
+      }
+    }
+
+    if (normalizedIteration !== normalizedCorrectIteration) {
+      if (
+        normalizedIteration.includes("i=i-1") ||
+        normalizedIteration.includes("i-=1")
+      ) {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> hampir benar, tetapi gunakan <code>i--</code> untuk menyamakan dengan jawaban yang diharapkan.</li>`;
+      } else if (!normalizedIteration.includes("--")) {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Gunakan <code>i--</code> untuk mengurangi nilai <code>i</code> sebesar 1 setiap iterasi.</li>`;
+      } else {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Periksa sintaksis, pastikan formatnya seperti <code>i--</code>.</li>`;
+      }
+    }
+
+    feedback += "</ul>Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -93,7 +136,7 @@ const Quiz6 = ({ onComplete }) => {
         <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
-              {`\npublic class Quiz\n{\n    public static void Main()\n    {\n        int i = 5;\n\n        while (`}
+              {`\npublic class Quiz\n{\n    public static void Main(string[] args)\n    {\n        int i = 5;\n\n        while (`}
               <input
                 type="text"
                 value={inputCondition}
@@ -156,12 +199,11 @@ const Quiz6 = ({ onComplete }) => {
         </div>
       </div>
 
-      {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -178,14 +220,20 @@ const Quiz6 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah: <code>i > 0</code> untuk kondisi, dan{" "}
-          <code>i--</code> untuk iterasi.
-          <br />
-          Dalam perulangan <code>while</code> di C#, kondisi <code>i > 0</code>{" "}
-          memastikan perulangan berjalan selama nilai <code>i</code> lebih besar
-          dari 0. Iterasi <code>i--</code> mengurangi nilai <code>i</code>{" "}
-          sebesar 1 pada setiap iterasi, sehingga mencetak angka dari 5 hingga
-          1.
+          Selamat! Jawaban Anda benar. Perulangan <code>while</code> yang Anda
+          tulis:
+          <ul>
+            <li>
+              <code>{inputCondition}</code>: Memastikan perulangan berjalan
+              selama <code>i</code> lebih besar dari 0.
+            </li>
+            <li>
+              <code>{inputIteration}</code>: Mengurangi nilai <code>i</code>{" "}
+              sebesar 1 setiap iterasi.
+            </li>
+          </ul>
+          Dengan inisialisasi <code>int i = 5</code>, kode akan mencetak angka
+          dari 5 hingga 1.
         </div>
       )}
     </div>

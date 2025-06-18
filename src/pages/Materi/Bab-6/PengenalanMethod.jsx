@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
 import lockIcon from "../../../assets/img/lock.png";
@@ -12,15 +13,25 @@ const MethodMateri = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab6/pengenalan-method";
 
-  const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab6/pengenalan-method");
-    setQuizCompleted(true);
+  // Initialize quizCompleted based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizComplete = (isCorrect) => {
+    if (isCorrect && !completedLessons.includes(currentLessonPath)) {
+      handleLessonComplete(currentLessonPath);
+      setQuizCompleted(true);
+    }
   };
 
   const handleNext = () => {
     if (quizCompleted) {
-      handleLessonComplete("/materi/bab6/pengenalan-method");
       window.scrollTo(0, 0);
       navigate("/materi/bab6/method-void");
     }
@@ -44,7 +55,7 @@ const MethodMateri = () => {
           PENDAHULUAN MATERI
           <span className="ml-2">▼</span>
         </h3>
-        <div className="p-4 text-justify text-gray-700 rounded-b-lg bg-white">
+        <div className="p-4 text-justify text-gray-700 bg-white rounded-b-lg">
           <p>
             Pada bab ini, kita akan membahas tentang Method dalam pemrograman
             C#. Method adalah blok kode yang dirancang untuk melakukan tugas

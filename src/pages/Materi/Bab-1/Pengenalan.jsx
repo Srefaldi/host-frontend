@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Tambahkan useEffect
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux"; // Tambahkan useSelector untuk akses Redux state
 import alur from "./img-bab1/alur.png";
 import logoc from "./img-bab1/logo.png";
 import Quiz from "./Quiz-bab1/Quiz1";
@@ -19,6 +20,15 @@ const PengenalanCSharp = () => {
   const navigate = useNavigate();
   const { handleLessonComplete, handleQuizComplete } = useOutletContext();
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const { completedLessons } = useSelector((state) => state.auth); // Ambil completedLessons dari Redux
+  const currentLessonPath = "/materi/bab1/pengenalan"; // Path materi saat ini
+
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true); // Set quizCompleted ke true jika materi sudah diselesaikan
+    }
+  }, [completedLessons, currentLessonPath]);
 
   const toggleSection = (section) => {
     setOpenSections((prev) => ({
@@ -29,7 +39,7 @@ const PengenalanCSharp = () => {
 
   const handleQuizCompleteLocal = () => {
     setQuizCompleted(true);
-    handleQuizComplete("/materi/bab1/pengenalan");
+    handleQuizComplete("/materi/bab1/pengenalan"); // Panggil handleQuizComplete dengan path saat ini
   };
 
   const handleNext = () => {
@@ -207,12 +217,12 @@ const PengenalanCSharp = () => {
       <Quiz onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
-      <div className="flex justify-between mt-6 gap-4">
+      <div className="flex justify-between gap-4 mt-6">
         {" "}
         {/* Added gap-4 for spacing */}
         <button
           onClick={() => navigate("/dashboard")}
-          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"
+          className="flex items-center px-4 py-2 text-base font-semibold text-white transition-colors duration-200 bg-gray-500 rounded-lg hover:bg-gray-600"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali

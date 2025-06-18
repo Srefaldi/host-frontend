@@ -33,15 +33,16 @@ const Quiz6 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setSelectedAnswer("");
+        setShowExplanation(false);
       });
     }
   };
@@ -49,6 +50,30 @@ const Quiz6 = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "A":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Operator <code>||</code> menghasilkan <code>false</code> jika kedua kondisi bernilai <code>false</code>, bukan <code>true</code>. Tinjau kembali materi tentang operator logika . Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Operator <code>||</code> tidak mensyaratkan semua kondisi bernilai <code>true</code>, cukup salah satu. Tinjau kembali materi tentang operator logika . Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Operator <code>||</code> tidak hanya bergantung pada kondisi pertama, tetapi juga memeriksa kondisi kedua jika diperlukan. Tinjau kembali materi tentang operator logika . Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Operator <code>||</code> adalah operator logika untuk kondisi boolean, bukan untuk membandingkan nilai numerik. Tinjau kembali materi tentang operator logika . Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang operator logika dan coba lagi.";
+    }
   };
 
   return (
@@ -131,10 +156,10 @@ const Quiz6 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -151,16 +176,8 @@ const Quiz6 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:{" "}
-          <strong>B. Salah satu kondisi bernilai true</strong>.
-          <br />
-          Dalam C#, operator <code>||</code> adalah operator logika OR (atau).
-          Operator ini akan menghasilkan <code>true</code> jika salah satu atau
-          kedua kondisi yang dibandingkan bernilai <code>true</code>. Sebagai
-          contoh, jika kita memiliki kondisi <code>true || false</code>,
-          hasilnya adalah <code>true</code> karena salah satu kondisi bernilai{" "}
-          <code>true</code>. Hanya jika kedua kondisi bernilai{" "}
-          <code>false</code>, maka hasilnya akan <code>false</code>.
+          Dalam C#, operator logika OR digunakan untuk mengevaluasi dua kondisi,
+          menghasilkan nilai true jika salah satu atau keduanya bernilai true.
         </div>
       )}
     </div>

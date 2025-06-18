@@ -1,6 +1,9 @@
 import React from "react";
 
 const ProgressBar = ({ progress }) => {
+  // Bulatkan progress ke bilangan bulat terdekat
+  const roundedProgress = Math.round(progress);
+
   return (
     <div className="w-full bg-gray-200 h-4 relative">
       <div
@@ -8,7 +11,7 @@ const ProgressBar = ({ progress }) => {
         style={{ width: `${progress}%` }}
       ></div>
       <span className="absolute inset-0 flex justify-center items-center text-xs font-bold text-[#001F3F]">
-        {progress}% Selesai
+        {roundedProgress}%
       </span>
     </div>
   );

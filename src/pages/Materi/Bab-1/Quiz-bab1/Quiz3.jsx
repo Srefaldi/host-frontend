@@ -39,16 +39,21 @@ const Quiz = ({ onComplete }) => {
         onComplete();
       });
     } else {
-      window.scrollTo(0, 0);
-      setFunctionName("");
-      setMethodName("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: `Jawaban Anda <strong>${
+          functionName || "kosong"
+        }</strong> dan <strong>${
+          methodName || "kosong"
+        }</strong> belum benar. Coba tinjau materi tentang struktur program C# dan kelas yang digunakan untuk output konsol. Yuk, coba lagi!`,
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setFunctionName("");
+        setMethodName("");
+        setShowExplanation(false);
       });
     }
   };
@@ -102,7 +107,7 @@ const Quiz = ({ onComplete }) => {
         </div>
 
         {/* Tombol Submit */}
-        <div className="flex flex-col sm:flex-row mt-4 gap-2">
+        <div className="flex flex-col gap-2 mt-4 sm:flex-row">
           <button
             onClick={handleSubmit}
             style={{
@@ -169,10 +174,10 @@ const Quiz = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"

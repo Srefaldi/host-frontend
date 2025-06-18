@@ -6,6 +6,11 @@ const Quiz3 = ({ onComplete }) => {
   const [inputReturn, setInputReturn] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
+  // Function to normalize answers
+  const normalizeAnswer = (answer) => {
+    return answer.replace(/\s+/g, "").toLowerCase();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -20,11 +25,6 @@ const Quiz3 = ({ onComplete }) => {
       });
       return;
     }
-
-    // Function to normalize answers
-    const normalizeAnswer = (answer) => {
-      return answer.replace(/\s+/g, "").toLowerCase();
-    };
 
     // Normalize user answers and correct answers
     const normalizedInputMain = normalizeAnswer(inputMain);
@@ -58,16 +58,17 @@ const Quiz3 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputMain("");
-      setInputReturn("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(inputMain, inputReturn),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputMain("");
+        setInputReturn("");
+        setShowExplanation(false);
       });
     }
   };
@@ -78,8 +79,44 @@ const Quiz3 = ({ onComplete }) => {
     setShowExplanation(false);
   };
 
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (main, returnVal) => {
+    const normalizedMain = normalizeAnswer(main);
+    const normalizedReturn = normalizeAnswer(returnVal);
+    let feedback = "Jawaban Anda belum tepat. Berikut adalah masalahnya:<ul>";
+
+    // Feedback for inputMain
+    if (normalizedMain !== normalizeAnswer("PerkalianTigaAngka()")) {
+      if (!main.trim()) {
+        feedback += `<li><strong>Pemanggilan method</strong> kosong. Anda perlu memanggil method dengan nama yang benar di dalam <code>Main</code> untuk mencetak hasilnya. Tinjau kembali materi tentang pemanggilan method di Bab 6.3.</li>`;
+      } else if (!normalizedMain.includes("perkaliantigaangka")) {
+        feedback += `<li><strong>Pemanggilan method (${main})</strong> salah. Nama method tidak sesuai. Pastikan Anda menggunakan nama method yang didefinisikan dalam kode. Tinjau kembali materi tentang pemanggilan method di Bab 6.3.</li>`;
+      } else if (!main.includes("()")) {
+        feedback += `<li><strong>Pemanggilan method (${main})</strong> salah. Anda lupa menyertakan tanda kurung <code>()</code> untuk memanggil method. Tinjau kembali sintaksis pemanggilan method di Bab 6.3.</li>`;
+      } else {
+        feedback += `<li><strong>Pemanggilan method (${main})</strong> tidak tepat. Pastikan sintaksis pemanggilan method benar, termasuk penggunaan tanda kurung <code>()</code>. Tinjau kembali materi tentang pemanggilan method di Bab 6.3.</li>`;
+      }
+    }
+
+    // Feedback for inputReturn
+    if (normalizedReturn !== normalizeAnswer("return hasil")) {
+      if (!returnVal.trim()) {
+        feedback += `<li><strong>Pernyataan return</strong> kosong. Method dengan tipe kembalian <code>int</code> harus mengembalikan nilai menggunakan pernyataan <code>return</code>. Tinjau kembali materi tentang method dengan nilai balik di Bab 6.3.</li>`;
+      } else if (!normalizedReturn.includes("return")) {
+        feedback += `<li><strong>Pernyataan return (${returnVal})</strong> salah. Anda lupa menyertakan kata kunci <code>return</code> untuk mengembalikan nilai. Tinjau kembali materi tentang pernyataan return di Bab 6.3.</li>`;
+      } else if (!normalizedReturn.includes("hasil")) {
+        feedback += `<li><strong>Pernyataan return (${returnVal})</strong> salah. Anda mengembalikan nilai yang tidak sesuai. Pastikan Anda mengembalikan variabel yang menyimpan hasil perkalian. Tinjau kembali materi tentang method dengan nilai balik di Bab 6.3.</li>`;
+      } else {
+        feedback += `<li><strong>Pernyataan return (${returnVal})</strong> tidak tepat. Pastikan sintaksis pernyataan <code>return</code> benar dan mengembalikan variabel yang sesuai. Tinjau kembali materi tentang pernyataan return di Bab 6.3.</li>`;
+      }
+    }
+
+    feedback += "</ul>Yuk, coba lagi!";
+    return feedback;
+  };
+
   return (
-    <div className="mt-4 max-w-full p-6 mx-auto rounded-lg">
+    <div className="max-w-full p-6 mx-auto mt-4 rounded-lg">
       <h2
         className="text-lg font-semibold text-center"
         style={{ color: "#6E2A7F" }}
@@ -94,10 +131,14 @@ const Quiz3 = ({ onComplete }) => {
           mencetaknya ke layar:
         </p>
 
-        <div className="p-4 mt-3 font-mono text-sm bg-gray-100 rounded-lg mb-4">
+        <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
-              {`public class BelajarCSharp\n{\n    public static void Main(string[] args)\n    {\n        Console.WriteLine(`}
+              {`public class BelajarCSharp
+{
+    public static void Main(string[] args)
+    {
+        Console.WriteLine(`}
               <input
                 type="text"
                 value={inputMain}
@@ -105,7 +146,14 @@ const Quiz3 = ({ onComplete }) => {
                 className="ml-1 mr-1 border-2 border-gray-400 px-2 py-1 w-40 mb-2 rounded-md focus:ring-2 focus:ring-[#6E2A7F]"
                 placeholder="Jawaban ..."
               />
-              {`);\n    }\n\n    static int PerkalianTigaAngka()\n    {\n        int a = 2, b = 3, c = 4;\n        int hasil = a * b * c;\n        `}
+              {`);
+    }
+
+    static int PerkalianTigaAngka()
+    {
+        int a = 2, b = 3, c = 4;
+        int hasil = a * b * c;
+        `}
               <input
                 type="text"
                 value={inputReturn}
@@ -113,7 +161,9 @@ const Quiz3 = ({ onComplete }) => {
                 className="ml-1 mr-1 border-2 border-gray-400 px-2 py-1 w-40 mb-2 rounded-md focus:ring-2 focus:ring-[#6E2A7F]"
                 placeholder="Jawaban ..."
               />
-              {`;\n    }\n}`}
+              {`;
+    }
+}`}
             </code>
           </pre>
         </div>
@@ -161,10 +211,10 @@ const Quiz3 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"

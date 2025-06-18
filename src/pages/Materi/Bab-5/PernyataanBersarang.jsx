@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
 import lockIcon from "../../../assets/img/lock.png";
@@ -7,15 +8,35 @@ import QuizKedua from "./Quiz-bab5/Quiz8";
 
 const PernyataanBersarang = () => {
   const [quiz2Completed, setQuiz2Completed] = useState(false);
+  const [quiz2Passed, setQuiz2Passed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab5/perulangan-bersarang";
+
+  // Initialize quiz states based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuiz2Completed(true);
+      setQuiz2Passed(true);
+    }
+  }, [completedLessons]);
+
+  const handleQuiz2Complete = (isPassed) => {
+    console.log("Quiz 2 completed, isPassed:", isPassed); // Debugging
+    setQuiz2Completed(true);
+    setQuiz2Passed(isPassed);
+
+    if (isPassed) {
+      handleLessonComplete(currentLessonPath);
+    }
+  };
 
   const handleNext = () => {
-    if (quiz2Completed) {
-      handleLessonComplete("/materi/bab5/perulangan-bersarang");
-      window.scrollTo(0, 0);
-      navigate("/materi/bab5/latihan-bab5");
-    }
+    if (!quiz2Passed) return; // Prevent navigation if quiz not passed
+    handleLessonComplete("/materi/bab5/latihan-bab5");
+    window.scrollTo(0, 0);
+    navigate("/materi/bab5/latihan-bab5");
   };
 
   const handleBack = () => {
@@ -23,10 +44,10 @@ const PernyataanBersarang = () => {
     navigate("/materi/bab5/pernyataan-break-continue");
   };
 
-  const handleQuiz2Complete = () => {
-    handleLessonComplete("/materi/bab5/latihan-bab5");
-    setQuiz2Completed(true);
-  };
+  // Debugging state changes
+  useEffect(() => {
+    console.log("quiz2Completed:", quiz2Completed, "quiz2Passed:", quiz2Passed);
+  }, [quiz2Completed, quiz2Passed]);
 
   return (
     <div className="mt-4 mb-4">
@@ -34,7 +55,7 @@ const PernyataanBersarang = () => {
         BAB 5 - KONTROL ALUR
       </h1>
 
-      <div className="p-4 mb-6 text-justify text-gray-700 bg-white rounded-lg shadow-md">
+      <div className="p-4 mb-2 text-justify text-gray-700 bg-white rounded-lg shadow-md">
         <h2 className="mt-2 mb-4 text-2xl font-bold">
           5.6 Perulangan Bersarang
         </h2>
@@ -163,6 +184,7 @@ const PernyataanBersarang = () => {
         <button
           onClick={handleBack}
           className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          aria-label="Kembali ke materi sebelumnya"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
@@ -171,24 +193,27 @@ const PernyataanBersarang = () => {
           onClick={handleNext}
           className="flex items-center justify-between px-4 py-2 text-white rounded-lg"
           style={{
-            backgroundColor: quiz2Completed ? "#6E2A7F" : "#A0A0A0",
-            cursor: quiz2Completed ? "pointer" : "not-allowed",
+            backgroundColor: quiz2Passed ? "#6E2A7F" : "#A0A0A0",
+            cursor: quiz2Passed ? "pointer" : "not-allowed",
             transition: "background-color 0.2s",
           }}
           onMouseEnter={(e) =>
-            quiz2Completed &&
-            (e.currentTarget.style.backgroundColor = "#5B1F6A")
+            quiz2Passed && (e.currentTarget.style.backgroundColor = "#5B1F6A")
           }
           onMouseLeave={(e) =>
-            quiz2Completed &&
-            (e.currentTarget.style.backgroundColor = "#6E2A7F")
+            quiz2Passed && (e.currentTarget.style.backgroundColor = "#6E2A7F")
           }
-          disabled={!quiz2Completed}
+          disabled={!quiz2Passed}
+          aria-label={
+            quiz2Passed
+              ? "Lanjut ke materi berikutnya"
+              : "Selesaikan kuis dengan benar untuk melanjutkan"
+          }
         >
           <span>Selanjutnya</span>
           <img
-            src={quiz2Completed ? nextIcon : lockIcon}
-            alt={quiz2Completed ? "Selanjutnya" : "Terkunci"}
+            src={quiz2Passed ? nextIcon : lockIcon}
+            alt={quiz2Passed ? "Selanjutnya" : "Terkunci"}
             className="w-5 h-5 ml-2"
           />
         </button>

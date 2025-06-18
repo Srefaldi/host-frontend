@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import QuizFloat from "./Quiz-bab3/Quiz5";
 import nextIcon from "../../../assets/img/selanjutnya.png";
@@ -10,21 +11,33 @@ const Float = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab3/floating-point";
 
-  const handleQuizComplete = (isPassed) => {
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuizPassed(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  // Debugging state changes
+  useEffect(() => {
+    console.log("quizCompleted:", quizCompleted, "quizPassed:", quizPassed);
+  }, [quizCompleted, quizPassed]);
+
+  const handleQuizCompleteLocal = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed); // Debugging
+    handleQuizComplete(currentLessonPath);
     setQuizCompleted(true);
     setQuizPassed(isPassed);
-
-    if (isPassed) {
-      handleLessonComplete("/materi/bab3/boolean");
-    }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab3/floating-point");
+    handleLessonComplete(currentLessonPath);
     window.scrollTo(0, 0);
     navigate("/materi/bab3/boolean");
   };
@@ -33,11 +46,6 @@ const Float = () => {
     window.scrollTo(0, 0);
     navigate("/materi/bab3/integer");
   };
-
-  // Debugging state changes
-  useEffect(() => {
-    console.log("quizCompleted:", quizCompleted, "quizPassed:", quizPassed);
-  }, [quizCompleted, quizPassed]);
 
   return (
     <div className="p-4">
@@ -188,7 +196,7 @@ const Float = () => {
       </div>
 
       {/* Kuis */}
-      <QuizFloat onComplete={handleQuizComplete} />
+      <QuizFloat onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

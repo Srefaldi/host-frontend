@@ -1,14 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Quiz from "./Quiz-bab1/Quiz3";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
-import lockIcon from "../../../assets/img/lock.png"; // Replace with actual lock icon path
+import lockIcon from "../../../assets/img/lock.png";
 
 const StrukturKode = () => {
   const navigate = useNavigate();
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab1/struktur-kode";
+
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
 
   const handleBack = () => {
     window.scrollTo(0, 0);
@@ -21,8 +31,8 @@ const StrukturKode = () => {
     navigate("/materi/bab1/struktur-eksekusi");
   };
 
-  const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab1/struktur-eksekusi");
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab1/struktur-kode");
     setQuizCompleted(true);
   };
 
@@ -84,12 +94,10 @@ const StrukturKode = () => {
       </div>
 
       {/* Kuis */}
-      <Quiz onComplete={handleQuizComplete} />
+      <Quiz onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6 gap-4">
-        {" "}
-        {/* Added gap-4 for spacing */}
         <button
           onClick={() => navigate("/dashboard")}
           className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"

@@ -49,16 +49,21 @@ const Quiz4 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setVar1("");
-      setVar2("");
-      setVar3("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(
+          normalizedVar1,
+          normalizedVar2,
+          normalizedVar3
+        ),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setVar1("");
+        setVar2("");
+        setVar3("");
+        setShowExplanation(false);
       });
     }
   };
@@ -68,6 +73,30 @@ const Quiz4 = ({ onComplete }) => {
     setVar2("");
     setVar3("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (var1, var2, var3) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check var1 (binary)
+    if (var1 !== "0b10100100") {
+      feedback += `<li>Untuk <code>var1</code>, jawaban <strong>${var1}</strong> salah. Pastikan Anda menggunakan prefiks <code>0b</code> dan format biner yang benar untuk nilai tersebut.</li>`;
+    }
+
+    // Check var2 (decimal)
+    if (var2 !== "164") {
+      feedback += `<li>Untuk <code>var2</code>, jawaban <strong>${var2}</strong> salah. Gunakan representasi desimal langsung tanpa prefiks.</li>`;
+    }
+
+    // Check var3 (hexadecimal)
+    if (var3 !== "0xa4") {
+      feedback += `<li>Untuk <code>var3</code>, jawaban <strong>${var3}</strong> salah. Pastikan Anda menggunakan prefiks <code>0x</code> dan format heksadesimal yang benar.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang representasi bilangan . Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -181,19 +210,10 @@ const Quiz4 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          <strong>var1 = 0b10100100</strong> (biner),
-          <br />
-          <strong>var2 = 164</strong> (desimal),
-          <br />
-          <strong>var3 = 0xA4</strong> (heksadesimal).
-          <br />
-          Dalam C#, nilai 164 dapat direpresentasikan dalam tiga bentuk: biner
-          menggunakan prefiks <code>0b</code> (0b10100100), desimal langsung
-          (164), dan heksadesimal menggunakan prefiks <code>0x</code> (0xA4).
-          Ketiganya memiliki nilai yang sama saat disimpan sebagai{" "}
-          <code>int</code>.
+          Dalam C#, nilai tersebut dapat direpresentasikan dalam tiga bentuk:
+          biner menggunakan prefiks <code>0b</code>, desimal langsung, dan
+          heksadesimal menggunakan prefiks <code>0x</code>. Ketiganya memiliki
+          nilai yang sama saat disimpan sebagai <code>int</code>.
         </div>
       )}
     </div>

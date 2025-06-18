@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizChar from "./Quiz-bab3/Quiz7";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -10,21 +11,32 @@ const Char = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab3/char";
 
-  const handleQuizComplete = (isPassed) => {
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuizPassed(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const onQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed); // Debugging
     setQuizCompleted(true);
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab3/string");
+      handleLessonComplete(currentLessonPath);
+      handleQuizComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab3/char");
+    handleLessonComplete(currentLessonPath);
     window.scrollTo(0, 0);
     navigate("/materi/bab3/string");
   };
@@ -92,13 +104,13 @@ const Char = () => {
         <h3 className="mt-4 text-xl font-bold">Karakter Unicode dalam C#</h3>
         <p className="mt-2">
           Tipe data <code>char</code> mendukung karakter Unicode. Karakter
-          Unicode dapat diwakili dengan awalan (prefix) <code>\\u</code>,
-          diikuti dengan empat digit nomor Unicode heksadesimal. Berikut adalah
-          contoh kode yang menggunakan karakter Unicode:
+          Unicode dapat diwakili dengan awalan (prefix) <code>\u</code>, diikuti
+          dengan empat digit nomor Unicode heksadesimal. Berikut adalah contoh
+          kode yang menggunakan karakter Unicode:
         </p>
         <pre className="p-2 font-mono bg-gray-100 rounded">
           <code>
-            {`char var1 = '\\u0041';\nchar var2 = '\\u00B5'; \nchar var3 = '\\u00C6'; \n\nConsole.WriteLine(var1);  // Output: A\nConsole.WriteLine(var2);  // Output: µ\nConsole.WriteLine(var3);  // Output: Æ`}
+            {`char var1 = '\u0041';\nchar var2 = '\u00B5'; \nchar var3 = '\u00C6'; \n\nConsole.WriteLine(var1);  // Output: A\nConsole.WriteLine(var2);  // Output: µ\nConsole.WriteLine(var3);  // Output: Æ`}
           </code>
         </pre>
         <p className="mt-2">
@@ -111,22 +123,22 @@ const Char = () => {
         <p className="mt-2">
           Tipe data <code>char</code> juga mendukung karakter khusus seperti
           tanda kutip, karakter enter, dan lainnya dengan menggunakan karakter
-          backslash <code>\\</code>, yang disebut sebagai escape character.
+          backslash <code>\</code>, yang disebut sebagai escape character.
           Berikut adalah contoh kode yang menggunakan karakter khusus:
         </p>
         <pre className="p-2 font-mono bg-gray-100 rounded">
           <code>
-            {`char var1 = '\''; \nchar var2 = '\\n'; \nchar var3 = '\"'; \n\nConsole.Write(var1); \nConsole.Write(var2); \nConsole.Write(var3);`}
+            {`char var1 = '\''; \nchar var2 = '\n'; \nchar var3 = '\"'; \n\nConsole.Write(var1); \nConsole.Write(var2); \nConsole.Write(var3);`}
           </code>
         </pre>
         <p className="mt-2">
           Dalam contoh di atas, karakter tanda kutip tunggal (<code>'</code>)
-          diwakili oleh <code>\\'</code>, karakter enter diwakili oleh{" "}
-          <code>\\n</code>, dan karakter tanda kutip dua (<code>"</code>)
-          diwakili oleh <code>\\\"</code>. Perhatikan bahwa{" "}
+          diwakili oleh <code>\'</code>, karakter enter diwakili oleh{" "}
+          <code>\n</code>, dan karakter tanda kutip dua (<code>"</code>)
+          diwakili oleh <code>\"</code>. Perhatikan bahwa{" "}
           <code>Console.Write()</code> digunakan untuk menampilkan karakter
           tanpa baris baru, sehingga karakter tanda kutip dua tampil di baris
-          baru karena karakter enter (<code>\\n</code>) di atasnya.
+          baru karena karakter enter (<code>\n</code>) di atasnya.
         </p>
         <h3 className="mt-4 text-xl font-bold">Membaca Input Tipe Data char</h3>
         <p className="mt-2">
@@ -164,7 +176,7 @@ const Char = () => {
       </div>
 
       {/* Kuis */}
-      <QuizChar onComplete={handleQuizComplete} />
+      <QuizChar onComplete={onQuizComplete} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

@@ -8,7 +8,6 @@ const Rangkuman = () => {
   const { handleLessonComplete } = useOutletContext();
 
   const handleNext = () => {
-    handleLessonComplete("/materi/bab3/pengertian-tipedata");
     handleLessonComplete("/materi/bab2/rangkuman-bab2");
     window.scrollTo(0, 0);
     navigate("/materi/bab3/pengertian-tipedata");

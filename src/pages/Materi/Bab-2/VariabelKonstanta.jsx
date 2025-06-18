@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -8,12 +9,22 @@ import Quiz6 from "./Quiz-bab2/Quiz6";
 
 const VariabelKonstanta = () => {
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab2/variabel-konstanta";
 
-  const handleQuizComplete = (isPassed) => {
-    handleLessonComplete("/materi/bab2/sintaks-input");
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuizPassed(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizCompleteLocal = (isPassed) => {
+    handleQuizComplete("/materi/bab2/variabel-konstanta");
     setQuizCompleted(true);
     setQuizPassed(isPassed);
   };
@@ -97,7 +108,7 @@ const VariabelKonstanta = () => {
       </div>
 
       {/* Kuis Variabel Konstanta */}
-      <Quiz6 onComplete={handleQuizComplete} />
+      <Quiz6 onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

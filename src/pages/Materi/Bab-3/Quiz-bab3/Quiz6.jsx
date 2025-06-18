@@ -49,18 +49,23 @@ const Quiz6 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setOperator1("");
-      setOperator2("");
-      setOperator3("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(
+          normalizedOperator1,
+          normalizedOperator2,
+          normalizedOperator3
+        ),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setOperator1("");
+        setOperator2("");
+        setOperator3("");
+        setShowExplanation(false);
+        onComplete(false);
       });
-      onComplete(false);
     }
   };
 
@@ -69,6 +74,30 @@ const Quiz6 = ({ onComplete }) => {
     setOperator2("");
     setOperator3("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (operator1, operator2, operator3) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check operator1 (less than)
+    if (operator1 !== "<") {
+      feedback += `<li>Untuk <code>hasil1</code>, operator <strong>${operator1}</strong> salah. Pastikan operator sesuai untuk membandingkan apakah 50 lebih kecil dari 30.</li>`;
+    }
+
+    // Check operator2 (equal to)
+    if (operator2 !== "==") {
+      feedback += `<li>Untuk <code>hasil2</code>, operator <strong>${operator2}</strong> salah. Pastikan operator sesuai untuk membandingkan apakah 15 sama dengan 15.</li>`;
+    }
+
+    // Check operator3 (greater than)
+    if (operator3 !== ">") {
+      feedback += `<li>Untuk <code>hasil3</code>, operator <strong>${operator3}</strong> salah. Pastikan operator sesuai untuk membandingkan karakter 'B' dengan 'b' berdasarkan nilai ASCII.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang operator perbandingan . Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -184,21 +213,8 @@ const Quiz6 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Operator 1: <strong>&lt;</strong> (lebih kecil dari),
-          <br />
-          Operator 2: <strong>==</strong> (sama dengan),
-          <br />
-          Operator 3: <strong>&gt;</strong> (lebih besar dari).
-          <br />
-          Dalam C#, operator perbandingan yang digunakan adalah:{" "}
-          <code>&lt;</code> untuk membandingkan apakah 50 lebih kecil dari 30
-          (hasil: <code>false</code>), <code>==</code> untuk membandingkan
-          apakah 15 sama dengan 15 (hasil: <code>true</code>), dan{" "}
-          <code>&gt;</code> untuk membandingkan apakah karakter 'B' lebih besar
-          dari 'b' berdasarkan nilai ASCII (hasil: <code>false</code>, karena
-          'B' = 66 dan 'b' = 98).
+          Dalam C#, operator perbandingan digunakan untuk membandingkan nilai,
+          menghasilkan nilai boolean berdasarkan kondisi tertentu.
         </div>
       )}
     </div>

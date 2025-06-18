@@ -39,15 +39,16 @@ const Quiz4 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setSelectedAnswer("");
+        setShowExplanation(false);
       });
     }
   };
@@ -55,6 +56,30 @@ const Quiz4 = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "B":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Dalam C#, dua konstanta <code>case</code> di dalam <code>switch</code> yang sama memang tidak boleh memiliki nilai identik, sehingga pernyataan ini benar. Tinjau kembali materi tentang struktur <code>switch</code>. Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Ekspresi dalam <code>switch</code> memang dapat bertipe <code>char</code>, <code>byte</code>, <code>short</code>, <code>int</code>, enumerasi, atau <code>string</code>, sehingga pernyataan ini benar. Tinjau kembali materi tentang struktur <code>switch</code>. Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Struktur <code>switch</code> memang tidak mendukung tipe data <code>boolean</code>, sehingga pernyataan ini benar. Tinjau kembali materi tentang struktur <code>switch</code>. Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Dalam C#, <code>switch</code> tidak mengizinkan beberapa <code>case</code> memiliki nilai yang sama, karena setiap <code>case</code> harus unik. Pernyataan ini salah, tetapi bukan jawaban yang diminta. Tinjau kembali materi tentang struktur <code>switch</code>. Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang struktur <code>switch</code> dan coba lagi.";
+    }
   };
 
   return (
@@ -135,10 +160,10 @@ const Quiz4 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -155,19 +180,9 @@ const Quiz4 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:{" "}
-          <strong>
-            A. Switch statement memastikan persamaan antara sebuah nilai dari
-            sebuah string dengan nilai variabel selain string yang ada pada case
-            di dalam sebuah switch.
-          </strong>
-          <br />
-          Pernyataan ini tidak tepat karena dalam C#, <code>switch</code>{" "}
-          statement hanya dapat membandingkan ekspresi dengan konstanta yang
-          memiliki tipe yang sama atau kompatibel (misalnya, string hanya dengan
-          string, int hanya dengan int). Membandingkan string dengan variabel
-          bertipe lain (selain string) tidak didukung oleh struktur{" "}
-          <code>switch</code>.
+          Dalam C#, struktur <code>switch</code> digunakan untuk membandingkan
+          nilai ekspresi dengan konstanta yang memiliki tipe data yang
+          kompatibel.
         </div>
       )}
     </div>

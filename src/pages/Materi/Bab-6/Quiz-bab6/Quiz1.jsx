@@ -38,15 +38,17 @@ const Quiz1 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setSelectedAnswer("");
+        setShowExplanation(false);
+        onComplete(false);
       });
     }
   };
@@ -54,6 +56,30 @@ const Quiz1 = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "A":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Menghentikan program secara paksa bukanlah tujuan method, melainkan terkait dengan penanganan error atau terminasi aplikasi. Tinjau kembali materi tentang method di C#. Yuk, coba lagi!`;
+      case "B":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Perintah berulang tanpa kontrol lebih berkaitan dengan perulangan tak terbatas, bukan fungsi method. Tinjau kembali materi tentang method di C#. Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Menyimpan data sementara lebih berkaitan dengan variabel atau memori, bukan tujuan utama method. Tinjau kembali materi tentang method di C#. Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Menampilkan data ke layar adalah fungsi spesifik dari beberapa perintah seperti <code>Console.WriteLine</code>, bukan definisi umum method. Tinjau kembali materi tentang method di C#. Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang method di C# dan coba lagi.";
+    }
   };
 
   return (
@@ -135,10 +161,10 @@ const Quiz1 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -155,16 +181,10 @@ const Quiz1 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:{" "}
-          <strong>
-            C. melakukan tugas tertentu dan dapat dipanggil dalam program
-          </strong>
-          .
-          <br />
-          Dalam C#, sebuah method adalah blok kode yang berisi serangkaian
-          pernyataan untuk melakukan tugas tertentu. Method dapat dipanggil
-          kapan saja dalam program untuk menjalankan tugas tersebut,
-          meningkatkan reusabilitas dan organisasi kode.
+          Jawaban Anda benar. Method dalam C# adalah kumpulan pernyataan yang
+          dirancang untuk menjalankan tugas spesifik, seperti menghitung nilai
+          atau memproses data. Method dapat dipanggil berulang kali di berbagai
+          bagian program, meningkatkan efisiensi dan organisasi kode.
         </div>
       )}
     </div>

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizPenamaanVariabel from "./Quiz-bab2/Quiz2";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -8,10 +9,19 @@ import lockIcon from "../../../assets/img/lock.png";
 const PenamaanVariabel = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab2/penamaan-variabel";
 
-  const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab2/kategori-variabel");
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab2/penamaan-variabel");
     setQuizCompleted(true);
     // Scroll ke bagian paling bawah halaman
     window.scrollTo({
@@ -143,7 +153,7 @@ const PenamaanVariabel = () => {
 
       {/* Quiz Component - Now always visible and outside white container */}
       <div className="mb-6">
-        <QuizPenamaanVariabel onComplete={handleQuizComplete} />
+        <QuizPenamaanVariabel onComplete={handleQuizCompleteLocal} />
       </div>
 
       {/* Navigation Buttons - Now outside white container */}

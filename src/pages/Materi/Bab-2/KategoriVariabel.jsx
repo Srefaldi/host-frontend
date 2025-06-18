@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
 import lockIcon from "../../../assets/img/lock.png";
@@ -8,10 +9,19 @@ import QuizKategoriVariabel from "./Quiz-bab2/Quiz3";
 const KategoriVariabel = () => {
   const navigate = useNavigate();
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab2/kategori-variabel";
 
-  const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab2/deklarasi-inialisasi");
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab2/kategori-variabel");
     setQuizCompleted(true);
     // Scroll ke bagian paling bawah halaman
     window.scrollTo({
@@ -178,7 +188,7 @@ const KategoriVariabel = () => {
       </div>
 
       {/* Kuis Kategori Variabel */}
-      <QuizKategoriVariabel onComplete={handleQuizComplete} />
+      <QuizKategoriVariabel onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

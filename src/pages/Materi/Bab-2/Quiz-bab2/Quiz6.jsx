@@ -30,14 +30,16 @@ const Quiz6 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setSelectedAnswer("");
+        setShowExplanation(false);
+        window.scrollTo(0, 0);
       });
     }
   };
@@ -45,6 +47,30 @@ const Quiz6 = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "B":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Variabel konstanta dengan <code>const</code> tidak dapat berubah nilainya, sedangkan nilai sementara menggunakan variabel biasa. Tinjau kembali materi tentang variabel konstanta . Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Variabel konstanta tidak terbatas pada satu metode; mereka bersifat tetap di seluruh program. Tinjau kembali materi tentang variabel konstanta . Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Variabel konstanta tidak menyimpan referensi ke objek yang dapat diubah; nilainya harus tetap. Tinjau kembali materi tentang variabel konstanta . Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Variabel konstanta ditentukan saat kompilasi, bukan hanya tersedia saat runtime. Tinjau kembali materi tentang variabel konstanta . Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang variabel konstanta dan coba lagi.";
+    }
   };
 
   return (

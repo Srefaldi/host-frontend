@@ -39,15 +39,16 @@ const Quiz2 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setSelectedAnswer("");
+        setShowExplanation(false);
       });
     }
   };
@@ -55,6 +56,30 @@ const Quiz2 = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "A":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Pernyataan <code>if</code> yang menjadi target dari <code>if</code> atau <code>else</code> lain adalah bagian dari pernyataan <code>if</code> bersarang. Tinjau kembali materi tentang pernyataan <code>if</code> bersarang. Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Pernyataan <code>if</code> di dalam pernyataan <code>if</code> adalah definisi utama dari <code>if</code> bersarang. Tinjau kembali materi tentang pernyataan <code>if</code> bersarang. Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Pernyataan <code>if</code> selalu memerlukan kondisi, sehingga opsi ini masih berkaitan dengan konsep <code>if</code> bersarang. Tinjau kembali materi tentang pernyataan <code>if</code> bersarang. Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Pernyataan <code>if</code> bersarang tidak terpisah dari blok kode lain, melainkan tertanam di dalamnya. Tinjau kembali materi tentang pernyataan <code>if</code> bersarang. Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang pernyataan <code>if</code> bersarang dan coba lagi.";
+    }
   };
 
   return (
@@ -134,10 +159,10 @@ const Quiz2 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -154,55 +179,9 @@ const Quiz2 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:{" "}
-          <strong>
-            B. Statement if yang dikecualikan dari statement if lainnya
-          </strong>
-          .
-          <br />
-          Nested <code>if</code> statements (pernyataan <code>if</code>{" "}
-          bersarang) mengacu pada penggunaan satu atau lebih pernyataan{" "}
-          <code>if</code> di dalam pernyataan <code>if</code> lain untuk
-          menangani logika bersyarat yang lebih kompleks. Mari kita periksa
-          setiap opsi:
-          <ul className="list-disc list-inside">
-            <li>
-              <strong>
-                A. Statement if yang menjadi target dari if atau else lain:
-              </strong>{" "}
-              Benar, ini menggambarkan nested <code>if</code> karena pernyataan{" "}
-              <code>if</code> berada di dalam blok <code>if</code> atau{" "}
-              <code>else</code> lain.
-            </li>
-            <li>
-              <strong>
-                B. Statement if yang dikecualikan dari statement if lainnya:
-              </strong>{" "}
-              Salah, nested <code>if</code> statements selalu berada di dalam
-              pernyataan <code>if</code> lain, bukan dikecualikan.
-            </li>
-            <li>
-              <strong>C. Statement if di dalam statement if:</strong> Benar, ini
-              adalah definisi inti dari nested <code>if</code>.
-            </li>
-            <li>
-              <strong>D. Statement if yang tidak memiliki kondisi:</strong>{" "}
-              Benar, dalam konteks nested <code>if</code>, pernyataan ini salah
-              karena semua <code>if</code> harus memiliki kondisi, tetapi opsi
-              ini tetap mengacu pada konsep <code>if</code>.
-            </li>
-            <li>
-              <strong>
-                E. Statement if yang terpisah dari blok kode lainnya:
-              </strong>{" "}
-              Salah, tetapi nested <code>if</code> statements tidak "terpisah";
-              mereka tertanam di dalam blok kode lain. Namun, ini masih
-              berhubungan dengan konsep <code>if</code>.
-            </li>
-          </ul>
-          Oleh karena itu, opsi B adalah jawaban yang benar karena "dikecualikan
-          dari statement if lainnya" tidak menggambarkan nested <code>if</code>{" "}
-          statements.
+          Dalam C#, pernyataan <code>if</code> bersarang mengacu pada penggunaan
+          pernyataan <code>if</code> di dalam pernyataan <code>if</code> lain
+          untuk menangani logika bersyarat yang lebih kompleks.
         </div>
       )}
     </div>

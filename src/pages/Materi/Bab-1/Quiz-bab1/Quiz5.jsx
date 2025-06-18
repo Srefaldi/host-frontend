@@ -14,39 +14,40 @@ const Quiz = ({ onComplete }) => {
 
   // Handle form submission
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!selectedOption) {
-      Swal.fire({
-        title: "Pilih Jawaban!",
-        text: "Silakan pilih salah satu opsi sebelum mengirim.",
-        icon: "warning",
-        confirmButtonText: "OK",
-      });
-      return;
-    }
-    if (selectedOption === "B") {
-      setShowExplanation(true);
-      Swal.fire({
-        title: "Jawaban Anda Benar!",
-        text: "Silakan lanjut ke materi berikutnya.",
-        icon: "success",
-        confirmButtonText: "Lanjut",
-        confirmButtonColor: "#6E2A7F",
-      }).then(() => {
-        onComplete();
-      });
-    } else {
+  e.preventDefault();
+  if (!selectedOption) {
+    Swal.fire({
+      title: "Pilih Jawaban!",
+      text: "Silakan pilih salah satu opsi sebelum mengirim.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+    return;
+  }
+  if (selectedOption === "B") {
+    setShowExplanation(true);
+    Swal.fire({
+      title: "Jawaban Anda Benar!",
+      text: "Silakan lanjut ke materi berikutnya.",
+      icon: "success",
+      confirmButtonText: "Lanjut",
+      confirmButtonColor: "#6E2A7F",
+    }).then(() => {
+      onComplete();
+    });
+  } else {
+    Swal.fire({
+      title: "Jawaban Anda Belum Tepat!",
+      html: `Pilihan Anda <strong>${getOptionText(selectedOption)}</strong> bukan fungsi dari <code>Console.WriteLine()</code>. Coba tinjau kembali materi tentang kelas <code>Console</code> dan fungsinya dalam menangani output. Yuk, coba lagi!`,
+      icon: "error",
+      confirmButtonText: "Coba Lagi",
+      confirmButtonColor: "#EF4444",
+    }).then(() => {
       setSelectedOption("");
       setShowExplanation(false);
-      Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
-        icon: "error",
-        confirmButtonText: "Coba Lagi",
-        confirmButtonColor: "#EF4444",
-      });
-    }
-  };
+    });
+  }
+};
 
   // Reset quiz state
   const handleReset = () => {
@@ -95,7 +96,7 @@ const Quiz = ({ onComplete }) => {
           ))}
         </div>
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row mt-4 gap-2">
+        <div className="flex flex-col gap-2 mt-4 sm:flex-row">
           <button
             type="submit"
             style={{
@@ -170,10 +171,10 @@ const Quiz = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"

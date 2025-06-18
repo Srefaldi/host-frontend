@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizString from "./Quiz-bab3/Quiz8";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -11,6 +12,16 @@ const String = () => {
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab3/string";
+
+  // Initialize quizPassed based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      setQuizCompleted(true);
+    }
+  }, [completedLessons]);
 
   const handleQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed); // Debugging
@@ -18,13 +29,13 @@ const String = () => {
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab3/latihan-bab3");
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab3/string");
+    handleLessonComplete("/materi/bab3/latihan-bab3");
     window.scrollTo(0, 0);
     navigate("/materi/bab3/latihan-bab3");
   };

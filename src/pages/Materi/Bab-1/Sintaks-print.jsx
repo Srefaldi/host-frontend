@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Quiz from "./Quiz-bab1/Quiz5";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -29,7 +30,16 @@ const SintaksPrint = () => {
   );
   const [numberAndNumberOutput, setNumberAndNumberOutput] = useState("");
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab1/sintaks-print";
+
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
 
   // Navigate to previous lesson
   const handleBack = () => {
@@ -146,8 +156,8 @@ const SintaksPrint = () => {
   };
 
   // Handle quiz completion
-  const handleQuizCompletion = () => {
-    handleLessonComplete("/materi/bab1/sintaks-komentar");
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab1/sintaks-print");
     setQuizCompleted(true);
     window.scrollTo({
       top: document.documentElement.scrollHeight,
@@ -374,7 +384,7 @@ const SintaksPrint = () => {
       </div>
 
       {/* Quiz component */}
-      <Quiz onComplete={handleQuizCompletion} />
+      <Quiz onComplete={handleQuizCompleteLocal} />
 
       {/* Navigation buttons */}
       <div className="flex justify-between mt-6 gap-4">

@@ -33,15 +33,16 @@ const Quiz7 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setSelectedAnswer("");
+        setShowExplanation(false);
       });
     }
   };
@@ -49,6 +50,30 @@ const Quiz7 = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "A":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Tanda <code>-></code> bukan simbol untuk operator bersyarat di C#. Tinjau kembali materi tentang operator bersyarat . Yuk, coba lagi!`;
+      case "B":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Operator bersyarat dapat digunakan dengan tipe data lain selain boolean, selama hasilnya sesuai. Tinjau kembali materi tentang operator bersyarat . Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Operator bersyarat adalah operator ternary, bukan unary. Tinjau kembali materi tentang operator bersyarat . Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Operator bersyarat dapat digunakan untuk penugasan variabel. Tinjau kembali materi tentang operator bersyarat . Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang operator bersyarat dan coba lagi.";
+    }
   };
 
   return (
@@ -130,10 +155,10 @@ const Quiz7 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -150,18 +175,9 @@ const Quiz7 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:{" "}
-          <strong>D. Memerlukan tiga operand untuk bekerja</strong>.
-          <br />
-          Dalam C#, operator bersyarat (conditional operator) dikenal sebagai
-          operator ternary dan memiliki sintaks{" "}
-          <code>condition ? expression1 : expression2</code>. Operator ini
-          memerlukan tiga operand: sebuah kondisi, ekspresi yang dieksekusi jika
-          kondisi bernilai <code>true</code>, dan ekspresi yang dieksekusi jika
-          kondisi bernilai <code>false</code>. Sebagai contoh,{" "}
-          <code>int result = (a > b) ? a : b;</code> akan mengembalikan nilai{" "}
-          <code>a</code> jika <code>a > b</code> bernilai <code>true</code>,
-          atau <code>b</code> jika bernilai <code>false</code>.
+          Dalam C#, operator bersyarat (ternary) digunakan untuk mengevaluasi
+          kondisi dan mengembalikan salah satu dari dua nilai berdasarkan hasil
+          kondisi tersebut.
         </div>
       )}
     </div>

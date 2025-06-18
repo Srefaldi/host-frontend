@@ -49,16 +49,21 @@ const Quiz8 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setDataType("");
-      setStringValue("");
-      setOutput("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(
+          normalizedDataType,
+          normalizedStringValue,
+          normalizedOutput
+        ),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setDataType("");
+        setStringValue("");
+        setOutput("");
+        setShowExplanation(false);
       });
     }
   };
@@ -68,6 +73,30 @@ const Quiz8 = ({ onComplete }) => {
     setStringValue("");
     setOutput("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (dataType, stringValue, output) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check dataType
+    if (dataType !== "string") {
+      feedback += `<li>Untuk tipe data, jawaban <strong>${dataType}</strong> salah. Gunakan tipe data yang sesuai untuk menyimpan teks dalam C#.</li>`;
+    }
+
+    // Check stringValue
+    if (stringValue !== '"hello world"') {
+      feedback += `<li>Untuk nilai <code>greeting</code>, jawaban <strong>${stringValue}</strong> salah. Gunakan teks dengan tanda kutip ganda (<code>"</code>) yang sesuai dengan output yang diharapkan.</li>`;
+    }
+
+    // Check output
+    if (output !== "greeting") {
+      feedback += `<li>Untuk output, jawaban <strong>${output}</strong> salah. Gunakan nama variabel yang sesuai untuk mencetak teks ke konsol.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang tipe data <code>string</code> . Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -181,19 +210,9 @@ const Quiz8 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Tipe data: <strong>string</strong>,
-          <br />
-          Nilai: <strong>"Hello World"</strong>,
-          <br />
-          Output: <strong>greeting</strong>.
-          <br />
           Dalam C#, tipe data <code>string</code> digunakan untuk menyimpan teks
-          seperti "Hello World" dengan tanda kutip ganda. Variabel{" "}
-          <code>greeting</code> menyimpan nilai tersebut, dan{" "}
-          <code>Console.WriteLine(greeting)</code> akan mencetak teks tersebut
-          ke konsol.
+          dengan tanda kutip ganda. Variabel menyimpan nilai teks, dan
+          <code>Console.WriteLine</code> mencetak nilai tersebut ke konsol.
         </div>
       )}
     </div>

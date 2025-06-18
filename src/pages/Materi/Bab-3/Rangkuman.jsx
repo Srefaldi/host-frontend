@@ -8,7 +8,6 @@ const Rangkuman = () => {
   const { handleLessonComplete } = useOutletContext();
 
   const handleNext = () => {
-    handleLessonComplete("/materi/bab4/pengertian-operator");
     handleLessonComplete("/materi/bab3/rangkuman-bab3");
     window.scrollTo(0, 0);
     navigate("/materi/bab4/pengertian-operator");
@@ -16,7 +15,7 @@ const Rangkuman = () => {
 
   const handleBack = () => {
     window.scrollTo(0, 0);
-    navigate("/materi/bab3/char");
+    navigate("/materi/bab3/operator-equality");
   };
 
   return (

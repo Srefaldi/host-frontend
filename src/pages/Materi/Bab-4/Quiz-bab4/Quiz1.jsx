@@ -46,15 +46,16 @@ const QuizOperator = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setInputA("");
-      setInputB("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(normalizedInputA, normalizedInputB),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setInputA("");
+        setInputB("");
+        setShowExplanation(false);
       });
     }
   };
@@ -63,6 +64,25 @@ const QuizOperator = ({ onComplete }) => {
     setInputA("");
     setInputB("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (inputA, inputB) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check inputA
+    if (inputA !== "-") {
+      feedback += `<li>Untuk <code>b</code>, operator <strong>${inputA}</strong> salah. Gunakan operator unary yang membuat nilai numerik menjadi negatif.</li>`;
+    }
+
+    // Check inputB
+    if (inputB !== "!") {
+      feedback += `<li>Untuk <code>c</code>, operator <strong>${inputB}</strong> salah. Gunakan operator unary yang menghasilkan negasi dari nilai boolean.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang operator unary. Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -168,18 +188,9 @@ const QuizOperator = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Untuk b: <strong>-a</strong>,
-          <br />
-          Untuk c: <strong>!true</strong>.
-          <br />
-          Dalam C#, operator unary <code>-</code> digunakan untuk negasi
-          numerik, sehingga <code>-a</code> mengubah nilai a (5) menjadi -5.
-          Operator unary <code>!</code> digunakan untuk negasi logis, sehingga{" "}
-          <code>!true</code> menghasilkan <code>false</code>. Hasilnya,{" "}
-          <code>b</code> bernilai -5 dan <code>c</code> bernilai{" "}
-          <code>false</code>.
+          Dalam C#, operator unary digunakan untuk operasi pada satu operand.
+          Operator negasi numerik mengubah nilai positif menjadi negatif, dan
+          operator negasi logis membalik nilai boolean.
         </div>
       )}
     </div>

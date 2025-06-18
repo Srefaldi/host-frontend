@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 const Quiz = ({ onComplete }) => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -30,15 +30,15 @@ const Quiz = ({ onComplete }) => {
         onComplete();
       });
     } else {
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
       }).then(() => {
+        setSelectedAnswer("");
+        setShowExplanation(false);
         window.scrollTo(0, 0);
       });
     }
@@ -47,6 +47,30 @@ const Quiz = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "A":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Lokasi penyimpanan variabel di memori ditentukan oleh sistem, bukan tipe data. Tinjau kembali materi tentang tipe data . Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Penamaan variabel berkaitan dengan sintaksis, bukan tipe data. Tinjau kembali materi tentang tipe data . Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Ukuran layar tidak relevan dengan tipe data variabel. Tinjau kembali materi tentang tipe data . Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Warna teks pada editor kode hanyalah fitur visual, bukan tipe data. Tinjau kembali materi tentang tipe data . Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang tipe data dan coba lagi.";
+    }
   };
 
   return (

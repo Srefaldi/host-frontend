@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizLogic from "./Quiz-bab4/Quiz6";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -11,6 +12,16 @@ const OperatorLogika = () => {
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab4/operator-logika";
+
+  // Initialize quizPassed and quizCompleted based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      setQuizCompleted(true);
+    }
+  }, [completedLessons]);
 
   const handleQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed); // Debugging
@@ -18,13 +29,13 @@ const OperatorLogika = () => {
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab4/operator-conditional");
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab4/operator-logika");
+ 
     window.scrollTo(0, 0);
     navigate("/materi/bab4/operator-conditional");
   };
@@ -78,7 +89,7 @@ const OperatorLogika = () => {
                 <td className="p-2 border border-gray-300">&&</td>
                 <td className="p-2 border border-gray-300">AND</td>
                 <td className="p-2 border border-gray-300">
-                  <code>(5 &gt; 3) && (2 &lt; 4)</code>
+                  <code>(5 > 3) && (2 {"<"} 4)</code>
                 </td>
                 <td className="p-2 border border-gray-300">true</td>
               </tr>
@@ -86,7 +97,7 @@ const OperatorLogika = () => {
                 <td className="p-2 border border-gray-300">||</td>
                 <td className="p-2 border border-gray-300">OR</td>
                 <td className="p-2 border border-gray-300">
-                  <code>(5 &gt; 3) || (2 &gt; 4)</code>
+                  <code>(5 > 3) || (2 > 4)</code>
                 </td>
                 <td className="p-2 border border-gray-300">true</td>
               </tr>
@@ -94,7 +105,7 @@ const OperatorLogika = () => {
                 <td className="p-2 border border-gray-300">!</td>
                 <td className="p-2 border border-gray-300">NOT</td>
                 <td className="p-2 border border-gray-300">
-                  <code>!(5 &gt; 3)</code>
+                  <code>!(5 > 3)</code>
                 </td>
                 <td className="p-2 border border-gray-300">false</td>
               </tr>
@@ -125,7 +136,7 @@ const OperatorLogika = () => {
                 <th className="p-2 text-white border border-gray-300">
                   Pernyataan 2
                 </th>
-                <th className="p-2 text-white border border-gray-300">Hasil</th>
+                <th className="p-2 border border-gray-300">Hasil</th>
               </tr>
             </thead>
             <tbody>
@@ -157,7 +168,7 @@ const OperatorLogika = () => {
           <strong>true </strong>jika dan hanya jika kedua operan bernilai{" "}
           <strong>true.</strong>
         </p>
-        <h2 className="font-bold">Operator OR ( | | )</h2>
+        <h2 className="font-bold">Operator OR (||)</h2>
         <p className="text-sm italic text-center text-gray-600">
           Tabel 4.8 Tabel daftar operator logika OR
         </p>
@@ -171,7 +182,7 @@ const OperatorLogika = () => {
                 <th className="p-2 text-white border border-gray-300">
                   Pernyataan 2
                 </th>
-                <th className="p-2 text-white border border-gray-300">Hasil</th>
+                <th className="p-2 border border-gray-300">Hasil</th>
               </tr>
             </thead>
             <tbody>
@@ -213,7 +224,7 @@ const OperatorLogika = () => {
                 <th className="p-2 text-white border border-gray-300">
                   Pernyataan 1
                 </th>
-                <th className="p-2 text-white border border-gray-300">Hasil</th>
+                <th className="p-2 border border-gray-300">Hasil</th>
               </tr>
             </thead>
             <tbody>

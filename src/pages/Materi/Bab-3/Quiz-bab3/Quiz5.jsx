@@ -71,19 +71,27 @@ const Quiz5 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setVar1Type("");
-      setVar2Type("");
-      setVar3Type("");
-      setVar1Value("");
-      setVar2Value("");
-      setVar3Value("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(
+          normalizedVar1Type,
+          normalizedVar2Type,
+          normalizedVar3Type,
+          normalizedVar1Value,
+          normalizedVar2Value,
+          normalizedVar3Value
+        ),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setVar1Type("");
+        setVar2Type("");
+        setVar3Type("");
+        setVar1Value("");
+        setVar2Value("");
+        setVar3Value("");
+        setShowExplanation(false);
       });
     }
   };
@@ -96,6 +104,46 @@ const Quiz5 = ({ onComplete }) => {
     setVar2Value("");
     setVar3Value("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (
+    var1Type,
+    var2Type,
+    var3Type,
+    var1Value,
+    var2Value,
+    var3Value
+  ) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check var1Type and var1Value
+    if (var1Type !== "float") {
+      feedback += `<li>Untuk <code>var1</code>, tipe data <strong>${var1Type}</strong> salah. Pastikan tipe data sesuai dengan nilai desimal yang menggunakan sufiks tertentu.</li>`;
+    }
+    if (var1Value !== "f") {
+      feedback += `<li>Untuk <code>var1</code>, sufiks <strong>${var1Value}</strong> salah. Pastikan sufiks sesuai dengan tipe data untuk nilai desimal.</li>`;
+    }
+
+    // Check var2Type and var2Value
+    if (var2Type !== "double") {
+      feedback += `<li>Untuk <code>var2</code>, tipe data <strong>${var2Type}</strong> salah. Pastikan tipe data sesuai dengan nilai desimal yang menggunakan sufiks tertentu.</li>`;
+    }
+    if (var2Value !== "d") {
+      feedback += `<li>Untuk <code>var2</code>, sufiks <strong>${var2Value}</strong> salah. Pastikan sufiks sesuai dengan tipe data untuk nilai desimal.</li>`;
+    }
+
+    // Check var3Type and var3Value
+    if (var3Type !== "decimal") {
+      feedback += `<li>Untuk <code>var3</code>, tipe data <strong>${var3Type}</strong> salah. Pastikan tipe data sesuai dengan nilai desimal yang menggunakan sufiks tertentu.</li>`;
+    }
+    if (var3Value !== "m") {
+      feedback += `<li>Untuk <code>var3</code>, sufiks <strong>${var3Value}</strong> salah. Pastikan sufiks sesuai dengan tipe data untuk nilai desimal.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang tipe data desimal . Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -232,19 +280,9 @@ const Quiz5 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Tipe data: <strong>float</strong> untuk var1, <strong>double</strong>{" "}
-          untuk var2, <strong>decimal</strong> untuk var3.
-          <br />
-          Sufiks: <strong>F</strong> untuk var1, <strong>D</strong> untuk var2,{" "}
-          <strong>M</strong> untuk var3.
-          <br />
-          Dalam C#, untuk bilangan desimal, tipe <code>float</code> memerlukan
-          sufiks <code>F</code>, <code>double</code> memerlukan sufiks{" "}
-          <code>D</code> (opsional, tapi disarankan untuk kejelasan), dan{" "}
-          <code>decimal</code> memerlukan sufiks <code>M</code>. Nilai 136.18
-          disimpan dengan tipe data yang sesuai.
+          Dalam C#, untuk bilangan desimal, tipe data tertentu memerlukan sufiks
+          spesifik untuk menandakan nilai desimalnya. Nilai 136.18 disimpan
+          dengan tipe data yang sesuai.
         </div>
       )}
     </div>

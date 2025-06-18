@@ -340,7 +340,7 @@ const LatihanBab6 = () => {
   const renderInstruksi = () => (
     <div className="max-w-4xl p-2 mx-auto bg-white rounded-lg shadow-md sm:p-4 lg:p-6">
       <h1 className="mb-4 text-xl font-bold text-center sm:text-2xl">
-        BAB 6 - ARRAY DAN LIST
+        BAB 6 - METHOD
       </h1>
       <section>
         <h2 className="mb-3 text-base font-semibold text-gray-800 sm:text-lg">

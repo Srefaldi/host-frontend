@@ -115,7 +115,6 @@ const MateriRoutes = () => {
         <Route path="bab1/hasil-kuis-bab1" element={<HasilKuisBab1 />} />
 
         {/* BAB 2 */}
-
         <Route path="bab2/variabel" element={<Variabel />} />
         <Route path="bab2/penamaan-variabel" element={<PenamaanVariabel />} />
         <Route path="bab2/kategori-variabel" element={<KategoriVariabel />} />
@@ -135,7 +134,7 @@ const MateriRoutes = () => {
         <Route path="bab2/hasil-latihan-bab2" element={<HasilLatihanBab2 />} />
         <Route path="bab2/hasil-kuis-bab2" element={<HasilKuisBab2 />} />
 
-        {/*   BAB 3 Tipe Data */}
+        {/* BAB 3 Tipe Data */}
         <Route
           path="bab3/pengertian-tipedata"
           element={<PengertianTipeData />}
@@ -156,7 +155,7 @@ const MateriRoutes = () => {
         <Route path="bab3/hasil-latihan-bab3" element={<HasilLatihanBab3 />} />
         <Route path="bab3/hasil-kuis-bab3" element={<HasilKuisBab3 />} />
 
-        {/* BAB 4  */}
+        {/* BAB 4 */}
         <Route
           path="bab4/pengertian-operator"
           element={<PengertianOperator />}

@@ -65,19 +65,27 @@ const Quiz7 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setCharValue1("");
-      setCharValue2("");
-      setCharValue3("");
-      setOutput1("");
-      setOutput2("");
-      setOutput3("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(
+          normalizedCharValue1,
+          normalizedCharValue2,
+          normalizedCharValue3,
+          normalizedOutput1,
+          normalizedOutput2,
+          normalizedOutput3
+        ),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setCharValue1("");
+        setCharValue2("");
+        setCharValue3("");
+        setOutput1("");
+        setOutput2("");
+        setOutput3("");
+        setShowExplanation(false);
       });
     }
   };
@@ -90,6 +98,46 @@ const Quiz7 = ({ onComplete }) => {
     setOutput2("");
     setOutput3("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (
+    charValue1,
+    charValue2,
+    charValue3,
+    output1,
+    output2,
+    output3
+  ) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check charValue1 and output1
+    if (charValue1 !== "'b'") {
+      feedback += `<li>Untuk <code>huruf</code>, nilai <strong>${charValue1}</strong> salah. Gunakan karakter huruf tunggal dengan tanda kutip tunggal (<code>'</code>).</li>`;
+    }
+    if (output1 !== "huruf") {
+      feedback += `<li>Untuk output <code>huruf</code>, jawaban <strong>${output1}</strong> salah. Gunakan kategori yang mencerminkan jenis karakter huruf.</li>`;
+    }
+
+    // Check charValue2 and output2
+    if (charValue2 !== "'7'") {
+      feedback += `<li>Untuk <code>angka</code>, nilai <strong>${charValue2}</strong> salah. Gunakan karakter angka tunggal dengan tanda kutip tunggal (<code>'</code>).</li>`;
+    }
+    if (output2 !== "angka") {
+      feedback += `<li>Untuk output <code>angka</code>, jawaban <strong>${output2}</strong> salah. Gunakan kategori yang mencerminkan jenis karakter angka.</li>`;
+    }
+
+    // Check charValue3 and output3
+    if (charValue3 !== "'#'") {
+      feedback += `<li>Untuk <code>simbol</code>, nilai <strong>${charValue3}</strong> salah. Gunakan karakter simbol tunggal dengan tanda kutip tunggal (<code>'</code>).</li>`;
+    }
+    if (output3 !== "simbol") {
+      feedback += `<li>Untuk output <code>simbol</code>, jawaban <strong>${output3}</strong> salah. Gunakan kategori yang mencerminkan jenis karakter simbol.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang tipe data <code>char</code> . Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -227,18 +275,10 @@ const Quiz7 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Karakter: <strong>'B'</strong> untuk huruf, <strong>'7'</strong> untuk
-          angka, <strong>'#'</strong> untuk simbol.
-          <br />
-          Output: <strong>huruf</strong> untuk 'B', <strong>angka</strong> untuk
-          '7', <strong>simbol</strong> untuk '#'.
-          <br />
           Dalam C#, tipe data <code>char</code> digunakan untuk menyimpan
-          karakter tunggal seperti huruf ('B'), angka ('7'), dan simbol ('#').
-          Output mencerminkan kategori masing-masing karakter saat dicetak
-          menggunakan <code>Console.WriteLine</code>.
+          karakter tunggal seperti huruf, angka, dan simbol. Output mencerminkan
+          kategori masing-masing karakter saat dicetak menggunakan{" "}
+          <code>Console.WriteLine</code>.
         </div>
       )}
     </div>

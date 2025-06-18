@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizConditional from "./Quiz-bab4/Quiz7";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -11,6 +12,16 @@ const OperatorConditional = () => {
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab4/operator-conditional";
+
+  // Initialize quizPassed and quizCompleted based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      setQuizCompleted(true);
+    }
+  }, [completedLessons]);
 
   const handleQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed); // Debugging
@@ -18,13 +29,13 @@ const OperatorConditional = () => {
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab4/operator-equality");
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab4/operator-conditional");
+    
     window.scrollTo(0, 0);
     navigate("/materi/bab4/operator-equality");
   };
@@ -53,7 +64,7 @@ const OperatorConditional = () => {
           bentuk umum penggunaannya adalah sebagai berikut:
         </p>
         <pre className="p-2 mb-4 font-mono bg-gray-100 rounded">
-          <code>{`Kondisi? a : b; `}</code>
+          <code>Kondisi ? a : b;</code>
         </pre>
         <p className="mb-2">
           Pada bentuk umum di atas, kondisi merupakan ekspresi logika yang akan
@@ -73,12 +84,11 @@ const OperatorConditional = () => {
         </div>
         <p className="mb-2">
           Pada kode di atas terdapat 2 variabel yang bertipe data integer yaitu,
-          variabel <code>int a</code>
-          dan <code>int b</code> yang mana variabel <code>b</code> melakukan
-          operasi conditional di antaranya
+          variabel <code>int a</code> dan <code>int b</code> yang mana variabel{" "}
+          <code>b</code> melakukan operasi conditional di antaranya{" "}
           <code>(a > 5) ? 10 : 20</code>. Variabel <code>b</code> digunakan
           untuk menyimpan hasil operasi conditional dari variabel <code>a</code>
-          . Kemudian ditampilkan menggunakan perintah
+          . Kemudian ditampilkan menggunakan perintah{" "}
           <code>Console.WriteLine()</code>.
         </p>
       </div>

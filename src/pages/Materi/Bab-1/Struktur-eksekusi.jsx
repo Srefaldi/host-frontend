@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import gambar118 from "./img-bab1/Gambar-118.png";
 import Quiz from "./Quiz-bab1/Quiz4";
 import nextIcon from "../../../assets/img/selanjutnya.png";
@@ -10,7 +11,16 @@ import lockIcon from "../../../assets/img/lock.png";
 const StrukturEksekusi = () => {
   const navigate = useNavigate();
   const [quizCompleted, setQuizCompleted] = useState(false);
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab1/struktur-eksekusi";
+
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
 
   // Navigate to previous lesson
   const handleBack = () => {
@@ -26,8 +36,8 @@ const StrukturEksekusi = () => {
   };
 
   // Handle quiz completion
-  const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab1/sintaks-print");
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab1/struktur-eksekusi");
     setQuizCompleted(true);
     window.scrollTo({
       top: document.documentElement.scrollHeight,
@@ -83,7 +93,7 @@ const StrukturEksekusi = () => {
         <p className="mt-4">
           Di dalam struktur eksekusi kode terdapat control structures yang
           berguna untuk mengatur proses eksekusi sebuah kode program. Terdapat 3
-          ada 3 ttipe control structures dalam bahasa pemrograman:
+          tipe control structures dalam bahasa pemrograman:
           <ul className="mt-4 pl-6 list-disc">
             <li>
               <strong>Sequence</strong> - struktur dimana perintah dieksekusi
@@ -100,7 +110,7 @@ const StrukturEksekusi = () => {
           </ul>
         </p>
 
-        {/* <!-- Tipe Control Structures Image and Caption --> */}
+        {/* Tipe Control Structures Image and Caption */}
         <figure className="p-0 md:p-4 my-3 sm:my-8 text-center w-full mt-4">
           <img
             src={gambar118}
@@ -115,12 +125,12 @@ const StrukturEksekusi = () => {
         </figure>
       </div>
 
-      {/* <!-- Quiz - Outside white container -->  */}
+      {/* Quiz - Outside white container */}
       <div className="mb-6">
-        <Quiz onComplete={handleQuizComplete} />
+        <Quiz onComplete={handleQuizCompleteLocal} />
       </div>
 
-      {/* <!-- Navigation Buttons - Outside white container -->  */}
+      {/* Navigation Buttons - Outside white container */}
       <div className="flex justify-between mt-6 gap-4">
         <button
           onClick={handleBack}

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import QuizTipeDataDasar from "./Quiz-bab3/Quiz3";
 import nextIcon from "../../../assets/img/selanjutnya.png";
@@ -10,15 +11,24 @@ const TipeDataDasar = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  const currentLessonPath = "/materi/bab3/tipe-data-dasar";
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuizPassed(true);
+    }
+  }, [completedLessons, currentLessonPath]);
 
-  const handleQuizComplete = (isPassed) => {
+  const handleQuizCompleteLocal = (isPassed) => {
+    handleQuizComplete("/materi/bab3/tipe-data-dasar");
     setQuizCompleted(true);
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab3/integer");
-      // Tampilkan notifikasi sukses
+      // Tampilkan notifikasi sukses (handled by handleQuizComplete)
     }
   };
 
@@ -30,7 +40,7 @@ const TipeDataDasar = () => {
 
   const handleBack = () => {
     window.scrollTo(0, 0);
-    navigate("/materi/bab3/klasifikasi-tipedata");
+    navigate("/materi/bab3/klasifikasi-tipedataifikasi-tipe-data");
   };
 
   return (
@@ -40,7 +50,7 @@ const TipeDataDasar = () => {
         <h2 className="text-2xl font-bold">3.3 Tipe Data Dasar</h2>
         <p className="mt-4">
           Dalam bahasa pemrograman C#, tipe data dapat dibagi ke dalam dua
-          kategori utama, yaitu Value Types dan Reference Types. Masing-masing
+          kategori utama, yaitu: Value Types dan Reference Types. Masing-masing
           kategori ini memiliki karakteristik dan kegunaan yang berbeda.
         </p>
 
@@ -122,7 +132,7 @@ const TipeDataDasar = () => {
       </div>
 
       {/* Kuis */}
-      <QuizTipeDataDasar onComplete={handleQuizComplete} />
+      <QuizTipeDataDasar onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
 import lockIcon from "../../../assets/img/lock.png";
@@ -9,15 +10,48 @@ import QuizKedua from "./Quiz-bab5/Quiz6";
 const PernyataanPerulangan = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quiz2Completed, setQuiz2Completed] = useState(false);
+  const [quiz1Passed, setQuiz1Passed] = useState(false);
+  const [quiz2Passed, setQuiz2Passed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab5/pernyataan-perulangan";
+
+  // Initialize quiz states based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuiz2Completed(true);
+      setQuiz1Passed(true);
+      setQuiz2Passed(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizComplete = (isPassed) => {
+    console.log("Quiz 1 completed, isPassed:", isPassed); // Debugging
+    setQuizCompleted(true);
+    setQuiz1Passed(isPassed);
+
+    if (isPassed && !completedLessons.includes(currentLessonPath)) {
+      handleLessonComplete(currentLessonPath);
+    }
+  };
+
+  const handleQuiz2Complete = (isPassed) => {
+    console.log("Quiz 2 completed, isPassed:", isPassed); // Debugging
+    setQuiz2Completed(true);
+    setQuiz2Passed(isPassed);
+
+    if (isPassed && !completedLessons.includes(currentLessonPath)) {
+      handleLessonComplete(currentLessonPath);
+    }
+  };
 
   const handleNext = () => {
-    if (quiz2Completed) {
-      handleLessonComplete("/materi/bab5/pernyataan-perulangan");
-      window.scrollTo(0, 0);
-      navigate("/materi/bab5/pernyataan-break-continue");
-    }
+    if (!quiz2Passed) return; // Prevent navigation if quiz 2 not passed
+
+    window.scrollTo(0, 0);
+    navigate("/materi/bab5/pernyataan-break-continue");
   };
 
   const handleBack = () => {
@@ -25,14 +59,11 @@ const PernyataanPerulangan = () => {
     navigate("/materi/bab5/pernyataan-switch");
   };
 
-  const handleQuizComplete = () => {
-    setQuizCompleted(true);
-  };
-
-  const handleQuiz2Complete = () => {
-    handleLessonComplete("/materi/bab5/pernyataan-break-continue");
-    setQuiz2Completed(true);
-  };
+  // Debugging state changes
+  useEffect(() => {
+    console.log("quizCompleted:", quizCompleted, "quiz1Passed:", quiz1Passed);
+    console.log("quiz2Completed:", quiz2Completed, "quiz2Passed:", quiz2Passed);
+  }, [quizCompleted, quiz1Passed, quiz2Completed, quiz2Passed]);
 
   return (
     <div className="mt-4 mb-4">
@@ -171,8 +202,8 @@ const PernyataanPerulangan = () => {
         <p className="mb-3">
           Perulangan ini tidak akan pernah dieksekusi karena variabel
           kendalinya, hitung, lebih besar dari 5 ketika pertama kali program
-          mengeksekusi perulangan for. Ini membuat ekspresi kondisional, hitung
-          &lt; 5, bernilai false; jadi,{" "}
+          mengeksekusi perulangan for. Ini membuat ekspresi kondisional,{" "}
+          <code>hitung {"<"} 5</code>, bernilai false; jadi,{" "}
           <strong>satu iterasi perulangan pun tidak pernah terjadi.</strong>
         </p>
       </div>
@@ -279,7 +310,7 @@ const PernyataanPerulangan = () => {
           <code>{`for (; ; ) 
 { 
     // runtun statemen . . . 
-} `}</code>
+}`}</code>
         </pre>
       </div>
 
@@ -300,7 +331,7 @@ const PernyataanPerulangan = () => {
           <code>{`while (kondisi) 
 { 
     runtun statemen; 
-} `}</code>
+}`}</code>
         </pre>
         <p className="mb-2">
           Statement dieksekusi bila kondisi bernilai true. Jika bernilai false,
@@ -376,8 +407,7 @@ while (kondisi)
           <code>{`do 
 { 
     runtun statemen; 
-} while (kondisi); 
-`}</code>
+} while (kondisi);`}</code>
         </pre>
         <p className="mb-2">
           Perulangan <strong>do-while</strong> dieksekusi sepanjang ekspresi
@@ -409,6 +439,7 @@ while (kondisi)
         <button
           onClick={handleBack}
           className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          aria-label="Kembali ke materi sebelumnya"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
@@ -417,24 +448,27 @@ while (kondisi)
           onClick={handleNext}
           className="flex items-center justify-between px-4 py-2 text-white rounded-lg"
           style={{
-            backgroundColor: quiz2Completed ? "#6E2A7F" : "#A0A0A0",
-            cursor: quiz2Completed ? "pointer" : "not-allowed",
+            backgroundColor: quiz2Passed ? "#6E2A7F" : "#A0A0A0",
+            cursor: quiz2Passed ? "pointer" : "not-allowed",
             transition: "background-color 0.2s",
           }}
           onMouseEnter={(e) =>
-            quiz2Completed &&
-            (e.currentTarget.style.backgroundColor = "#5B1F6A")
+            quiz2Passed && (e.currentTarget.style.backgroundColor = "#5B1F6A")
           }
           onMouseLeave={(e) =>
-            quiz2Completed &&
-            (e.currentTarget.style.backgroundColor = "#6E2A7F")
+            quiz2Passed && (e.currentTarget.style.backgroundColor = "#6E2A7F")
           }
-          disabled={!quiz2Completed}
+          disabled={!quiz2Passed}
+          aria-label={
+            quiz2Passed
+              ? "Lanjut ke materi berikutnya"
+              : "Selesaikan kedua kuis dengan benar untuk melanjutkan"
+          }
         >
           <span>Selanjutnya</span>
           <img
-            src={quiz2Completed ? nextIcon : lockIcon}
-            alt={quiz2Completed ? "Selanjutnya" : "Terkunci"}
+            src={quiz2Passed ? nextIcon : lockIcon}
+            alt={quiz2Passed ? "Selanjutnya" : "Terkunci"}
             className="w-5 h-5 ml-2"
           />
         </button>

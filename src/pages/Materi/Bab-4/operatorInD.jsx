@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Quiz3 from "./Quiz-bab4/Quiz3";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -11,6 +12,16 @@ const OperatorInD = () => {
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab4/operator-increment-decrement";
+
+  // Initialize quizPassed based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      setQuizCompleted(true);
+    }
+  }, [completedLessons]);
 
   const handleQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed);
@@ -18,13 +29,13 @@ const OperatorInD = () => {
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab4/operator-assignment");
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return;
-    handleLessonComplete("/materi/bab4/operator-increment-decrement");
+
     window.scrollTo(0, 0);
     navigate("/materi/bab4/operator-assignment");
   };

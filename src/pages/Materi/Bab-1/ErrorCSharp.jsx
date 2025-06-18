@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Quiz from "./Quiz-bab1/Quiz7";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -8,8 +9,17 @@ import lockIcon from "../../../assets/img/lock.png";
 // Material page for "Error CSharp"
 const ErrorCSharp = () => {
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab1/error-csharp";
+
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
 
   // Navigate to next lesson
   const handleNext = () => {
@@ -25,8 +35,8 @@ const ErrorCSharp = () => {
   };
 
   // Handle quiz completion
-  const handleQuizCompletion = () => {
-    handleLessonComplete("/materi/bab1/latihan-bab1");
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab1/error-csharp");
     setQuizCompleted(true);
     window.scrollTo({
       top: document.documentElement.scrollHeight,
@@ -135,7 +145,7 @@ const ErrorCSharp = () => {
 
       {/* Quiz Component */}
       <div className="mb-6">
-        <Quiz onComplete={handleQuizCompletion} />
+        <Quiz onComplete={handleQuizCompleteLocal} />
       </div>
 
       {/* Navigation Buttons */}

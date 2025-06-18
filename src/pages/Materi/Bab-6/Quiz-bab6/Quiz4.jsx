@@ -6,6 +6,11 @@ const Quiz4 = ({ onComplete }) => {
   const [inputParameter, setInputParameter] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
+  // Function to normalize answers
+  const normalizeAnswer = (answer) => {
+    return answer.replace(/\s+/g, "").toLowerCase();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -20,11 +25,6 @@ const Quiz4 = ({ onComplete }) => {
       });
       return;
     }
-
-    // Function to normalize answers
-    const normalizeAnswer = (answer) => {
-      return answer.replace(/\s+/g, "").toLowerCase();
-    };
 
     // Normalize user answers and correct answers
     const normalizedInputMethodCall = normalizeAnswer(inputMethodCall);
@@ -58,16 +58,17 @@ const Quiz4 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputMethodCall("");
-      setInputParameter("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(inputMethodCall, inputParameter),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputMethodCall("");
+        setInputParameter("");
+        setShowExplanation(false);
       });
     }
   };
@@ -78,8 +79,44 @@ const Quiz4 = ({ onComplete }) => {
     setShowExplanation(false);
   };
 
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (methodCall, parameter) => {
+    const normalizedMethodCall = normalizeAnswer(methodCall);
+    const normalizedParameter = normalizeAnswer(parameter);
+    let feedback = "Jawaban Anda belum tepat. Berikut adalah masalahnya:<ul>";
+
+    // Feedback for inputMethodCall
+    if (normalizedMethodCall !== normalizeAnswer("Sapa")) {
+      if (!methodCall.trim()) {
+        feedback += `<li><strong>Pemanggilan method</strong> kosong. Anda perlu menulis nama method yang benar di dalam <code>Main</code> untuk memanggil method tersebut. Tinjau kembali materi tentang pemanggilan method di Bab 6.</li>`;
+      } else if (!normalizedMethodCall.includes("sapa")) {
+        feedback += `<li><strong>Pemanggilan method (${methodCall})</strong> salah. Nama method tidak sesuai. Pastikan Anda menggunakan nama method yang didefinisikan dalam kode. Tinjau kembali materi tentang pemanggilan method di Bab 6.</li>`;
+      } else if (methodCall.includes("(") || methodCall.includes(")")) {
+        feedback += `<li><strong>Pemanggilan method (${methodCall})</strong> salah. Anda tidak perlu menyertakan tanda kurung <code>()</code> atau parameter di bagian ini, hanya nama method saja. Tinjau kembali sintaksis pemanggilan method di Bab 6.</li>`;
+      } else {
+        feedback += `<li><strong>Pemanggilan method (${methodCall})</strong> tidak tepat. Pastikan Anda hanya menulis nama method tanpa tanda kurung atau parameter tambahan. Tinjau kembali materi tentang pemanggilan method di Bab 6.</li>`;
+      }
+    }
+
+    // Feedback for inputParameter
+    if (normalizedParameter !== normalizeAnswer("nama")) {
+      if (!parameter.trim()) {
+        feedback += `<li><strong>Parameter</strong> kosong. Anda perlu menulis nama parameter yang digunakan dalam method untuk mencetak sapaan. Tinjau kembali materi tentang parameter method di Bab 6.</li>`;
+      } else if (parameter.includes('"') || normalizedParameter === "andi") {
+        feedback += `<li><strong>Parameter (${parameter})</strong> salah. Anda tidak perlu menulis nilai literal seperti "Andi". Gunakan nama parameter yang dideklarasikan dalam method. Tinjau kembali materi tentang parameter method di Bab 6.</li>`;
+      } else if (!normalizedParameter.includes("nama")) {
+        feedback += `<li><strong>Parameter (${parameter})</strong> salah. Nama parameter tidak sesuai dengan yang dideklarasikan dalam method. Pastikan Anda menggunakan nama parameter yang benar. Tinjau kembali materi tentang parameter method di Bab 6.</li>`;
+      } else {
+        feedback += `<li><strong>Parameter (${parameter})</strong> tidak tepat. Pastikan Anda menulis nama parameter tanpa tanda tambahan seperti titik koma atau tipe data. Tinjau kembali materi tentang parameter method di Bab 6.</li>`;
+      }
+    }
+
+    feedback += "</ul>Yuk, coba lagi!";
+    return feedback;
+  };
+
   return (
-    <div className="mt-4 max-w-full p-6 mx-auto rounded-lg">
+    <div className="max-w-full p-6 mx-auto mt-4 rounded-lg">
       <h2
         className="text-lg font-semibold text-center"
         style={{ color: "#6E2A7F" }}
@@ -94,7 +131,7 @@ const Quiz4 = ({ onComplete }) => {
           [nama]!"...
         </p>
 
-        <div className="p-4 mt-3 font-mono text-sm bg-gray-100 rounded-lg mb-4">
+        <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
               {`public class Quiz\n{\n    public static void Main(string[] args)\n    {\n        `}
@@ -161,10 +198,10 @@ const Quiz4 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -181,12 +218,6 @@ const Quiz4 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Untuk pemanggilan method: <strong>Sapa</strong>,
-          <br />
-          Untuk parameter: <strong>nama</strong>.
-          <br />
           Dalam C#, method <code>Sapa</code> dipanggil dengan nama method
           diikuti parameter dalam tanda kurung, dalam hal ini{" "}
           <code>Sapa("Andi")</code>, untuk mengirim string "Andi" ke method.

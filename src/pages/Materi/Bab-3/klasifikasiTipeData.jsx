@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import QuizKlasifikasiTipeData from "./Quiz-bab3/Quiz2";
 import nextIcon from "../../../assets/img/selanjutnya.png";
@@ -9,10 +10,19 @@ import lockIcon from "../../../assets/img/lock.png";
 const KlasifikasiTipeData = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab3/klasifikasi-tipedata";
 
-  const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab3/tipe-data-dasar");
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab3/klasifikasi-tipedata");
     setQuizCompleted(true);
   };
 
@@ -174,7 +184,7 @@ const KlasifikasiTipeData = () => {
       </div>
 
       {/* Kuis */}
-      <QuizKlasifikasiTipeData onComplete={handleQuizComplete} />
+      <QuizKlasifikasiTipeData onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

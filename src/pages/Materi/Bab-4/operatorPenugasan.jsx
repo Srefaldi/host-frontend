@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizAssignment from "./Quiz-bab4/Quiz4";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -11,6 +12,16 @@ const OperatorAssignment = () => {
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab4/operator-assignment";
+
+  // Initialize quizPassed and quizCompleted based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      setQuizCompleted(true);
+    }
+  }, [completedLessons]);
 
   const handleQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed); // Debugging
@@ -18,13 +29,13 @@ const OperatorAssignment = () => {
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab4/operator-comparison");
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab4/operator-assignment");
+
     window.scrollTo(0, 0);
     navigate("/materi/bab4/operator-comparison");
   };
@@ -63,7 +74,7 @@ const OperatorAssignment = () => {
         <p className="text-sm italic text-center text-gray-600">
           Tabel 4.3 Tabel daftar simbol operator penugasan
         </p>
-        <div className="flex justify-center p-4 mt-2 mb-4">
+        <div className="flex justify-center p-4 mt-2 mb-6">
           <table className="text-center border border-gray-300">
             <thead className="bg-[#68217A] text-white text-center">
               <tr>
@@ -117,7 +128,7 @@ const OperatorAssignment = () => {
         <p className="text-sm italic text-center text-gray-600">
           Tabel 4.4 Tabel daftar contoh kasus operator penugasan
         </p>
-        <div className="flex justify-center p-4 mt-2 mb-4">
+        <div className="flex justify-center p-4 mt-2 mb-6">
           <table className="text-center border border-gray-300">
             <thead className="bg-[#68217A] text-white text-center">
               <tr>

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizBoolean from "./Quiz-bab3/Quiz6";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -10,20 +11,45 @@ const Boolean = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab3/boolean";
 
-  const handleQuizComplete = (isPassed) => {
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuizPassed(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  // Debugging state changes
+  useEffect(() => {
+    console.log("quizCompleted:", quizCompleted, "quizPassed:", quizPassed);
+  }, [quizCompleted, quizPassed]);
+
+  const handleQuizCompleteLocal = (isPassed) => {
+    console.log("Quiz completed, isPassed:", isPassed); // Debugging
     setQuizCompleted(true);
-    setQuizPassed(isPassed);
 
+    // Jika materi sudah diselesaikan sebelumnya, pertahankan quizPassed = true
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      console.log("Materi sudah selesai, mempertahankan quizPassed = true");
+      return;
+    }
+
+    // Jika materi belum diselesaikan, perbarui status berdasarkan hasil kuis
+    setQuizPassed(isPassed);
     if (isPassed) {
-      handleLessonComplete("/materi/bab3/char");
+      handleQuizComplete(currentLessonPath);
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab3/boolean");
+    handleLessonComplete(currentLessonPath);
     window.scrollTo(0, 0);
     navigate("/materi/bab3/char");
   };
@@ -77,11 +103,11 @@ const Boolean = () => {
         </pre>
         <p className="mt-2">
           Dalam kode di atas, <code>var1</code> menyimpan hasil perbandingan{" "}
-          <code>18 &lt; 13</code>, yang bernilai false karena 18 lebih besar
+          <code>{"18 < 13"}</code>, yang bernilai false karena 18 lebih besar
           dari 13. <code>var2</code> menyimpan hasil perbandingan{" "}
-          <code>26 &gt; 18</code>, yang bernilai true karena 26 lebih besar dari
-          18. <code>var3</code> menyimpan hasil perbandingan{" "}
-          <code>'A' == 'a'</code>, yang bernilai <code>false</code> karena
+          <code>{"26 > 18"}</code>, yang bernilai true karena 26 lebih besar
+          dari 18. <code>var3</code> menyimpan hasil perbandingan{" "}
+          <code>{"'A' == 'a'"}</code>, yang bernilai <code>false</code> karena
           karakter 'A' tidak sama dengan karakter 'a'.
         </p>
         <h3 className="mt-4 text-xl font-bold">
@@ -99,7 +125,7 @@ const Boolean = () => {
         </pre>
         <p className="mt-2">
           Dalam kode di atas, <code>var1</code> menyimpan hasil perbandingan{" "}
-          <code>18 &lt; 13</code>, yang bernilai <code>false</code> karena
+          <code>{"18 < 13"}</code>, yang bernilai <code>false</code> karena
           <code>18</code> lebih besar dari <code>13</code>.
         </p>
         <h3 className="mt-4 text-xl font-bold">Cobalah Kode Program Berikut</h3>
@@ -112,18 +138,23 @@ const Boolean = () => {
         </div>
         <p className="mt-2">
           Dalam kode ini, pengguna memasukkan sebuah angka, lalu program
-          memeriksa apakah angka tersebut **genap** menggunakan operasi{" "}
-          <code>angka % 2 == 0</code>. Hasilnya disimpan dalam **variabel
-          boolean** <code>isGenap</code>, yang digunakan dalam **pernyataan
-          if-else** untuk menentukan apakah angka **genap atau ganjil**. **Tipe
-          data <code>bool</code> dalam C#** sangat penting dalam **logika,
-          perbandingan, dan kontrol alur program**, memungkinkan kode lebih
-          **efisien** dalam menangani kondisi.
+          memeriksa apakah angka tersebut <strong>genap</strong> menggunakan
+          operasi <code>angka % 2 == 0</code>. Hasilnya disimpan dalam{" "}
+          <strong>variabel boolean</strong> <code>isGenap</code>, yang digunakan
+          dalam <strong>pernyataan if-else</strong> untuk menentukan apakah
+          angka <strong>genap atau ganjil</strong>.{" "}
+          <strong>
+            Tipe data <code>bool</code> dalam C#
+          </strong>{" "}
+          sangat penting dalam{" "}
+          <strong>logika, perbandingan, dan kontrol alur program</strong>,
+          memungkinkan kode lebih
+          <strong>efisien</strong> dalam menangani kondisi.
         </p>
       </div>
 
       {/* Kuis */}
-      <QuizBoolean onComplete={handleQuizComplete} />
+      <QuizBoolean onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

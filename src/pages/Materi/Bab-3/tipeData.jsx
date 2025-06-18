@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Quiz from "./Quiz-bab3/Quiz1";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -12,10 +13,19 @@ import gambar1 from "./img-bab3/gambar1-bab3.png";
 const TipeData = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const navigate = useNavigate();
-  const { handleLessonComplete } = useOutletContext();
+  const { handleLessonComplete, handleQuizComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab3/pengertian-tipedata";
 
-  const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab3/klasifikasi-tipedata");
+  // Periksa apakah materi sudah diselesaikan saat komponen dimuat
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, currentLessonPath]);
+
+  const handleQuizCompleteLocal = () => {
+    handleQuizComplete("/materi/bab3/pengertian-tipedata");
     setQuizCompleted(true);
     // Scroll ke bagian paling bawah halaman
     window.scrollTo({
@@ -149,7 +159,7 @@ const TipeData = () => {
       </div>
 
       {/* Kuis */}
-      <Quiz onComplete={handleQuizComplete} />
+      <Quiz onComplete={handleQuizCompleteLocal} />
 
       {/* Tombol Navigasi */}
       <div className="flex justify-between mt-6">

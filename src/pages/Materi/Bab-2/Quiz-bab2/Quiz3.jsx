@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 const QuizKategoriVariabel = ({ onComplete }) => {
   const [selectedAnswer, setSelectedAnswer] = useState("");
@@ -30,15 +30,15 @@ const QuizKategoriVariabel = ({ onComplete }) => {
         onComplete();
       });
     } else {
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca Kembali Materi dan Coba Lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
       }).then(() => {
+        setSelectedAnswer("");
+        setShowExplanation(false);
         window.scrollTo(0, 0);
       });
     }
@@ -47,6 +47,30 @@ const QuizKategoriVariabel = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "A":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Variabel static dapat diubah berkali-kali, bukan hanya sekali. Tinjau kembali materi tentang variabel static . Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Variabel static tidak diinisialisasi ulang oleh setiap instance, melainkan hanya sekali untuk kelas. Tinjau kembali materi tentang variabel static . Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. C# tidak secara otomatis mengunci variabel static; penguncian memerlukan mekanisme seperti <code>lock</code>. Tinjau kembali materi tentang variabel static . Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Variabel static dapat diakses dari metode static maupun non-static. Tinjau kembali materi tentang variabel static . Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang variabel static dan coba lagi.";
+    }
   };
 
   return (

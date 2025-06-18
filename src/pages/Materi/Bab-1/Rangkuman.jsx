@@ -9,7 +9,7 @@ const Rangkuman = () => {
   const handleNext = () => {
     handleLessonComplete("/materi/bab1/rangkuman-bab1");
     window.scrollTo(0, 0);
-    handleLessonComplete("/materi/bab2/variabel");
+
     navigate("/materi/bab2/variabel");
   };
 

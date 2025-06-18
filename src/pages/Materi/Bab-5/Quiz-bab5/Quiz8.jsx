@@ -5,11 +5,18 @@ const Quiz8 = ({ onComplete }) => {
   const [inputIteration, setInputIteration] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
+  // Fungsi untuk normalisasi jawaban
+  const normalizeAnswer = (answer) => {
+    return answer
+      .replace(/[;,\s]+/g, "") // Hapus spasi, koma, dan titik koma
+      .toLowerCase();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Cek apakah ada jawaban yang diisi
-    if (!inputIteration) {
+    // Cek apakah input kosong atau hanya berisi spasi
+    if (!inputIteration.trim()) {
       window.scrollTo(0, 0);
       Swal.fire({
         title: "Isi Semua Kolom!",
@@ -21,37 +28,20 @@ const Quiz8 = ({ onComplete }) => {
       return;
     }
 
-    // Fungsi untuk normalisasi jawaban
-    const normalizeAnswer = (answer) => {
-      return answer.replace(/\s+/g, "").toLowerCase();
-    };
-
     // Normalisasi jawaban pengguna dan jawaban yang benar
     const normalizedInputIteration = normalizeAnswer(inputIteration);
-    const correctIteration = "for (int j = 0; j < 2; j++)";
+    const correctIteration = "for(intj=0;j<2;j++)";
     const normalizedCorrectIteration = normalizeAnswer(correctIteration);
 
-    // Cek jawaban (case insensitive dan ignore spaces)
+    // Cek jawaban
     if (normalizedInputIteration === normalizedCorrectIteration) {
-      // Jika benar, simpan dengan format yang benar (kapitalisasi sesuai jawaban benar)
-      const formattedAnswer = inputIteration.replace(/\s+/g, " ").trim();
-      const correctFormatted = correctIteration;
-
-      // Jika hanya masalah kapitalisasi, gunakan format yang benar
-      if (
-        normalizeAnswer(formattedAnswer) === normalizeAnswer(correctFormatted)
-      ) {
-        setInputIteration(correctFormatted);
-      }
-
-      // Set showExplanation to true to display the explanation
       setShowExplanation(true);
-
       Swal.fire({
         title: "Jawaban Anda Benar!",
-        text: "Silahkan lanjut ke materi berikutnya.",
+        text: "Silakan lanjut ke materi berikutnya.",
         icon: "success",
         confirmButtonText: "OK",
+        confirmButtonColor: "#6E2A7F",
       }).then(() => {
         window.scrollTo({
           top: document.documentElement.scrollHeight,
@@ -60,14 +50,17 @@ const Quiz8 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputIteration("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca Kembali Materi dan Coba Lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(inputIteration),
         icon: "error",
-        confirmButtonText: "OK",
+        confirmButtonText: "Coba Lagi",
+        confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputIteration("");
+        setShowExplanation(false);
+        onComplete(false);
       });
     }
   };
@@ -75,6 +68,45 @@ const Quiz8 = ({ onComplete }) => {
   const handleReset = () => {
     setInputIteration("");
     setShowExplanation(false);
+    // Atur fokus ke input
+    document.querySelector('input[placeholder="Jawaban..."]').focus();
+  };
+
+  // Fungsi untuk menghasilkan feedback
+  const getIncorrectFeedback = (iteration) => {
+    const normalizedIteration = normalizeAnswer(iteration);
+
+    let feedback = "Jawaban Anda belum tepat. Berikut adalah masalahnya:<ul>";
+
+    if (!normalizedIteration.includes("for(")) {
+      feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Anda perlu menggunakan perulangan <code>for</code> untuk mencetak kombinasi pasangan bilangan. Tinjau kembali sintaksis perulangan <code>for</code> di C#.</li>`;
+    } else {
+      if (!normalizedIteration.includes("intj=0")) {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Inisialisasi variabel dalam perulangan <code>for</code> tidak tepat. Pastikan variabel dimulai dari nilai awal yang sesuai untuk mencetak bilangan dari 0 sampai 1. Tinjau kembali materi tentang perulangan <code>for</code>.</li>`;
+      }
+      if (
+        normalizedIteration.includes("j<=2") ||
+        normalizedIteration.includes("j>=2")
+      ) {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Kondisi perulangan menghasilkan jumlah iterasi yang tidak sesuai. Pastikan kondisi hanya mencakup bilangan 0 dan 1. Tinjau kembali materi tentang perulangan <code>for</code>.</li>`;
+      } else if (!normalizedIteration.includes("j<2")) {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Kondisi perulangan tidak tepat. Pastikan kondisi memungkinkan perulangan berjalan untuk menghasilkan bilangan 0 dan 1. Tinjau kembali materi tentang perulangan <code>for</code>.</li>`;
+      }
+      if (!normalizedIteration.includes("j++")) {
+        if (
+          normalizedIteration.includes("j--") ||
+          normalizedIteration.includes("j=j-1") ||
+          normalizedIteration.includes("j-=1")
+        ) {
+          feedback += `<li><strong>Iterasi (${iteration})</strong> hampir benar, tetapi langkah perulangan salah. Anda perlu menambah nilai variabel, bukan menguranginya, untuk mencetak bilangan dari 0 sampai 1. Tinjau kembali materi tentang perulangan <code>for</code>.</li>`;
+        } else {
+          feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Langkah perulangan tidak tepat. Pastikan Anda menggunakan operator yang benar untuk menambah nilai variabel setiap iterasi. Tinjau kembali materi tentang perulangan <code>for</code>.</li>`;
+        }
+      }
+    }
+
+    feedback += "</ul>Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -88,15 +120,14 @@ const Quiz8 = ({ onComplete }) => {
 
       <form onSubmit={handleSubmit}>
         <p className="mt-2 text-gray-600">
-          Lengkapilah bagian kode yang kosong (tanda // ...) agar program
-          menampilkan seluruh kombinasi pasangan bilangan dari 0 sampai 1, dalam
-          bentuk i j:
+          Lengkapilah bagian kode yang kosong agar program menampilkan seluruh
+          kombinasi pasangan bilangan dari 0 sampai 1, dalam bentuk i j:
         </p>
 
         <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
-              {`public class Quiz\n{\n    public static void Main()\n    {\n        for (int i = 0; i < 2; i++)\n        {\n            `}
+              {`public class Quiz\n{\n    public static void Main(string[] args)\n    {\n        for (int i = 0; i < 2; i++)\n        {\n            `}
               <input
                 type="text"
                 value={inputIteration}
@@ -150,12 +181,11 @@ const Quiz8 = ({ onComplete }) => {
         </div>
       </form>
 
-      {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -172,16 +202,9 @@ const Quiz8 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah: <code>for (int j = 0; j &lt; 2; j++)</code>
-          .
-          <br />
-          Dalam perulangan <code>for</code> di C#, inisialisasi{" "}
-          <code>int j = 0</code> menetapkan variabel kontrol <code>j</code>{" "}
-          mulai dari 0. Kondisi <code>j &lt; 2</code> memastikan perulangan
-          berjalan selama nilai <code>j</code> kurang dari 2. Iterasi{" "}
-          <code>j++</code> meningkatkan nilai <code>j</code> sebesar 1 pada
-          setiap iterasi, sehingga mencetak kombinasi pasangan bilangan dari 0
-          sampai 1.
+          Jawaban Anda benar. Perulangan <code>for</code> yang Anda tulis (
+          <code>{inputIteration}</code>) memungkinkan pencetakan semua kombinasi
+          pasangan bilangan dari 0 sampai 1 dalam format <code>i j</code>.
         </div>
       )}
     </div>

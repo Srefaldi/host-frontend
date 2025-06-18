@@ -6,24 +6,191 @@ const ProgresBelajar = () => {
   const [classes, setClasses] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 untuk performa
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState(null);
 
-  // Fetch data saat selectedClass berubah
+  // Daftar materi (sama dengan yang ada di backend)
+  const daftarBab = [
+    {
+      id: 1,
+      judul: "Pendahuluan",
+      subBab: [
+        { path: "/materi/bab1/pengenalan", label: "Pengenalan" },
+        { path: "/materi/bab1/struktur-kode", label: "Struktur Kode" },
+        { path: "/materi/bab1/struktur-eksekusi", label: "Struktur Eksekusi" },
+        { path: "/materi/bab1/sintaks-print", label: "Sintaks Print" },
+        { path: "/materi/bab1/sintaks-komentar", label: "Sintaks Komentar" },
+        { path: "/materi/bab1/error-csharp", label: "Error C#" },
+        { path: "/materi/bab1/latihan-bab1", label: "Latihan Bab 1" },
+        { path: "/materi/bab1/kuis-bab1", label: "Kuis Bab 1" },
+        { path: "/materi/bab1/rangkuman-bab1", label: "Rangkuman Bab 1" },
+      ],
+    },
+    {
+      id: 2,
+      judul: "Variabel",
+      subBab: [
+        { path: "/materi/bab2/variabel", label: "Variabel" },
+        { path: "/materi/bab2/penamaan-variabel", label: "Penamaan Variabel" },
+        { path: "/materi/bab2/kategori-variabel", label: "Kategori Variabel" },
+        {
+          path: "/materi/bab2/deklarasi-inialisasi",
+          label: "Deklarasi dan Inialisasi",
+        },
+        {
+          path: "/materi/bab2/deklarasi-banyak",
+          label: "Deklarasi Banyak Variabel",
+        },
+        {
+          path: "/materi/bab2/variabel-konstanta",
+          label: "Variabel dan Konstanta",
+        },
+        { path: "/materi/bab2/sintaks-input", label: "Sintaks Input" },
+        { path: "/materi/bab2/latihan-bab2", label: "Latihan Bab 2" },
+        { path: "/materi/bab2/kuis-bab2", label: "Kuis Bab 2" },
+        { path: "/materi/bab2/rangkuman-bab2", label: "Rangkuman Bab 2" },
+      ],
+    },
+    {
+      id: 3,
+      judul: "Tipe Data",
+      subBab: [
+        {
+          path: "/materi/bab3/pengertian-tipedata",
+          label: "Pengertian Tipe Data",
+        },
+        {
+          path: "/materi/bab3/klasifikasi-tipedata",
+          label: "Klasifikasi Tipe Data",
+        },
+        { path: "/materi/bab3/tipe-data-dasar", label: "Tipe Data Dasar" },
+        { path: "/materi/bab3/integer", label: "Integer" },
+        { path: "/materi/bab3/floating-point", label: "Floating Point" },
+        { path: "/materi/bab3/boolean", label: "Boolean" },
+        { path: "/materi/bab3/char", label: "Char" },
+        { path: "/materi/bab3/string", label: "String" },
+        { path: "/materi/bab3/latihan-bab3", label: "Latihan Bab 3" },
+        { path: "/materi/bab3/kuis-bab3", label: "Kuis Bab 3" },
+        { path: "/materi/bab3/rangkuman-bab3", label: "Rangkuman Bab 3" },
+      ],
+    },
+    {
+      id: 4,
+      judul: "Operator",
+      subBab: [
+        {
+          path: "/materi/bab4/pengertian-operator",
+          label: "Pengertian Operator",
+        },
+        {
+          path: "/materi/bab4/operator-arithmetic",
+          label: "Operator Aritmatika",
+        },
+        {
+          path: "/materi/bab4/operator-increment-decrement",
+          label: "Operator Increment dan Decrement",
+        },
+        {
+          path: "/materi/bab4/operator-assignment",
+          label: "Operator Assignment",
+        },
+        {
+          path: "/materi/bab4/operator-comparison",
+          label: "Operator Perbandingan",
+        },
+        { path: "/materi/bab4/operator-logika", label: "Operator Logika" },
+        {
+          path: "/materi/bab4/operator-conditional",
+          label: "Operator Kondisional",
+        },
+        { path: "/materi/bab4/operator-equality", label: "Operator Equality" },
+        { path: "/materi/bab4/latihan-bab4", label: "Latihan Bab 4" },
+        { path: "/materi/bab4/kuis-bab4", label: "Kuis Bab 4" },
+        { path: "/materi/bab4/rangkuman-bab4", label: "Rangkuman Bab 4" },
+      ],
+    },
+    {
+      id: 5,
+      judul: "Kontrol Alur",
+      subBab: [
+        {
+          path: "/materi/bab5/pengertian-kontrol-alur",
+          label: "Pengertian Kontrol Alur",
+        },
+        {
+          path: "/materi/bab5/pernyataan-if-else",
+          label: "Pernyataan If-Else",
+        },
+        { path: "/materi/bab5/pernyataan-switch", label: "Pernyataan Switch" },
+        {
+          path: "/materi/bab5/pernyataan-perulangan",
+          label: "Pernyataan Perulangan",
+        },
+        {
+          path: "/materi/bab5/pernyataan-break-continue",
+          label: "Pernyataan Break dan Continue",
+        },
+        {
+          path: "/materi/bab5/perulangan-bersarang",
+          label: "Perulangan Bersarang",
+        },
+        { path: "/materi/bab5/latihan-bab5", label: "Latihan Bab 5" },
+        { path: "/materi/bab5/kuis-bab5", label: "Kuis Bab 5" },
+        { path: "/materi/bab5/rangkuman-bab5", label: "Rangkuman Bab 5" },
+      ],
+    },
+    {
+      id: 6,
+      judul: "Method",
+      subBab: [
+        { path: "/materi/bab6/pengenalan-method", label: "Pengenalan Method" },
+        { path: "/materi/bab6/method-void", label: "Method Void" },
+        {
+          path: "/materi/bab6/method-tipe-data",
+          label: "Method dengan Tipe Data",
+        },
+        { path: "/materi/bab6/parameter-method", label: "Parameter Method" },
+        { path: "/materi/bab6/latihan-bab6", label: "Latihan Bab 6" },
+        { path: "/materi/bab6/kuis-bab6", label: "Kuis Bab 6" },
+        { path: "/materi/bab6/rangkuman-bab6", label: "Rangkuman Bab 6" },
+      ],
+    },
+    {
+      id: 7,
+      judul: "Evaluasi",
+      subBab: [
+        { path: "/materi/evaluasi/evaluasi-akhir", label: "Evaluasi Akhir" },
+      ],
+    },
+  ];
+
+  // Fungsi untuk mendapatkan label materi terakhir
+  const getLastMateri = (completedLessons) => {
+    if (!completedLessons || completedLessons.length === 0) {
+      return "-";
+    }
+    const lastLessonPath = completedLessons[completedLessons.length - 1];
+    for (const bab of daftarBab) {
+      const subBab = bab.subBab.find((sub) => sub.path === lastLessonPath);
+      if (subBab) {
+        return `${bab.judul} - ${subBab.label}`;
+      }
+    }
+    return "-";
+  };
+
   useEffect(() => {
     getClasses();
     getUsers();
   }, [selectedClass]);
 
-  // Redirect ke login jika error autentikasi
   useEffect(() => {
     if (error === "Mohon login ke akun anda") {
       window.location.href = "/login";
     }
   }, [error]);
 
-  // Fetch kelas
   const getClasses = async () => {
     try {
       const response = await axios.get(
@@ -31,18 +198,12 @@ const ProgresBelajar = () => {
         { withCredentials: true }
       );
       setClasses(response.data.sort() || []);
-      console.log("Classes fetched:", response.data);
     } catch (error) {
-      console.error(
-        "Error fetching classes:",
-        error.response?.data?.msg || error.message
-      );
       setError(error.response?.data?.msg || "Terjadi kesalahan");
       setClasses([]);
     }
   };
 
-  // Fetch users
   const getUsers = async () => {
     try {
       const response = await axios.get(
@@ -54,33 +215,18 @@ const ProgresBelajar = () => {
       );
       setUsers(response.data || []);
       setError(null);
-      console.log("Users fetched:", response.data);
     } catch (error) {
-      console.error(
-        "Error fetching users:",
-        error.response?.data?.msg || error.message
-      );
       setError(error.response?.data?.msg || "Terjadi kesalahan");
       setUsers([]);
     }
   };
 
-  // Filter users berdasarkan NIS, nama, dan kelas
   const filteredUsers = users.filter((user) => {
     const searchLower = searchTerm.toLowerCase();
     const nisMatch =
       user.nis?.toString().toLowerCase().includes(searchLower) || false;
     const nameMatch = user.name?.toLowerCase().includes(searchLower) || false;
     const classMatch = user.class?.toLowerCase().includes(searchLower) || false;
-    console.log("Filtering user:", {
-      nis: user.nis,
-      name: user.name,
-      class: user.class,
-      searchLower,
-      nisMatch,
-      nameMatch,
-      classMatch,
-    });
     return nisMatch || nameMatch || classMatch;
   });
 
@@ -161,14 +307,17 @@ const ProgresBelajar = () => {
                   <th className="w-[15%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
                     NIS
                   </th>
-                  <th className="w-[30%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
+                  <th className="w-[25%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
                     Nama
                   </th>
-                  <th className="w-[15%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
+                  <th className="w-[10%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
                     Kelas
                   </th>
-                  <th className="w-[40%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
+                  <th className="w-[25%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
                     Progres Belajar
+                  </th>
+                  <th className="w-[25%] px-2 py-1 font-semibold text-center sm:px-3 sm:py-2">
+                    Materi Terakhir
                   </th>
                 </tr>
               </thead>
@@ -176,7 +325,7 @@ const ProgresBelajar = () => {
                 {currentUsers.length === 0 ? (
                   <tr>
                     <td
-                      colSpan="4"
+                      colSpan="5"
                       className="px-2 py-1 text-sm text-center text-gray-500 sm:px-3 sm:py-2 sm:text-base"
                     >
                       Tidak ada data
@@ -210,18 +359,28 @@ const ProgresBelajar = () => {
                         <span className="inline-block w-20 font-semibold sm:hidden">
                           Progres:
                         </span>
-                        <div className="flex flex-col items-center w-full sm:w-3/4">
+                        <div className="relative flex flex-col items-center w-full sm:w-3/4">
                           <div className="w-full h-4 overflow-hidden bg-gray-200 rounded sm:w-3/4">
                             <div
-                              className="flex items-center justify-center h-full text-xs font-semibold text-white bg-blue-500"
-                              style={{ width: `${user.progress || 0}%` }}
-                            >
-                              {user.progress !== null
-                                ? `${user.progress.toFixed(2)}%`
-                                : "0%"}
-                            </div>
+                              className="h-full"
+                              style={{
+                                width: `${user.progress || 0}%`,
+                                backgroundColor: "#68217A",
+                              }}
+                            ></div>
+                          </div>
+                          <div className="absolute top-0 left-0 flex items-center justify-center w-full h-4 text-xs font-semibold text-black">
+                            {user.progress !== null
+                              ? `${Math.round(user.progress)}%`
+                              : "0%"}
                           </div>
                         </div>
+                      </td>
+                      <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:align-middle">
+                        <span className="inline-block w-20 font-semibold sm:hidden">
+                          Materi:
+                        </span>
+                        {getLastMateri(user.completedLessons)}
                       </td>
                     </tr>
                   ))

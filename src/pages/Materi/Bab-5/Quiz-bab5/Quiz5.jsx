@@ -7,11 +7,17 @@ const Quiz5 = ({ onComplete }) => {
   const [inputIteration, setInputIteration] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
+  const normalizeAnswer = (answer) => {
+    return answer
+      .replace(/[;,\s]+/g, "") // Hapus spasi, koma, dan titik koma
+      .toLowerCase();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Check for empty inputs
-    if (!inputInit || !inputCondition || !inputIteration) {
+    // Periksa input kosong atau hanya berisi spasi
+    if (!inputInit.trim() || !inputCondition.trim() || !inputIteration.trim()) {
       window.scrollTo(0, 0);
       Swal.fire({
         title: "Isi Semua Kolom!",
@@ -23,18 +29,13 @@ const Quiz5 = ({ onComplete }) => {
       return;
     }
 
-    // Fungsi untuk normalisasi jawaban
-    const normalizeAnswer = (answer) => {
-      return answer.replace(/\s+/g, "").toLowerCase();
-    };
-
-    // Normalisasi jawaban pengguna dan jawaban yang benar
+    // Normalisasi jawaban
     const normalizedInputInit = normalizeAnswer(inputInit);
     const normalizedInputCondition = normalizeAnswer(inputCondition);
     const normalizedInputIteration = normalizeAnswer(inputIteration);
-    const correctInit = "int i = 1"; // Jawaban yang benar untuk inisialisasi
-    const correctCondition = "i <= 10"; // Jawaban yang benar untuk kondisi
-    const correctIteration = "i++"; // Jawaban yang benar untuk iterasi
+    const correctInit = "int i = 1";
+    const correctCondition = "i <= 10";
+    const correctIteration = "i++";
     const normalizedCorrectInit = normalizeAnswer(correctInit);
     const normalizedCorrectCondition = normalizeAnswer(correctCondition);
     const normalizedCorrectIteration = normalizeAnswer(correctIteration);
@@ -60,17 +61,19 @@ const Quiz5 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputInit("");
-      setInputCondition("");
-      setInputIteration("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(inputInit, inputCondition, inputIteration),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputInit("");
+        setInputCondition("");
+        setInputIteration("");
+        setShowExplanation(false);
+        onComplete(false); // Tambahkan penanganan untuk jawaban salah
       });
     }
   };
@@ -80,6 +83,60 @@ const Quiz5 = ({ onComplete }) => {
     setInputCondition("");
     setInputIteration("");
     setShowExplanation(false);
+    // Atur fokus ke input pertama
+    document.querySelector('input[placeholder="Jawaban ..."]').focus();
+  };
+
+  const getIncorrectFeedback = (init, condition, iteration) => {
+    const normalizedInit = normalizeAnswer(init);
+    const normalizedCondition = normalizeAnswer(condition);
+    const normalizedIteration = normalizeAnswer(iteration);
+    const normalizedCorrectInit = normalizeAnswer("int i = 1");
+    const normalizedCorrectCondition = normalizeAnswer("i <= 10");
+    const normalizedCorrectIteration = normalizeAnswer("i++");
+
+    let feedback = "Jawaban Anda belum tepat. Berikut adalah masalahnya:<ul>";
+
+    if (normalizedInit !== normalizedCorrectInit) {
+      if (!normalizedInit.includes("int")) {
+        feedback += `<li><strong>Inisialisasi (${init})</strong> salah. Harus mendeklarasikan variabel dengan tipe <code>int</code>, misalnya <code>int i = 1</code>.</li>`;
+      } else if (!normalizedInit.includes("i=1")) {
+        feedback += `<li><strong>Inisialisasi (${init})</strong> salah. Variabel harus dimulai dari 1, misalnya <code>int i = 1</code>, untuk mencetak angka 1 hingga 10.</li>`;
+      } else {
+        feedback += `<li><strong>Inisialisasi (${init})</strong> salah. Periksa sintaksis, pastikan formatnya seperti <code>int i = 1</code>.</li>`;
+      }
+    }
+
+    if (normalizedCondition !== normalizedCorrectCondition) {
+      if (normalizedCondition.includes("i<11")) {
+        feedback += `<li><strong>Kondisi (${condition})</strong> hampir benar, tetapi gunakan <code>i <= 10</code> untuk menyamakan dengan jawaban yang diharapkan.</li>`;
+      } else if (
+        !normalizedCondition.includes("<=") &&
+        !normalizedCondition.includes("<")
+      ) {
+        feedback += `<li><strong>Kondisi (${condition})</strong> salah. Gunakan operator perbandingan seperti <code><=</code> untuk memeriksa batas perulangan.</li>`;
+      } else if (!normalizedCondition.includes("10")) {
+        feedback += `<li><strong>Kondisi (${condition})</strong> salah. Kondisi harus memeriksa hingga nilai 10, misalnya <code>i <= 10</code>.</li>`;
+      } else {
+        feedback += `<li><strong>Kondisi (${condition})</strong> salah. Periksa sintaksis, pastikan formatnya seperti <code>i <= 10</code>.</li>`;
+      }
+    }
+
+    if (normalizedIteration !== normalizedCorrectIteration) {
+      if (
+        normalizedIteration.includes("i=i+1") ||
+        normalizedIteration.includes("i+=1")
+      ) {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> hampir benar, tetapi gunakan <code>i++</code> untuk menyamakan dengan jawaban yang diharapkan.</li>`;
+      } else if (!normalizedIteration.includes("++")) {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Gunakan <code>i++</code> untuk menambah nilai variabel sebesar 1 setiap kali.</li>`;
+      } else {
+        feedback += `<li><strong>Iterasi (${iteration})</strong> salah. Periksa sintaksis, pastikan formatnya seperti <code>i++</code>.</li>`;
+      }
+    }
+
+    feedback += "</ul>Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -100,7 +157,7 @@ const Quiz5 = ({ onComplete }) => {
         <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
-              {`\npublic class Quiz\n{\n    public static void Main()\n    {\n            for (`}
+              {`\npublic class Quiz\n{\n    public static void Main(string[] args)\n    {\n        for (`}
               <input
                 type="text"
                 value={inputInit}
@@ -171,12 +228,11 @@ const Quiz5 = ({ onComplete }) => {
         </div>
       </div>
 
-      {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -193,16 +249,23 @@ const Quiz5 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah: <code>int i = 1</code> untuk inisialisasi,{" "}
-          <code>i &lt;= 10</code> untuk kondisi, dan <code>i++</code> untuk
-          iterasi.
-          <br />
-          Dalam perulangan <code>for</code> di C#, inisialisasi{" "}
-          <code>int i = 1</code> menetapkan variabel kontrol <code>i</code>{" "}
-          mulai dari 1. Kondisi <code>i &lt;= 10</code> memastikan perulangan
-          berjalan selama nilai <code>i</code> kurang dari atau sama dengan 10.
-          Iterasi <code>i++</code> meningkatkan nilai <code>i</code> sebesar 1
-          pada setiap iterasi, sehingga mencetak angka dari 1 hingga 10.
+          Selamat! Jawaban Anda benar. Perulangan <code>for</code> yang Anda
+          tulis:
+          <ul>
+            <li>
+              <code>{inputInit}</code>: Menginisialisasi variabel <code>i</code>{" "}
+              dengan nilai 1.
+            </li>
+            <li>
+              <code>{inputCondition}</code>: Memastikan perulangan berjalan
+              selama <code>i</code> kurang dari atau sama dengan 10.
+            </li>
+            <li>
+              <code>{inputIteration}</code>: Menambah nilai <code>i</code>{" "}
+              sebesar 1 setiap iterasi.
+            </li>
+          </ul>
+          Dengan ini, kode akan mencetak angka dari 1 hingga 10.
         </div>
       )}
     </div>

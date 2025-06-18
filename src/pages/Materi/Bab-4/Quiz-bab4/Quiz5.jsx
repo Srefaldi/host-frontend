@@ -42,15 +42,16 @@ const QuizComparison = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputComparison("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(normalizedInputComparison),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputComparison("");
+        setShowExplanation(false);
       });
     }
   };
@@ -58,6 +59,11 @@ const QuizComparison = ({ onComplete }) => {
   const handleReset = () => {
     setInputComparison("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (comparison) => {
+    return `Operator <strong>${comparison}</strong> salah. Gunakan operator perbandingan yang memeriksa apakah nilai pertama lebih besar dari nilai kedua. Tinjau kembali materi tentang operator perbandingan. Yuk, coba lagi!`;
   };
 
   return (
@@ -135,10 +141,10 @@ const QuizComparison = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -155,18 +161,8 @@ const QuizComparison = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Operator perbandingan: <strong>&gt;</strong> (operator untuk memeriksa
-          apakah nilai pertama lebih besar dari nilai kedua, menjadi{" "}
-          <code>x &gt; y</code>).
-          <br />
-          Dalam C#, operator <code>&gt;</code> digunakan untuk memeriksa apakah
-          nilai di sebelah kiri lebih besar dari nilai di sebelah kanan. Dalam
-          kasus ini, <code>x</code> bernilai 18 dan <code>y</code> bernilai 12.
-          Karena 18 &gt; 12, maka kondisi <code>x &gt; y</code> bernilai{" "}
-          <code>true</code>, sehingga pesan <code>"x lebih besar dari y"</code>{" "}
-          akan dicetak.
+          Dalam C#, operator perbandingan digunakan untuk membandingkan dua
+          nilai dan menghasilkan nilai boolean.
         </div>
       )}
     </div>

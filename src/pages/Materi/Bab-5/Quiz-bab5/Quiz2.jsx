@@ -8,6 +8,18 @@ const Quiz1 = ({ onComplete }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Check for empty input
+    if (!inputCondition) {
+      Swal.fire({
+        title: "Isi Jawaban!",
+        text: "Silakan isi kolom jawaban sebelum mengirim.",
+        icon: "warning",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#6E2A7F",
+      });
+      return;
+    }
+
     // Fungsi untuk normalisasi jawaban
     const normalizeAnswer = (answer) => {
       return answer.replace(/\s+/g, "").toLowerCase();
@@ -32,15 +44,16 @@ const Quiz1 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputCondition("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(inputCondition),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputCondition("");
+        setShowExplanation(false);
       });
     }
   };
@@ -48,6 +61,26 @@ const Quiz1 = ({ onComplete }) => {
   const handleReset = () => {
     setInputCondition("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (input) => {
+    const normalizedInput = input.replace(/\s+/g, "").toLowerCase();
+    if (normalizedInput.includes("!=") || normalizedInput.includes("!==")) {
+      return `Jawaban Anda <strong>${input}</strong> salah. Operator ketidaksetaraan seperti <code>!=</code> akan memberikan hasil sebaliknya dari yang diinginkan. Gunakan operator kesetaraan untuk memeriksa apakah <code>jenisHewan</code> adalah <code>"Kucing"</code>. Tinjau kembali materi tentang operator perbandingan. Yuk, coba lagi!`;
+    } else if (
+      !normalizedInput.includes("==") &&
+      !normalizedInput.includes("=")
+    ) {
+      return `Jawaban Anda <strong>${input}</strong> tidak tepat. Kondisi harus menggunakan operator kesetaraan untuk membandingkan <code>jenisHewan</code> dengan <code>"Kucing"</code>. Tinjau kembali materi tentang pernyataan <code>if</code>. Yuk, coba lagi!`;
+    } else if (
+      !normalizedInput.includes('"kucing"') &&
+      !normalizedInput.includes("'kucing'")
+    ) {
+      return `Jawaban Anda <strong>${input}</strong> salah. Nilai string <code>"Kucing"</code> harus ditulis dengan tanda kutip dan huruf kapital yang sesuai. Tinjau kembali materi tentang tipe data string. Yuk, coba lagi!`;
+    } else {
+      return `Jawaban Anda <strong>${input}</strong> belum tepat. Periksa kembali sintaksis kondisi, pastikan menggunakan operator kesetaraan dan nilai string yang benar. Tinjau kembali materi tentang pernyataan <code>if</code>. Yuk, coba lagi!`;
+    }
   };
 
   return (
@@ -74,7 +107,7 @@ const Quiz1 = ({ onComplete }) => {
         <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
-              {`string jenisHewan == "Kucing"; \n\nif (`}
+              {`string jenisHewan = "Kucing"; \n\nif (`}
               <input
                 type="text"
                 value={inputCondition}
@@ -130,10 +163,10 @@ const Quiz1 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -150,16 +183,9 @@ const Quiz1 = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah: <strong>jenisHewan == "Kucing"</strong>.
-          <br />
-          Dalam C#, pernyataan <code>if (jenisHewan == "Kucing")</code>{" "}
-          digunakan untuk memeriksa apakah nilai variabel{" "}
-          <code>jenisHewan</code> sama dengan string <code>"Kucing"</code>.
-          Operator <code>==</code> membandingkan kesetaraan, dan jika benar,
-          blok kode di dalam <code>if</code> akan dieksekusi (menampilkan
-          "diberikan makan ikan"). Jika salah, blok <code>else</code> akan
-          dieksekusi (menampilkan "diberikan makan sayur"). Pastikan spasi dan
-          tanda kutip digunakan dengan benar dalam kondisi.
+          Dalam C#, pernyataan <code>if</code> digunakan untuk memeriksa kondisi
+          tertentu dan menjalankan blok kode berdasarkan hasil evaluasi kondisi
+          tersebut.
         </div>
       )}
     </div>

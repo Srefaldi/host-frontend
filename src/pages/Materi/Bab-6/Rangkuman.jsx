@@ -8,7 +8,6 @@ const Rangkuman = () => {
   const { handleLessonComplete } = useOutletContext();
 
   const handleNext = () => {
-    handleLessonComplete("/materi/evaluasi/evaluasi-akhir");
     handleLessonComplete("/materi/bab6/rangkuman-bab6");
     window.scrollTo(0, 0);
     navigate("/materi/evaluasi/evaluasi-akhir"); // Ganti dengan rute topik berikutnya

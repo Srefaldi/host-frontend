@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useOutletContext, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
 import lockIcon from "../../../assets/img/lock.png";
@@ -8,11 +9,20 @@ import QuizMethodData from "./Quiz-bab6/Quiz3";
 const MethodDenganTipeData = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+
+  // Check if the current lesson is already completed
+  useEffect(() => {
+    const currentPath = location.pathname;
+    if (completedLessons.includes(currentPath)) {
+      setQuizCompleted(true);
+    }
+  }, [completedLessons, location.pathname]);
 
   const handleNext = () => {
     if (quizCompleted) {
-      handleLessonComplete("/materi/bab6/method-tipe-data");
       window.scrollTo(0, 0);
       navigate("/materi/bab6/parameter-method");
     }
@@ -24,7 +34,7 @@ const MethodDenganTipeData = () => {
   };
 
   const handleQuizComplete = () => {
-    handleLessonComplete("/materi/bab6/parameter-method");
+    handleLessonComplete("/materi/bab6/method-tipe-data");
     setQuizCompleted(true);
   };
 

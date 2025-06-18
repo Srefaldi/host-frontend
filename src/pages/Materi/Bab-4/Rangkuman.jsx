@@ -8,7 +8,6 @@ const Rangkuman = () => {
   const { handleLessonComplete } = useOutletContext();
 
   const handleNext = () => {
-    handleLessonComplete("/materi/bab4/pengertian-kontrol-alur");
     handleLessonComplete("/materi/bab4/rangkuman-bab4");
     window.scrollTo(0, 0);
     navigate("/materi/bab5/pengertian-kontrol-alur"); // Ganti dengan rute topik berikutnya

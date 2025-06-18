@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizComparison from "./Quiz-bab4/Quiz5";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -11,6 +12,16 @@ const OperatorPerbandingan = () => {
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab4/operator-comparison";
+
+  // Initialize quizPassed and quizCompleted based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      setQuizCompleted(true);
+    }
+  }, [completedLessons]);
 
   const handleQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed); // Debugging
@@ -18,13 +29,13 @@ const OperatorPerbandingan = () => {
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab4/operator-logika");
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return; // Prevent navigation if quiz not passed
-    handleLessonComplete("/materi/bab4/operator-comparison");
+
     window.scrollTo(0, 0);
     navigate("/materi/bab4/operator-logika");
   };
@@ -97,9 +108,9 @@ const OperatorPerbandingan = () => {
                 <td className="p-2 border border-gray-300">false</td>
               </tr>
               <tr>
-                <td className="p-2 border border-gray-300">&lt;</td>
+                <td className="p-2 border border-gray-300">{"<"}</td>
                 <td className="p-2 border border-gray-300">Lebih kecil</td>
-                <td className="p-2 border border-gray-300">5 &lt; 6</td>
+                <td className="p-2 border border-gray-300">5 {"<"} 6</td>
                 <td className="p-2 border border-gray-300">true</td>
               </tr>
               <tr>
@@ -111,11 +122,11 @@ const OperatorPerbandingan = () => {
                 <td className="p-2 border border-gray-300">true</td>
               </tr>
               <tr>
-                <td className="p-2 border border-gray-300">&lt;=</td>
+                <td className="p-2 border border-gray-300">{"<="}</td>
                 <td className="p-2 border border-gray-300">
                   Lebih kecil atau sama dengan
                 </td>
-                <td className="p-2 border border-gray-300">5 &lt;= 5</td>
+                <td className="p-2 border border-gray-300">5 {"<="} 5</td>
                 <td className="p-2 border border-gray-300">true</td>
               </tr>
             </tbody>

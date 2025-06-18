@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizEquality from "./Quiz-bab4/Quiz8";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -7,14 +8,27 @@ import lockIcon from "../../../assets/img/lock.png";
 
 const OperatorKesetaraan = () => {
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab4/operator-equality";
 
-  const handleNext = () => {
-    if (quizCompleted) {
-      handleLessonComplete("/materi/bab4/operator-equality");
-      window.scrollTo(0, 0);
-      navigate("/materi/bab4/latihan-bab4");
+  // Initialize quizCompleted and quizPassed based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizCompleted(true);
+      setQuizPassed(true);
+    }
+  }, [completedLessons]);
+
+  const handleQuizComplete = (isPassed) => {
+    console.log("Quiz completed, isPassed:", isPassed); // Debugging
+    setQuizCompleted(true);
+    setQuizPassed(isPassed);
+
+    if (isPassed) {
+      handleLessonComplete(currentLessonPath);
     }
   };
 
@@ -23,10 +37,17 @@ const OperatorKesetaraan = () => {
     navigate("/materi/bab4/operator-conditional");
   };
 
-  const handleQuizComplete = () => {
+  const handleNext = () => {
+    if (!quizPassed) return; // Prevent navigation if quiz not passed
     handleLessonComplete("/materi/bab4/latihan-bab4");
-    setQuizCompleted(true);
+    window.scrollTo(0, 0);
+    navigate("/materi/bab4/latihan-bab4");
   };
+
+  // Debugging state changes
+  useEffect(() => {
+    console.log("quizCompleted:", quizCompleted, "quizPassed:", quizPassed);
+  }, [quizCompleted, quizPassed]);
 
   return (
     <div className="mt-4 mb-4">
@@ -106,6 +127,7 @@ const OperatorKesetaraan = () => {
         <button
           onClick={handleBack}
           className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          aria-label="Kembali ke materi sebelumnya"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
@@ -114,22 +136,27 @@ const OperatorKesetaraan = () => {
           onClick={handleNext}
           className="flex items-center justify-between px-4 py-2 text-white rounded-lg"
           style={{
-            backgroundColor: quizCompleted ? "#6E2A7F" : "#A0A0A0",
-            cursor: quizCompleted ? "pointer" : "not-allowed",
+            backgroundColor: quizPassed ? "#6E2A7F" : "#A0A0A0",
+            cursor: quizPassed ? "pointer" : "not-allowed",
             transition: "background-color 0.2s",
           }}
           onMouseEnter={(e) =>
-            quizCompleted && (e.currentTarget.style.backgroundColor = "#5B1F6A")
+            quizPassed && (e.currentTarget.style.backgroundColor = "#5B1F6A")
           }
           onMouseLeave={(e) =>
-            quizCompleted && (e.currentTarget.style.backgroundColor = "#6E2A7F")
+            quizPassed && (e.currentTarget.style.backgroundColor = "#6E2A7F")
           }
-          disabled={!quizCompleted}
+          disabled={!quizPassed}
+          aria-label={
+            quizPassed
+              ? "Lanjut ke materi berikutnya"
+              : "Selesaikan kuis dengan benar untuk melanjutkan"
+          }
         >
           <span>Selanjutnya</span>
           <img
-            src={quizCompleted ? nextIcon : lockIcon}
-            alt={quizCompleted ? "Selanjutnya" : "Terkunci"}
+            src={quizPassed ? nextIcon : lockIcon}
+            alt={quizPassed ? "Selanjutnya" : "Terkunci"}
             className="w-5 h-5 ml-2"
           />
         </button>

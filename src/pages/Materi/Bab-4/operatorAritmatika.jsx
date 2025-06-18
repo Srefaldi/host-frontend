@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Quiz2 from "./Quiz-bab4/Quiz2";
 import nextIcon from "../../../assets/img/selanjutnya.png";
 import backIcon from "../../../assets/img/kembali.png";
@@ -12,6 +13,16 @@ const OperatorAritmatika = () => {
   const [quizPassed, setQuizPassed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab4/operator-arithmetic";
+
+  // Initialize quizPassed based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuizPassed(true);
+      setQuizCompleted(true);
+    }
+  }, [completedLessons]);
 
   const handleQuizComplete = (isPassed) => {
     console.log("Quiz completed, isPassed:", isPassed);
@@ -19,13 +30,13 @@ const OperatorAritmatika = () => {
     setQuizPassed(isPassed);
 
     if (isPassed) {
-      handleLessonComplete("/materi/bab4/operator-increment-decrement");
+      handleLessonComplete(currentLessonPath);
     }
   };
 
   const handleNext = () => {
     if (!quizPassed) return;
-    handleLessonComplete("/materi/bab4/operator-arithmetic");
+
     window.scrollTo(0, 0);
     navigate("/materi/bab4/operator-increment-decrement");
   };
@@ -59,14 +70,14 @@ const OperatorAritmatika = () => {
           </strong>
           seperti terlihat pada gambar di bawah ini.
         </p>
-        <figure className="p-0 md:p-4 my-3 md:my-0 text-center w-full mt-4">
+        <figure className="w-full p-0 my-3 mt-4 text-center md:p-4 md:my-0">
           <img
             src={bab41}
             alt="Gambar 4.1 Konsep pernyataan operasi aritmatika"
             className="w-full max-w-2xl mx-auto rounded-lg"
           />
           <div className="mt-3">
-            <figcaption className="text-gray-600 text-sm sm:text-base">
+            <figcaption className="text-sm text-gray-600 sm:text-base">
               Gambar 4.1. Konsep pernyataan operasi aritmatika
             </figcaption>
           </div>

@@ -34,7 +34,7 @@ const Login = () => {
         Swal.fire({
           icon: "error",
           title: "Akses Ditolak",
-          text: "Halaman ini hanya untuk guru (role admin).",
+          text: "Halaman ini hanya untuk guru.",
           showConfirmButton: true,
         });
       }

@@ -311,7 +311,6 @@ const LatihanBab1 = () => {
 
           if (scorePercentage >= 75) {
             handleQuizComplete("/materi/bab1/latihan-bab1");
-            handleQuizComplete("/materi/bab1/rangkuman-bab1");
           }
 
           navigate("/materi/bab1/hasil-latihan-bab1", {
@@ -356,6 +355,10 @@ const LatihanBab1 = () => {
         response.data
       );
 
+      if (scorePercentage >= 75) {
+        handleQuizComplete("/materi/bab1/latihan-bab1");
+      }
+
       Swal.fire({
         title: "Waktu Habis!",
         text: "Jawaban Anda akan dikirim.",
@@ -363,9 +366,6 @@ const LatihanBab1 = () => {
         confirmButtonText: "OK",
         confirmButtonColor: "#6E2A7F",
       }).then(() => {
-        if (scorePercentage >= 75) {
-          handleQuizComplete("/materi/bab1/latihan-bab1");
-        }
         navigate("/materi/bab1/hasil-latihan-bab1", {
           state: { score, totalQuestions: questions.length },
         });

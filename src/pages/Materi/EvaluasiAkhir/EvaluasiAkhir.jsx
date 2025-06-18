@@ -278,7 +278,6 @@ const EvaluasiAkhir = () => {
 
           if (scoreToSave >= kkm) {
             handleLessonComplete("/materi/evaluasi/evaluasi-akhir");
-            handleLessonComplete("/materi/evaluasi/kesimpulan");
           }
 
           navigate("/materi/evaluasi/hasil-evaluasi-akhir", {
@@ -324,7 +323,6 @@ const EvaluasiAkhir = () => {
 
       if (scoreToSave >= kkm) {
         handleLessonComplete("/materi/evaluasi/evaluasi-akhir");
-        handleLessonComplete("/materi/evaluasi/kesimpulan");
       }
 
       Swal.fire({

@@ -48,16 +48,20 @@ const QuizAssignment = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      window.scrollTo(0, 0);
-      setInputMultiply("");
-      setInputDivide("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(
+          normalizedInputMultiply,
+          normalizedInputDivide
+        ),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setInputMultiply("");
+        setInputDivide("");
+        setShowExplanation(false);
       });
     }
   };
@@ -66,6 +70,25 @@ const QuizAssignment = ({ onComplete }) => {
     setInputMultiply("");
     setInputDivide("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (multiply, divide) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check multiply input
+    if (multiply !== "*=") {
+      feedback += `<li>Untuk perkalian, operator <strong>${multiply}</strong> salah. Gunakan operator penugasan gabungan yang mengalikan variabel dengan nilai tertentu.</li>`;
+    }
+
+    // Check divide input
+    if (divide !== "/=") {
+      feedback += `<li>Untuk pembagian, operator <strong>${divide}</strong> salah. Gunakan operator penugasan gabungan yang membagi variabel dengan nilai tertentu.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang operator penugasan gabungan. Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -151,10 +174,10 @@ const QuizAssignment = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
@@ -171,20 +194,8 @@ const QuizAssignment = ({ onComplete }) => {
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Untuk perkalian: <strong>*=</strong> (operator penugasan gabungan
-          untuk perkalian, menjadi <code>angka *= 4</code>),
-          <br />
-          Untuk pembagian: <strong>/=</strong> (operator penugasan gabungan
-          untuk pembagian, menjadi <code>angka /= 2</code>).
-          <br />
-          Dalam C#, operator <code>*=</code> mengalikan variabel dengan nilai
-          tertentu dan menyimpan hasilnya ke variabel tersebut. Jadi,{" "}
-          <code>angka *= 4</code> mengalikan <code>angka</code> (10) dengan 4,
-          menghasilkan 40. Operator <code>/=</code> membagi variabel dengan
-          nilai tertentu dan menyimpan hasilnya. Jadi, <code>angka /= 2</code>{" "}
-          membagi <code>angka</code> (40) dengan 2, menghasilkan 20.
+          Dalam C#, operator penugasan gabungan digunakan untuk melakukan
+          operasi aritmatika dan menyimpan hasilnya ke variabel secara langsung.
         </div>
       )}
     </div>

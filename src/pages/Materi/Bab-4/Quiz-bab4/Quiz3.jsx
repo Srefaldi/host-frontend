@@ -6,10 +6,10 @@ const Quiz3 = ({ onComplete }) => {
   const [inputPostIncrement, setInputPostIncrement] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-    // Check for empty inputs
+    // Input validation
     if (!inputPreIncrement || !inputPostIncrement) {
       Swal.fire({
         title: "Isi Semua Jawaban!",
@@ -21,16 +21,16 @@ const Quiz3 = ({ onComplete }) => {
       return;
     }
 
-    // Fungsi untuk normalisasi jawaban
-    const normalizeAnswer = (answer) => {
-      return answer.trim().replace(/\s+/g, " ").toLowerCase();
+    // Normalizing answer function
+    const normalizeAnswer = (ans) => {
+      return ans.trim().replace(/\s+/g, " ").toLowerCase();
     };
 
-    // Normalisasi jawaban pengguna dan jawaban yang benar
+    // Normalize user input
     const normalizedInputPreIncrement = normalizeAnswer(inputPreIncrement);
     const normalizedInputPostIncrement = normalizeAnswer(inputPostIncrement);
 
-    // Cek jawaban
+    // Answer verification
     if (
       normalizedInputPreIncrement === normalizeAnswer("++") &&
       normalizedInputPostIncrement === normalizeAnswer("++")
@@ -46,15 +46,19 @@ const Quiz3 = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setInputPreIncrement("");
-      setInputPostIncrement("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(
+          normalizedInputPreIncrement,
+          normalizedInputPostIncrement
+        ),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setInputPreIncrement("");
+        setInputPostIncrement("");
+        setShowExplanation(false);
       });
     }
   };
@@ -63,6 +67,25 @@ const Quiz3 = ({ onComplete }) => {
     setInputPreIncrement("");
     setInputPostIncrement("");
     setShowExplanation(false);
+  };
+
+  // Feedback function for incorrect answers
+  const getIncorrectFeedback = (preInc, postInc) => {
+    let feedback = "Beberapa jawaban Anda belum tepat:<br><ul>";
+
+    // Check pre-increment input
+    if (preInc !== "++") {
+      feedback += `<li>Untuk <code>pre-increment</code>, operator <strong>${preInc}</strong> salah. Gunakan operator yang menambahkan nilai variabel sebelum digunakan.</li>`;
+    }
+
+    // Check post-increment input
+    if (postInc !== "++") {
+      feedback += `<li>Untuk <code>post-increment</code>, operator <strong>${postInc}</strong> salah. Gunakan operator yang menambahkan nilai variabel setelah digunakan.</li>`;
+    }
+
+    feedback +=
+      "</ul>Tinjau kembali materi tentang operator increment. Yuk, coba lagi!";
+    return feedback;
   };
 
   return (
@@ -83,7 +106,13 @@ const Quiz3 = ({ onComplete }) => {
         <div className="p-4 mt-3 mb-4 font-mono text-sm bg-gray-100 rounded-lg">
           <pre style={{ whiteSpace: "pre-wrap" }}>
             <code>
-              {`public class SoalIncrement\n{\n    public static void Main(string[] args)\n    {\n        int a = 5;\n        Console.WriteLine("Hasil Pre-Increment: " + `}
+              {`
+public class SoalIncrement
+{
+    public static void Main(string[] args)
+    {
+        int a = 5;
+        Console.WriteLine("Hasil Pre-Increment: " + `}
               <input
                 type="text"
                 value={inputPreIncrement}
@@ -91,7 +120,11 @@ const Quiz3 = ({ onComplete }) => {
                 className="ml-1 mr-1 border border-gray-400 px-1 py-1 w-20 mb-2 rounded-md focus:ring-2 focus:ring-[#6E2A7F]"
                 placeholder="Jawaban ..."
               />
-              {`a);\n        Console.WriteLine("Hasil Setelah Pre-Increment: " + a);\n\n        int b = 5;\n        Console.WriteLine("Hasil Post-Increment: " + b`}
+              {`a);
+        Console.WriteLine("Hasil Setelah Pre-Increment: " + a);
+
+        int b = 5;
+        Console.WriteLine("Hasil Post-Increment: " + b`}
               <input
                 type="text"
                 value={inputPostIncrement}
@@ -99,7 +132,11 @@ const Quiz3 = ({ onComplete }) => {
                 className="ml-1 mr-1 border border-gray-400 px-1 py-1 w-20 mb-2 rounded-md focus:ring-2 focus:ring-[#6E2A7F]"
                 placeholder="Jawaban ..."
               />
-              {`);\n        Console.WriteLine("Hasil Setelah Post-Increment: " + b);\n    }\n}`}
+              {`);
+        Console.WriteLine("Hasil Setelah Post-Increment: " + b);
+    }
+}
+              `}
             </code>
           </pre>
         </div>
@@ -148,14 +185,14 @@ const Quiz3 = ({ onComplete }) => {
 
       {/* Explanation Section */}
       {showExplanation && (
-        <div className="bg-green-100 border border-green-300 rounded-md p-4 text-green-800 text-sm font-normal mt-4">
+        <div className="p-4 mt-4 text-sm font-normal text-green-800 bg-green-100 border border-green-300 rounded-md">
           <div className="flex items-center mb-2 font-semibold">
             <svg
-              className="w-5 h-5 mr-2 flex-shrink-0"
+              viewBox="0 0 24 24"
+              className="flex-shrink-0 w-5 h-5 mr-2"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
-              viewBox="0 0 24 24"
               aria-hidden="true"
               focusable="false"
               xmlns="http://www.w3.org/2000/svg"
@@ -164,23 +201,13 @@ const Quiz3 = ({ onComplete }) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 d="M9 12l2 2 4-4"
-              ></path>
+              />
             </svg>
             BENAR
           </div>
-          Jawaban yang benar adalah:
-          <br />
-          Untuk pre-increment: <strong>++</strong> (sebelum variabel, menjadi{" "}
-          <code>++a</code>),
-          <br />
-          Untuk post-increment: <strong>++</strong> (setelah variabel, menjadi{" "}
-          <code>b++</code>).
-          <br />
-          Dalam C#, operator <code>++</code> digunakan untuk increment.
-          Pre-increment (<code>++a</code>) menambah nilai <code>a</code>{" "}
-          terlebih dahulu (menjadi 6), lalu mencetak 6. Post-increment (
-          <code>b++</code>) mencetak nilai <code>b</code> terlebih dahulu (5),
-          lalu menambah nilainya menjadi 6, yang terlihat pada baris berikutnya.
+          Dalam C#, operator increment digunakan untuk menambah nilai variabel.
+          Pre-increment menambah nilai sebelum digunakan, sedangkan
+          post-increment menambah nilai setelah digunakan.
         </div>
       )}
     </div>

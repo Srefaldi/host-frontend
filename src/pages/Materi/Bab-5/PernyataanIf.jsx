@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
 import QuizIfElse from "./Quiz-bab5/Quiz2";
 import Quiz2 from "./Quiz-bab5/Quiz3";
 import nextIcon from "../../../assets/img/selanjutnya.png";
@@ -9,15 +10,48 @@ import lockIcon from "../../../assets/img/lock.png";
 const PernyataanIfElse = () => {
   const [quiz1Completed, setQuiz1Completed] = useState(false);
   const [quiz2Completed, setQuiz2Completed] = useState(false);
+  const [quiz1Passed, setQuiz1Passed] = useState(false);
+  const [quiz2Passed, setQuiz2Passed] = useState(false);
   const navigate = useNavigate();
   const { handleLessonComplete } = useOutletContext();
+  const { completedLessons } = useSelector((state) => state.auth);
+  const currentLessonPath = "/materi/bab5/pernyataan-if-else";
+
+  // Initialize quiz states based on completedLessons
+  useEffect(() => {
+    if (completedLessons.includes(currentLessonPath)) {
+      setQuiz1Completed(true);
+      setQuiz2Completed(true);
+      setQuiz1Passed(true);
+      setQuiz2Passed(true);
+    }
+  }, [completedLessons]);
+
+  const handleQuiz1Complete = (isPassed) => {
+    console.log("Quiz 1 completed, isPassed:", isPassed); // Debugging
+    setQuiz1Completed(true);
+    setQuiz1Passed(isPassed);
+
+    if (isPassed) {
+      handleLessonComplete(currentLessonPath);
+    }
+  };
+
+  const handleQuiz2Complete = (isPassed) => {
+    console.log("Quiz 2 completed, isPassed:", isPassed); // Debugging
+    setQuiz2Completed(true);
+    setQuiz2Passed(isPassed);
+
+    if (isPassed) {
+      handleLessonComplete(currentLessonPath);
+    }
+  };
 
   const handleNext = () => {
-    if (quiz2Completed) {
-      handleLessonComplete("/materi/bab5/pernyataan-if-else");
-      window.scrollTo(0, 0);
-      navigate("/materi/bab5/pernyataan-switch");
-    }
+    if (!quiz2Passed) return; // Prevent navigation if quiz 2 not passed
+
+    window.scrollTo(0, 0);
+    navigate("/materi/bab5/pernyataan-switch");
   };
 
   const handleBack = () => {
@@ -25,14 +59,11 @@ const PernyataanIfElse = () => {
     navigate("/materi/bab5/pengertian-kontrol-alur");
   };
 
-  const handleQuiz1Complete = () => {
-    setQuiz1Completed(true);
-  };
-
-  const handleQuiz2Complete = () => {
-    handleLessonComplete("/materi/bab5/pernyataan-switch");
-    setQuiz2Completed(true);
-  };
+  // Debugging state changes
+  useEffect(() => {
+    console.log("quiz1Completed:", quiz1Completed, "quiz1Passed:", quiz1Passed);
+    console.log("quiz2Completed:", quiz2Completed, "quiz2Passed:", quiz2Passed);
+  }, [quiz1Completed, quiz1Passed, quiz2Completed, quiz2Passed]);
 
   return (
     <div className="mt-4 mb-4">
@@ -64,7 +95,7 @@ const PernyataanIfElse = () => {
           <code>{`if (kondisi) 
 { 
     // statement 
-} `}</code>
+}`}</code>
         </pre>
         <p className="mb-2">
           Pernyataan if menentukan kondisi ekspresi yang akan dievaluasi.
@@ -230,7 +261,7 @@ else if (kondisi)
     statement; 
 . . . 
 else 
-    statement; `}</code>
+    statement;`}</code>
         </pre>
         <p className="mb-2">
           Ekspresi kondisional dievaluasi dari atas ke bawah. Begitu ditemukan
@@ -265,6 +296,7 @@ else
         <button
           onClick={handleBack}
           className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600"
+          aria-label="Kembali ke materi sebelumnya"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali
@@ -273,24 +305,27 @@ else
           onClick={handleNext}
           className="flex items-center justify-between px-4 py-2 text-white rounded-lg"
           style={{
-            backgroundColor: quiz2Completed ? "#6E2A7F" : "#A0A0A0",
-            cursor: quiz2Completed ? "pointer" : "not-allowed",
+            backgroundColor: quiz2Passed ? "#6E2A7F" : "#A0A0A0",
+            cursor: quiz2Passed ? "pointer" : "not-allowed",
             transition: "background-color 0.2s",
           }}
           onMouseEnter={(e) =>
-            quiz2Completed &&
-            (e.currentTarget.style.backgroundColor = "#5B1F6A")
+            quiz2Passed && (e.currentTarget.style.backgroundColor = "#5B1F6A")
           }
           onMouseLeave={(e) =>
-            quiz2Completed &&
-            (e.currentTarget.style.backgroundColor = "#6E2A7F")
+            quiz2Passed && (e.currentTarget.style.backgroundColor = "#6E2A7F")
           }
-          disabled={!quiz2Completed}
+          disabled={!quiz2Passed}
+          aria-label={
+            quiz2Passed
+              ? "Lanjut ke materi berikutnya"
+              : "Selesaikan kedua kuis dengan benar untuk melanjutkan"
+          }
         >
           <span>Selanjutnya</span>
           <img
-            src={quiz2Completed ? nextIcon : lockIcon}
-            alt={quiz2Completed ? "Selanjutnya" : "Terkunci"}
+            src={quiz2Passed ? nextIcon : lockIcon}
+            alt={quiz2Passed ? "Selanjutnya" : "Terkunci"}
             className="w-5 h-5 ml-2"
           />
         </button>

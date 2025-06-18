@@ -31,14 +31,16 @@ const QuizSintaksInput = ({ onComplete }) => {
         onComplete(true);
       });
     } else {
-      setSelectedAnswer("");
-      setShowExplanation(false);
       Swal.fire({
-        title: "Jawaban Salah!",
-        text: "Baca kembali materi dan coba lagi.",
+        title: "Jawaban Anda Belum Tepat!",
+        html: getIncorrectFeedback(selectedAnswer),
         icon: "error",
         confirmButtonText: "Coba Lagi",
         confirmButtonColor: "#EF4444",
+      }).then(() => {
+        setSelectedAnswer("");
+        setShowExplanation(false);
+        window.scrollTo(0, 0);
       });
     }
   };
@@ -46,6 +48,30 @@ const QuizSintaksInput = ({ onComplete }) => {
   const handleReset = () => {
     setSelectedAnswer("");
     setShowExplanation(false);
+  };
+
+  // Function to generate feedback for incorrect answers
+  const getIncorrectFeedback = (option) => {
+    switch (option) {
+      case "B":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Fungsi <code>Write()</code> dan <code>WriteLine()</code> digunakan untuk output, bukan input. Tinjau kembali materi tentang fungsi input . Yuk, coba lagi!`;
+      case "C":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak tepat. Meskipun <code>Read()</code> benar, <code>Write()</code> digunakan untuk output, bukan input. Tinjau kembali materi tentang fungsi input . Yuk, coba lagi!`;
+      case "D":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> tidak benar. Fungsi <code>GetInput()</code> bukanlah fungsi bawaan dalam C# untuk input. Tinjau kembali materi tentang fungsi input . Yuk, coba lagi!`;
+      case "E":
+        return `Pilihan Anda <strong>${getOptionText(
+          option
+        )}</strong> salah. Fungsi <code>GetOutput()</code> bukanlah fungsi bawaan dalam C# dan tidak digunakan untuk input. Tinjau kembali materi tentang fungsi input . Yuk, coba lagi!`;
+      default:
+        return "Jawaban Anda belum tepat. Silakan baca kembali materi tentang fungsi input dan coba lagi.";
+    }
   };
 
   return (
