@@ -1,4 +1,3 @@
-// src/pages/LoginSiswa.js
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
@@ -15,7 +14,7 @@ const LoginSiswa = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, isError, isLoading, message } = useSelector(
+  const { user, isError, isLoading, isSuccess, message } = useSelector(
     (state) => state.auth
   );
 
@@ -26,10 +25,19 @@ const LoginSiswa = () => {
   const Auth = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(LoginUser({ nis, password })).unwrap();
-      const result = await dispatch(getMe()).unwrap();
-      if (result?.role === "siswa") {
-        navigate("/dashboard-siswa");
+      const loginResult = await dispatch(LoginUser({ nis, password })).unwrap();
+      const meResult = await dispatch(getMe()).unwrap();
+
+      if (meResult?.role === "user") {
+        Swal.fire({
+          icon: "success",
+          title: "Login Berhasil!",
+          text: "Selamat datang! Anda berhasil masuk.",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          navigate("/dashboard-siswa");
+        });
       } else {
         Swal.fire({
           icon: "error",
@@ -37,25 +45,25 @@ const LoginSiswa = () => {
           text: "Halaman ini hanya untuk siswa.",
           showConfirmButton: true,
         });
+        dispatch(reset());
       }
-      dispatch(reset());
     } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Gagal",
+        text: error || "Terjadi kesalahan. Silakan coba lagi.",
+        showConfirmButton: true,
+      });
       dispatch(reset());
     }
   };
 
   useEffect(() => {
-    if (user && user.role === "siswa") {
-      Swal.fire({
-        icon: "success",
-        title: "Login Berhasil!",
-        text: message || "Selamat datang! Anda berhasil masuk.",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(() => {
-        navigate("/dashboard-siswa");
-      });
-    } else if (user && user.role !== "siswa") {
+    dispatch(reset());
+
+    if (isSuccess && user?.role === "user") {
+      navigate("/dashboard-siswa");
+    } else if (isSuccess && user?.role !== "user") {
       Swal.fire({
         icon: "error",
         title: "Akses Ditolak",
@@ -66,17 +74,15 @@ const LoginSiswa = () => {
       });
     }
 
-    if (isError) {
+    if (isError && message) {
       Swal.fire({
         icon: "error",
         title: "Login Gagal",
-        text: message || "Terjadi kesalahan. Silakan coba lagi.",
+        text: message,
         showConfirmButton: true,
       });
     }
-
-    dispatch(reset());
-  }, [user, isError, message, dispatch, navigate]);
+  }, [user, isError, isSuccess, message, dispatch, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen">
