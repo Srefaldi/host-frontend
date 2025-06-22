@@ -137,12 +137,12 @@ const Login = () => {
                 {isLoading ? "Memuat..." : "MASUK"}
               </button>
             </form>
-            <p className="mt-4 text-gray-600">
+            {/* <p className="mt-4 text-gray-600">
               Belum punya akun?{" "}
               <Link to="/daftar-guru" className="text-purple-500">
                 DAFTAR
               </Link>
-            </p>
+            </p> */}
           </div>
         </div>
       </div>
