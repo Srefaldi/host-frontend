@@ -1,8 +1,8 @@
+
 import React, { useEffect, useState } from "react";
 import iconHamburger from "../../assets/img/icon-hamburger.svg";
 import iconClose from "../../assets/img/icon-close.svg";
 import heroImage from "../../assets/img/logo-hero.png";
-import guruIcon from "../../assets/img/icon-guru.png";
 import { Link } from "react-router-dom";
 import Footer from "./Footer";
 import InfoModal from "./InfoModal";
@@ -97,7 +97,6 @@ function Landing() {
     setIsModalOpen(!isModalOpen);
   };
 
-  // Function to scroll to the daftar-materi section
   const scrollToDaftarMateri = () => {
     const element = document.getElementById("daftar-materi");
     if (element) {
@@ -199,18 +198,6 @@ function Landing() {
               >
                 DAFTAR MATERI
               </button>
-              <Link
-                to="/login-guru"
-                className="inline-flex items-center justify-center font-bold text-gray-600 no-underline border border-gray-400 rounded focus:outline-none hover:bg-gray-100"
-                style={{
-                  backgroundColor: "#FFFFFF",
-                  width: "180px",
-                  height: "55px",
-                  fontSize: "16px",
-                }}
-              >
-                HALAMAN GURU >>>
-              </Link>
             </div>
           </div>
 
@@ -250,20 +237,20 @@ function Landing() {
               </div>
             ))}
           </div>
-        </div>
-        <div className="flex justify-center mt-8">
-          <Link
-            to="/login"
-            className="inline-flex items-center justify-center text-white no-underline border-0 rounded focus:outline-none hover:bg-opacity-80"
-            style={{
-              backgroundColor: "#68217A",
-              width: "160px",
-              height: "48px",
-              fontSize: "16px",
-            }}
-          >
-            MULAI BELAJAR
-          </Link>
+          <div className="flex justify-center mt-8">
+            <Link
+              to="/login"
+              className="inline-flex items-center justify-center text-white no-underline border-0 rounded focus:outline-none hover:bg-opacity-80"
+              style={{
+                backgroundColor: "#68217A",
+                width: "160px",
+                height: "48px",
+                fontSize: "16px",
+              }}
+            >
+              MULAI BELAJAR
+            </Link>
+          </div>
         </div>
       </section>
 

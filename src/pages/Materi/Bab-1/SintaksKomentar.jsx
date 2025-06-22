@@ -61,7 +61,7 @@ const SintaksKomentar = () => {
           sistem. Dalam bahasa pemrograman C#, terdapat dua tipe komentar:
         </p>
 
-        <ul className="mt-4 pl-6 list-disc">
+        <ul className="pl-6 mt-4 list-disc">
           <li>Single line comment</li>
           <li>Multiple line comment</li>
         </ul>
@@ -74,12 +74,11 @@ const SintaksKomentar = () => {
 
         <p className="mt-4">Cobalah kode program pada compiler:</p>
 
-        <pre className="mt-4 p-4 overflow-x-auto bg-gray-100 rounded-lg">
+        <pre className="p-4 mt-4 overflow-x-auto bg-gray-100 rounded-lg">
           <iframe
             width="100%"
             height="475"
             src="https://dotnetfiddle.net/Widget/wpjyVs"
-            frameBorder="0"
             title="C# Comment Example"
           ></iframe>
         </pre>
@@ -91,10 +90,10 @@ const SintaksKomentar = () => {
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex justify-between mt-6 gap-4">
+      <div className="flex justify-between gap-4 mt-6">
         <button
           onClick={handleBack}
-          className="flex items-center px-4 py-2 text-white bg-gray-500 rounded-lg hover:bg-gray-600 text-base font-semibold transition-colors duration-200"
+          className="flex items-center px-4 py-2 text-base font-semibold text-white transition-colors duration-200 bg-gray-500 rounded-lg hover:bg-gray-600"
         >
           <img src={backIcon} alt="Kembali" className="w-5 h-5 mr-2" />
           Kembali

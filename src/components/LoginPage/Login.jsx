@@ -9,7 +9,7 @@ import loginImage from "../../assets/img/hero-login.png";
 import Swal from "sweetalert2";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-const Login = () => {
+const LoginSiswa = () => {
   const [nis, setNis] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,8 +28,8 @@ const Login = () => {
     try {
       await dispatch(LoginUser({ nis, password })).unwrap();
       const result = await dispatch(getMe()).unwrap();
-      if (result?.role === "user") {
-        navigate("/dashboard");
+      if (result?.role === "siswa") {
+        navigate("/dashboard-siswa");
       } else {
         Swal.fire({
           icon: "error",
@@ -45,7 +45,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (user && user.role === "user") {
+    if (user && user.role === "siswa") {
       Swal.fire({
         icon: "success",
         title: "Login Berhasil!",
@@ -53,9 +53,9 @@ const Login = () => {
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
-        navigate("/dashboard");
+        navigate("/dashboard-siswa");
       });
-    } else if (user && user.role !== "user") {
+    } else if (user && user.role !== "siswa") {
       Swal.fire({
         icon: "error",
         title: "Akses Ditolak",
@@ -81,7 +81,7 @@ const Login = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <div className="flex items-center justify-center flex-1">
+      <div className="flex items-center justify-center flex-1 mt-6 mb-5">
         <div className="flex flex-col w-full max-w-4xl overflow-hidden bg-white rounded-lg shadow-lg md:flex-row">
           <div className="items-center justify-center hidden md:flex md:flex-1">
             <img
@@ -102,7 +102,7 @@ const Login = () => {
                 <input
                   type="text"
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="NIS"
+                  placeholder="Nomor Induk Siswa"
                   value={nis}
                   onChange={(e) => setNis(e.target.value)}
                   required
@@ -143,6 +143,12 @@ const Login = () => {
                 DAFTAR
               </Link>
             </p>
+            <p className="mt-2 text-gray-600">
+              Masuk sebagai Guru?{" "}
+              <Link to="/login-guru" className="text-purple-500">
+                Masuk
+              </Link>
+            </p>
           </div>
         </div>
       </div>
@@ -151,4 +157,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginSiswa;
