@@ -36,7 +36,7 @@ const LoginSiswa = () => {
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
-          navigate("/dashboard-siswa");
+          navigate("/dashboard");
         });
       } else {
         Swal.fire({
@@ -62,7 +62,7 @@ const LoginSiswa = () => {
     dispatch(reset());
 
     if (isSuccess && user?.role === "user") {
-      navigate("/dashboard-siswa");
+      navigate("/dashboard");
     } else if (isSuccess && user?.role !== "user") {
       Swal.fire({
         icon: "error",
