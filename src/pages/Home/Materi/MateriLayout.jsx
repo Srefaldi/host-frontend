@@ -17,18 +17,19 @@ const MateriLayout = () => {
   const { user, isError, isLoading, completedLessons } = useSelector(
     (state) => state.auth
   );
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Corrected line
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Hitung total lessons, kecualikan halaman hasil
+  // Hitung total lessons, kecualikan halaman hasil dan penutup
   const allLessons = daftarBab
     .flatMap((bab) => bab.subBab.map((sub) => sub.path))
     .filter(
       (path) =>
         !path.includes("hasil-latihan") &&
         !path.includes("hasil-kuis") &&
-        !path.includes("hasil-evaluasi-akhir")
+        !path.includes("hasil-evaluasi-akhir") &&
+        path !== "/materi/evaluasi/penutup" // Exclude Penutup from validation
     );
   const totalLessons = allLessons.length; // Total sub-bab yang valid
   const previousPathRef = useRef(location.pathname);
@@ -93,8 +94,8 @@ const MateriLayout = () => {
       const currentPath = location.pathname;
       const previousPath = previousPathRef.current;
 
-      // Daftar halaman hasil yang diizinkan
-      const resultPages = [
+      // Daftar halaman hasil dan penutup yang diizinkan tanpa validasi
+      const exemptPages = [
         "/materi/bab1/hasil-latihan-bab1",
         "/materi/bab1/hasil-kuis-bab1",
         "/materi/bab2/hasil-latihan-bab2",
@@ -108,15 +109,16 @@ const MateriLayout = () => {
         "/materi/bab6/hasil-latihan-bab6",
         "/materi/bab6/hasil-kuis-bab6",
         "/materi/evaluasi/hasil-evaluasi-akhir",
+        "/materi/evaluasi/penutup", // Allow Penutup page
       ];
 
       console.log("Restrict Access - Current Path:", currentPath);
       console.log("Restrict Access - Previous Path:", previousPath);
       console.log("Restrict Access - Completed Lessons:", completedLessons);
 
-      // Jika currentPath adalah halaman hasil, izinkan akses tanpa validasi
-      if (resultPages.includes(currentPath)) {
-        console.log("Access allowed for result page:", currentPath);
+      // Jika currentPath adalah halaman yang dikecualikan, izinkan akses
+      if (exemptPages.includes(currentPath)) {
+        console.log("Access allowed for exempt page:", currentPath);
         previousPathRef.current = currentPath;
         return;
       }
@@ -256,14 +258,14 @@ const MateriLayout = () => {
   const getNextLesson = (currentLessonId) => {
     const currentIndex = allLessons.indexOf(currentLessonId);
     if (currentIndex === -1 || currentIndex === allLessons.length - 1) {
-      return null;
+      return "/materi/evaluasi/penutup"; // Navigate to Penutup if last lesson
     }
     return allLessons[currentIndex + 1];
   };
 
   const getStartLesson = () => {
     if (progress >= 100) {
-      return allLessons[allLessons.length - 1];
+      return "/materi/evaluasi/penutup"; // Allow Penutup if progress is 100
     }
     if (completedLessons.length > 0) {
       const lastCompleted = completedLessons[completedLessons.length - 1];
@@ -278,7 +280,10 @@ const MateriLayout = () => {
 
   const handleLessonComplete = (lessonId) => {
     console.log("handleLessonComplete dipanggil dengan lessonId:", lessonId);
-    if (!allLessons.includes(lessonId)) {
+    if (
+      !allLessons.includes(lessonId) &&
+      lessonId !== "/materi/evaluasi/penutup"
+    ) {
       console.error("lessonId tidak valid:", lessonId);
       Swal.fire({
         icon: "error",
@@ -413,7 +418,9 @@ const MateriLayout = () => {
           >
             {isSidebarOpen ? <HiX size={24} /> : <HiMenuAlt3 size={24} />}
           </button>
-          <Outlet context={{ handleLessonComplete, handleQuizComplete }} />
+          <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-purple-100 sm:p-6">
+            <Outlet context={{ handleLessonComplete, handleQuizComplete }} />
+          </div>
           <Footer />
         </div>
       </div>

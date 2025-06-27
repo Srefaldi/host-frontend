@@ -19,8 +19,7 @@ const HasilEvaluasiAkhir = () => {
   const handleNext = () => {
     if (isPassing) {
       handleLessonComplete("/materi/evaluasi/evaluasi-akhir");
-      handleLessonComplete("/materi/evaluasi/kesimpulan");
-      navigate("/dashboard");
+      navigate("/materi/evaluasi/penutup");
     }
   };
 
@@ -67,7 +66,7 @@ const HasilEvaluasiAkhir = () => {
           }`}
           disabled={!isPassing}
         >
-          <span>Kembali Ke Dashboard</span>
+          <span>Selanjutnya</span>
           <img
             src={isPassing ? nextIcon : lockIcon}
             alt={isPassing ? "Selanjutnya" : "Terkunci"}

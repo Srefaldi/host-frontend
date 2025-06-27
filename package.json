@@ -17,6 +17,7 @@
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "bulma": "^1.0.3",
+    "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "crypto-js": "^4.2.0",

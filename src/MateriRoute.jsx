@@ -90,6 +90,7 @@ import HasilKuisBab6 from "../src/pages/Materi/Bab-6/HasilKuisBab6";
 import EvaluasiAkhir from "./pages/Materi/EvaluasiAkhir/EvaluasiAkhir";
 import Kesimpulan from "./pages/Materi/EvaluasiAkhir/KesimpulanAkhir";
 import HasilEvaluasiAkhir from "./pages/Materi/EvaluasiAkhir/HasilEvaluasiAkhir";
+import Penutup from "./pages/Materi/EvaluasiAkhir/Penutup";
 
 const MateriRoutes = () => {
   return (
@@ -225,6 +226,7 @@ const MateriRoutes = () => {
           path="evaluasi/hasil-evaluasi-akhir"
           element={<HasilEvaluasiAkhir />}
         />
+        <Route path="evaluasi/penutup" element={<Penutup />} />
       </Route>
     </Routes>
   );
