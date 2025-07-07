@@ -1,3 +1,4 @@
+// features/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
@@ -12,6 +13,7 @@ const initialState = {
   evaluations: [],
   questions: [],
   kkm: [],
+  scores: [], // Added to store scores
   completedLessons: [],
 };
 
@@ -284,6 +286,24 @@ export const setKkm = createAsyncThunk(
   }
 );
 
+export const getScores = createAsyncThunk(
+  "scores/getScores",
+  async (userId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_ENDPOINT}/scores${
+          userId ? `/${userId}` : ""
+        }`,
+        { withCredentials: true }
+      );
+      return response.data;
+    } catch (error) {
+      const message = error.response?.data?.msg || "Terjadi kesalahan";
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -445,7 +465,6 @@ export const authSlice = createSlice({
     builder.addCase(getQuestionsByEvaluation.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
-      // Pastikan payload memiliki properti questions, jika tidak, gunakan array kosong
       state.questions = Array.isArray(action.payload?.questions)
         ? action.payload.questions
         : [];
@@ -456,7 +475,7 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
       state.message = action.payload;
-      state.questions = []; // Reset questions jika gagal
+      state.questions = [];
     });
 
     builder.addCase(createQuestion.pending, (state) => {
@@ -468,7 +487,6 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.message = action.payload.msg;
-      // Pastikan menambahkan question ke array questions
       if (action.payload.question) {
         state.questions.push(action.payload.question);
       }
@@ -489,7 +507,6 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = true;
       state.message = action.payload.msg;
-      // Pastikan hanya memperbarui jika question ada
       if (action.payload.question) {
         state.questions = state.questions.map((question) =>
           question.id === action.payload.question?.id
@@ -558,6 +575,26 @@ export const authSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
       state.message = action.payload;
+    });
+
+    builder.addCase(getScores.pending, (state) => {
+      state.isLoading = true;
+      state.isError = false;
+      state.message = "";
+    });
+    builder.addCase(getScores.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.scores = action.payload.scores;
+      state.user = action.payload.user;
+      state.isError = false;
+      state.message = "";
+    });
+    builder.addCase(getScores.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+      state.message = action.payload;
+      state.scores = [];
     });
   },
 });

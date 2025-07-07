@@ -23,6 +23,7 @@ import MateriRoutes from "./MateriRoute";
 import LoginGuru from "./components/LoginPage/Login Guru/FormLoginGuru";
 import DashboardGuru from "./components/LoginPage/Login Guru/HalamanDashboardGuru";
 import DaftarGuru from "./components/LoginPage/Login Guru/DaftarGuru";
+import HistoryNilai from "./components/LoginPage/HistoryNilaiLayout";
 
 // Siswa
 import DaftarSiswa from "./components/LoginPage/DaftarSIswa/FormDaftarSiswa";
@@ -59,6 +60,7 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/products/add" element={<AddProduct />} />
         <Route path="/products/edit/:id" element={<EditProduct />} />
+        <Route path="/history-nilai" element={<HistoryNilai />} />
 
         {/* ROUTE MATERI */}
         <Route path="/materi/*" element={<MateriRoutes />} />

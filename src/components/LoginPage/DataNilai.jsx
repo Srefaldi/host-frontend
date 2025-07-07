@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
@@ -14,8 +14,9 @@ const ScoreList = () => {
   const [classes, setClasses] = useState([]);
   const [error, setError] = useState(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null); // Track selected student for details
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     getClasses();
@@ -24,7 +25,7 @@ const ScoreList = () => {
 
   useEffect(() => {
     if (error === "Mohon login ke akun anda") {
-      navigate("/login"); // Replace window.location.href with navigate
+      navigate("/login");
     }
   }, [error, navigate]);
 
@@ -270,6 +271,10 @@ const ScoreList = () => {
     return Math.floor(highestScore);
   };
 
+  const toggleStudentDetails = (user) => {
+    setSelectedStudent(selectedStudent?.uuid === user.uuid ? null : user);
+  };
+
   const renderHeader = () => (
     <thead className="hidden sm:table-header-group">
       <tr className="text-center border-b border-gray-200">
@@ -309,6 +314,12 @@ const ScoreList = () => {
         >
           EVALUASI AKHIR
         </th>
+        <th
+          rowSpan={2}
+          className="w-[10%] px-2 py-1 text-sm font-semibold text-center align-middle select-none sm:px-3 sm:py-2 sm:text-base"
+        >
+          DETAIL
+        </th>
       </tr>
       <tr className="border-b border-gray-200">
         {[...Array(6)].map((_, i) => (
@@ -344,57 +355,138 @@ const ScoreList = () => {
         </tr>
       ) : (
         currentUsers.map((user) => (
-          <tr
-            key={user.uuid}
-            className="flex flex-col border-b border-gray-200 sm:table-row sm:border-b"
-          >
-            <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
-                NIS:
-              </span>
-              {user.nis}
-            </td>
-            <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
-                Nama:
-              </span>
-              {user.name}
-            </td>
-            <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
-                Kelas:
-              </span>
-              {user.class || "-"}
-            </td>
-            {[...Array(6)].map((_, i) => (
-              <td
-                key={`latihan-data-${i}`}
-                className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle"
-              >
+          <React.Fragment key={user.uuid}>
+            <tr
+              className="flex flex-col border-b border-gray-200 sm:table-row sm:border-b"
+            >
+              <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
                 <span className="inline-block w-24 font-semibold text-center sm:hidden">
-                  Latihan Bab {i + 1}:
+                  NIS:
                 </span>
-                {getHighestScore(user.scores, "latihan", i + 1)}
+                {user.nis}
               </td>
-            ))}
-            {[...Array(6)].map((_, i) => (
-              <td
-                key={`evaluasi-data-${i}`}
-                className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle"
-              >
+              <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
                 <span className="inline-block w-24 font-semibold text-center sm:hidden">
-                  Kuis Bab {i + 1}:
+                  Nama:
                 </span>
-                {getHighestScore(user.scores, "evaluasi", i + 1)}
+                {user.name}
               </td>
-            ))}
-            <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
-              <span className="inline-block w-24 font-semibold text-center sm:hidden">
-                Evaluasi Akhir:
-              </span>
-              {getHighestScore(user.scores, "evaluasi_akhir", null)}
-            </td>
-          </tr>
+              <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
+                <span className="inline-block w-24 font-semibold text-center sm:hidden">
+                  Kelas:
+                </span>
+                {user.class || "-"}
+              </td>
+              {[...Array(6)].map((_, i) => (
+                <td
+                  key={`latihan-data-${i}`}
+                  className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle"
+                >
+                  <span className="inline-block w-24 font-semibold text-center sm:hidden">
+                    Latihan Bab {i + 1}:
+                  </span>
+                  {getHighestScore(user.scores, "latihan", i + 1)}
+                </td>
+              ))}
+              {[...Array(6)].map((_, i) => (
+                <td
+                  key={`evaluasi-data-${i}`}
+                  className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle"
+                >
+                  <span className="inline-block w-24 font-semibold text-center sm:hidden">
+                    Kuis Bab {i + 1}:
+                  </span>
+                  {getHighestScore(user.scores, "evaluasi", i + 1)}
+                </td>
+              ))}
+              <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:font-mono sm:text-base sm:select-text sm:align-middle">
+                <span className="inline-block w-24 font-semibold text-center sm:hidden">
+                  Evaluasi Akhir:
+                </span>
+                {getHighestScore(user.scores, "evaluasi_akhir", null)}
+              </td>
+              <td className="flex items-center px-2 py-1 text-center sm:table-cell sm:px-3 sm:py-2 sm:align-middle">
+                <button
+                  onClick={() => toggleStudentDetails(user)}
+                  className="px-2 py-1 text-xs font-semibold text-white bg-purple-500 rounded hover:bg-purple-600 sm:px-3 sm:text-sm"
+                >
+                  {selectedStudent?.uuid === user.uuid ? "Sembunyikan" : "Detail"}
+                </button>
+              </td>
+            </tr>
+            {/* Detailed History */}
+            {selectedStudent?.uuid === user.uuid && (
+              <tr>
+                <td
+                  colSpan={16}
+                  className="px-4 py-4 bg-gray-100 sm:px-6 sm:py-6"
+                >
+                  <div className="p-4 border border-gray-200 rounded-lg">
+                    <h3 className="mb-4 text-lg font-semibold text-gray-800">
+                      Riwayat Nilai: {user.name}
+                    </h3>
+                    {user.scores.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-gray-700 border table-fixed">
+                          <thead className="bg-gray-200">
+                            <tr>
+                              <th className="px-4 py-2 text-sm font-semibold text-center">
+                                Tipe
+                              </th>
+                              <th className="px-4 py-2 text-sm font-semibold text-center">
+                                Bab
+                              </th>
+                              <th className="px-4 py-2 text-sm font-semibold text-center">
+                                Nilai
+                              </th>
+                              <th className="px-4 py-2 text-sm font-semibold text-center">
+                                Tanggal
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {user.scores.map((score, index) => (
+                              <tr key={index}>
+                                <td className="px-4 py-2 text-sm text-center">
+                                  {score.type === "latihan"
+                                    ? "Latihan"
+                                    : score.type === "evaluasi"
+                                    ? "Kuis"
+                                    : "Evaluasi Akhir"}
+                                </td>
+                                <td className="px-4 py-2 text-sm text-center">
+                                  {score.type === "evaluasi_akhir" ? "-" : score.chapter}
+                                </td>
+                                <td className="px-4 py-2 text-sm text-center">
+                                  {Math.floor(score.score)}
+                                </td>
+                                <td className="px-4 py-2 text-sm text-center">
+                                  {new Date(score.created_at).toLocaleDateString(
+                                    "id-ID",
+                                    {
+                                      day: "2-digit",
+                                      month: "long",
+                                      year: "numeric",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    }
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="text-center text-gray-600">
+                        Belum ada data nilai untuk siswa ini.
+                      </p>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            )}
+          </React.Fragment>
         ))
       )}
     </tbody>

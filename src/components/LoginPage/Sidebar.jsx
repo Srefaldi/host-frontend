@@ -10,6 +10,7 @@ import {
   IoPeople,
   IoMenu,
   IoClose,
+  IoDocumentText, // Added icon for History Nilai
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { LogOut, reset } from "../../features/authSlice";
@@ -68,6 +69,7 @@ const Sidebar = () => {
           DAFTAR MENU
         </h2>
         <nav className="flex flex-col flex-1 gap-3 mt-4 sm:gap-4 sm:mt-6">
+          {user && user.role === "admin" && (
           <NavLink
             to="/dashboard-guru"
             className={({ isActive }) =>
@@ -80,6 +82,7 @@ const Sidebar = () => {
             <IoHome className="mr-2 text-xl text-gray-600 sm:text-2xl" />
             Dashboard
           </NavLink>
+          )}
           {user && user.role === "admin" && (
             <NavLink
               to="/users"
@@ -122,6 +125,20 @@ const Sidebar = () => {
               Data Nilai
             </NavLink>
           )}
+          {/* {user && user.role === "admin" && (
+            <NavLink
+              to="/history-nilai"
+              className={({ isActive }) =>
+                `flex items-center px-3 sm:px-4 py-1 sm:py-2 text-lg sm:text-xl font-medium text-gray-800 rounded-lg hover:bg-gray-100 transition-colors duration-200 ${
+                  isActive ? "bg-gradient-to-r from-purple-100 to-blue-100" : ""
+                }`
+              }
+              onClick={() => setIsOpen(false)}
+            >
+              <IoDocumentText className="mr-2 text-xl text-gray-600 sm:text-2xl" />
+              History Nilai
+            </NavLink>
+          )} */}
           {user && user.role === "admin" && (
             <NavLink
               to="/products"
